@@ -135,6 +135,9 @@ exports.verifyEmail = async (req, res) => {
   try {
     const { email, otp } = req.body;
 
+    //deleting the previous otp from the db
+    await Otp.deleteOne({ email: email }, { sort: { createdAt: 1 } });
+
     const matchOtp = await OTP.findOne({ email: email });
 
     //checking if there is a otp entry in the db with this entered email
@@ -145,17 +148,20 @@ exports.verifyEmail = async (req, res) => {
       });
     }
 
-    //finding the newest otp
-    if (Date.now() > Otp.expiresAt){
-      return res.status()
+    if (Date.now() > matchOtp.expiresAt) {
+      await Otp.deleteOne({ email: email });
+      return res.status(400).json({
+        success: false,
+        message: "the entered otp is expired",
+      });
     }
-      if (otp !== matchOtp.otp) {
-        //checking if entered otp is same as the otp stored in db
-        return res.status(400).json({
-          success: false,
-          message: "incorrect otp entered",
-        });
-      }
+    if (otp !== matchOtp.otp) {
+      //checking if entered otp is same as the otp stored in db
+      return res.status(400).json({
+        success: false,
+        message: "incorrect otp entered",
+      });
+    }
 
     const newUser = await User.create({
       firstName: matchOtp.firstName,
