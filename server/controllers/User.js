@@ -66,6 +66,8 @@ exports.signup = async (req, res) => {
       text: otp,
     });
     if (isOtpSent) {
+      await Otp.deleteOne({ email: email }, { sort: { createdAt: 1 } });
+
       await Otp.create({
         email,
         otp,
@@ -136,7 +138,6 @@ exports.verifyEmail = async (req, res) => {
     const { email, otp } = req.body;
 
     //deleting the previous otp from the db
-    await Otp.deleteOne({ email: email }, { sort: { createdAt: 1 } });
 
     const matchOtp = await OTP.findOne({ email: email });
 
@@ -155,6 +156,7 @@ exports.verifyEmail = async (req, res) => {
         message: "the entered otp is expired",
       });
     }
+
     if (otp !== matchOtp.otp) {
       //checking if entered otp is same as the otp stored in db
       return res.status(400).json({
@@ -175,6 +177,60 @@ exports.verifyEmail = async (req, res) => {
       success: true,
       message: "otp matched, creating user now... with the below details",
       data: newUser,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.resendOtp = async (req, res) => {
+  const { email } = req.body;
+
+  //generating the otp here
+  const newOtp = otpGenerator.generate(6, {
+    upperCaseAlphabets: false,
+    specialChars: false,
+    digits: true,
+    lowerCaseAlphabets: false,
+  });
+
+  //mailing the otp here
+  const isOtpSent = await transporter.sendMail({
+    from: process.env.MAIL_USER,
+    to: email,
+    subject: "here is your otp",
+    text: newOtp,
+  });
+
+  const oldEntry = OTP.findOneAndUpdate(
+    { email: email },
+    {
+      otp: newOtp,
+    }
+  );
+  if (!oldEntry) {
+    return res.status(400).json({
+      success: false,
+      message: "no entry in OTP model found for this email",
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "new otp sent",
+  });
+};
+
+//for development purpose only
+exports.deleteAllUsers = async (req, res) => {
+  try {
+    await User.deleteMany({});
+    return res.status(200).json({
+      success: true,
+      message: "all users successfuly deleted",
     });
   } catch (err) {
     return res.status(500).json({

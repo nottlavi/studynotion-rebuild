@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
 export const SignUp = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -29,7 +28,7 @@ export const SignUp = () => {
         objToSend
       );
       if (res) {
-        navigate("/verify-email");
+        navigate("/verify-email", { state: { email } });
       }
     } catch (err) {
       console.log(err.message);

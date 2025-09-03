@@ -4,6 +4,7 @@ import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
 import { SignUp } from "./pages/Signup";
 import { VerifyEmail } from "./pages/VerifyEmail";
+import { ToastContainer, toast } from "react-toastify";
 
 export const App = () => {
   return (
@@ -14,6 +15,7 @@ export const App = () => {
         <Route path="/signup" element={<SignUp />} />
         <Route path="verify-email" element={<VerifyEmail />} />
       </Routes>
+      <ToastContainer />
     </div>
   );
 };

@@ -15,20 +15,16 @@ const otpSchema = new mongoose.Schema({
   },
   firstName: {
     type: String,
-    required: true,
   },
   lastName: {
     type: String,
-    required: true,
   },
   password: {
     type: String,
-    required: true,
   },
   accountType: {
     type: String,
     enum: ["Student", "Instructor", "Admin"], // example roles
-    required: true,
   },
 });
 
