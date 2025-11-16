@@ -11,8 +11,22 @@ const jwt = require("jsonwebtoken");
 exports.signup = async (req, res) => {
   try {
     //fetching all the imp details from the req.body
-    const { firstName, lastName, email, password, confirmPassword } = req.body;
-    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+      accountType,
+    } = req.body;
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !accountType
+    ) {
       return res.status(400).json({
         error: "all inputs details not found",
       });
@@ -62,6 +76,7 @@ exports.signup = async (req, res) => {
         firstName: firstName,
         lastName: lastName,
         password: hashedPassword,
+        accountType: accountType,
         expiresAt: new Date(Date.now() + 5 * 60 * 1000),
       });
 
@@ -118,6 +133,9 @@ exports.verifyEmail = async (req, res) => {
       password: existingEntry.password,
       accountType: existingEntry.accountType,
     });
+
+    //deleting the user from otp model
+    await OTPModel.deleteOne({ email: email });
 
     const userObj = newUser.toObject();
     delete userObj.password;

@@ -27,6 +27,11 @@ const OTPSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    accountType: {
+      type: String,
+      required: true,
+      enum: ["Instructor", "Student", "Admin"]
+    },
   },
   { timestamps: true }
 );

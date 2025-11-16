@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema(
     accountType: {
       type: String,
       enum: ["Instructor", "Student", "Admin"],
+      required: true,
     },
   },
   { timestamps: true }

@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 //routes
-app.use("/api/auth", userRoutes);
+app.use("/api/users", userRoutes);
 
 //check if server is running
 app.get("/", (req, res) => {
