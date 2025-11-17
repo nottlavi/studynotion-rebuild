@@ -193,7 +193,7 @@ exports.login = async (req, res) => {
       //change this in production
       secure: false,
       path: "/",
-      sameSite: "none",
+      sameSite: "lax",
     });
 
     //returning response here
@@ -214,7 +214,7 @@ exports.logout = async (req, res) => {
       httpOnly: true,
       secure: false,
       path: "/",
-      sameSite: "none",
+      sameSite: "lax",
     });
 
     res.status(200).json({
