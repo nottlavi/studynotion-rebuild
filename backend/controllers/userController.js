@@ -209,7 +209,22 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
-  const userId = req.user.userId;
+  try {
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      secure: false,
+      path: "/",
+      sameSite: "none",
+    });
 
-  
-}
+    res.status(200).json({
+      success: true,
+      message: "cookie cleared",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message
+    })
+  }
+};
