@@ -268,7 +268,7 @@ exports.sendOTP = async (req, res) => {
 
   if (isMailSent) {
     //checking if existing entry is present for this email?
-    tempOTPModel.findOneAndDelete({ email: email });
+    await tempOTPModel.findOneAndDelete({ email: email });
 
     //creating a new entry in temp otp model to use is later on and to check if its expired or not
     await tempOTPModel.create({
@@ -306,7 +306,7 @@ exports.checkOTP = async (req, res) => {
     }
     //checking if the db otp is expired
 
-    if (existingOTP.expiresAt > Date.now()) {
+    if (existingOTP.expiresAt < Date.now()) {
       return res.status(500).json({
         success: false,
         message: "otp has expired",
@@ -329,7 +329,7 @@ exports.changePassword = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!password || !email) {
+    if (!email || !password) {
       return res.status(401).json({
         success: false,
         message: "all input fields are required",

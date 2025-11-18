@@ -19,7 +19,9 @@ router.post("/signup", signup);
 router.post("/verify-email", verifyEmail);
 router.post("/login", login);
 router.post("/logout", verifyJWT, logout);
+//below three routes for forgot password
 router.post("/send-otp", sendOTP);
 router.post("/check-otp", checkOTP);
 router.post("/change-password", changePassword);
+
 module.exports = router;

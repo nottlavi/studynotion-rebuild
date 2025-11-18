@@ -7,7 +7,7 @@ const tempOTPSchema = new mongoose.Schema(
       required: true,
     },
     otp: {
-      type: Number,
+      type: String,
       required: true,
     },
     expiresAt: {
