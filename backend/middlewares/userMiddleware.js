@@ -1,4 +1,7 @@
 const jwt = require("jsonwebtoken");
+const { sendMail } = require("../utils/mailSender");
+const otpGenerator = require("otp-generator");
+const userModel = require("../models/userModel");
 
 exports.verifyJWT = async (req, res, next) => {
   const token = req.cookies.jwt;
