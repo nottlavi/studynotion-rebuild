@@ -1,7 +1,9 @@
 import { Outlet, useLocation, Link } from "react-router-dom";
-
+import { useEffect } from "react";
+import axios from "axios";
 //importing redux stuff here
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setProfile } from "../slices/userSlice";
 
 export const DashBoardPage = () => {
   //getting the url's endpoint to know which part is currently clicked on
@@ -9,7 +11,28 @@ export const DashBoardPage = () => {
   const currentBoy = location.pathname.split("/")[2];
 
   //managing the redux stuff here
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.user.token);
   const profile = useSelector((state) => state.user.profile);
+
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
+
+  useEffect(() => {
+    const getProfileByToken = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/users/get-profile`, {
+          withCredentials: true,
+        });
+
+        if (res) {
+          dispatch(setProfile(res.data.user));
+        }
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+    getProfileByToken();
+  }, [token]);
 
   return (
     <div className="flex gap-4">
@@ -34,13 +57,10 @@ export const DashBoardPage = () => {
             </div>
           </div>
         ) : (
-        
           <div>
             <hr />
             Instructor
-            <div>
-              My Courses
-            </div>
+            <div>My Courses</div>
           </div>
         )}
         <hr />
