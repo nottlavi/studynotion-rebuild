@@ -7,8 +7,6 @@ export const ProtectedRoute = ({ allowedRoles }) => {
   if (!profile || Object.keys(profile).length === 0)
     return <div>Loading profile...</div>;
 
-  console.log("hello from protected route", profile);
-
   if (allowedRoles && !allowedRoles.includes(profile.accountType)) {
     return <Navigate to="*" replace />;
   }
