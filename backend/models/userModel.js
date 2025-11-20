@@ -26,8 +26,14 @@ const userSchema = new mongoose.Schema(
       enum: ["Instructor", "Student", "Admin"],
       required: true,
     },
+    courses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    ],
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("user", userSchema);
+module.exports = mongoose.model("User", userSchema);

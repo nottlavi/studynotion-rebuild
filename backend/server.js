@@ -9,6 +9,7 @@ const database = require("./config/database");
 
 //importing routes here
 const userRoutes = require("./routes/userRoutes");
+const courseRoutes = require("./routes/courseRoutes");
 
 const PORT = process.env.PORT || 4000;
 
@@ -22,6 +23,7 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 //routes
 app.use("/api/users", userRoutes);
+app.use("/api/courses", courseRoutes);
 
 //check if server is running
 app.get("/", (req, res) => {
