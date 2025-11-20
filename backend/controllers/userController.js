@@ -377,3 +377,29 @@ exports.getProfileByToken = async (req, res) => {
     });
   }
 };
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const { userId } = req.user;
+
+    const user = await userModel.findById(userId);
+
+    const { firstName, lastName } = req.body;
+
+    const updatedUser = await userModel.findByIdAndUpdate(
+      userId,
+      { firstName, lastName },
+      { new: true, runValidators: true, select: "-password" }
+    );
+
+    return res.status(200).json({
+      success: true,
+      user: updatedUser,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};

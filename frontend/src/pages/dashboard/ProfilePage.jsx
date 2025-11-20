@@ -13,7 +13,7 @@ export const ProfilePage = () => {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   useEffect(() => {
-    const getProfileFromBackend = async () => {
+    const getProfileByToken = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/users/get-profile`, {
           withCredentials: true,
@@ -24,13 +24,15 @@ export const ProfilePage = () => {
         console.log(err.message);
       }
     };
-    getProfileFromBackend();
+    getProfileByToken();
   }, [token]);
 
-  return <div>
-    {profile.firstName}
-    {profile.lastName}
-    <br />
-    {profile.email}
-  </div>;
+  return (
+    <div>
+      {profile.firstName}
+      {profile.lastName}
+      <br />
+      {profile.email}
+    </div>
+  );
 };

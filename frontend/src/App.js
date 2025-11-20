@@ -13,6 +13,7 @@ import { ProfilePage } from "./pages/dashboard/ProfilePage";
 import { NotFound } from "./pages/NotFound";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { NavBar } from "./pages/NavBar";
+import { UpdateProfile } from "./pages/dashboard/UpdateProfile";
 
 //importing redux state here
 import { setToken } from "./slices/userSlice";
@@ -66,6 +67,7 @@ const App = () => {
           }
         >
           <Route path="my-profile" element={<ProfilePage />} />
+          <Route path="settings" element={<UpdateProfile />} />
         </Route>
 
         <Route path="/forgot-password" element={<ForgotPassword />} />

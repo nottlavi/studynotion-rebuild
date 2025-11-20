@@ -11,6 +11,7 @@ const {
   checkOTP,
   changePassword,
   getProfileByToken,
+  updateProfile,
 } = require("../controllers/userController");
 
 //importing the middlewares here
@@ -28,4 +29,5 @@ router.post("/change-password", changePassword);
 //route to access info about a user if they are logged in, in simpler words using token/jwt
 router.get("/get-profile", verifyJWT, getProfileByToken);
 
-module.exports = router;
+router.put("/update-profile", verifyJWT, updateProfile);
+module.exports = router;  
