@@ -10,6 +10,7 @@ const {
   sendOTP,
   checkOTP,
   changePassword,
+  getProfileByToken,
 } = require("../controllers/userController");
 
 //importing the middlewares here
@@ -19,9 +20,12 @@ router.post("/signup", signup);
 router.post("/verify-email", verifyEmail);
 router.post("/login", login);
 router.post("/logout", verifyJWT, logout);
-//below three routes for forgot password
+//below three routes for forgot password flow
 router.post("/send-otp", sendOTP);
 router.post("/check-otp", checkOTP);
 router.post("/change-password", changePassword);
+
+//route to access info about a user if they are logged in, in simpler words using token/jwt
+router.get("/get-profile", verifyJWT, getProfileByToken);
 
 module.exports = router;

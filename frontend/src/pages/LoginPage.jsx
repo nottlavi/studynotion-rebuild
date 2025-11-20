@@ -10,6 +10,7 @@ export const LoginPage = () => {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
   //managing all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -26,6 +27,7 @@ export const LoginPage = () => {
     //line to avoid reloading of page on submission of the form
     e.preventDefault();
     try {
+      setLoading(true);
       const res = await axios.post(`${BASE_URL}/users/login`, inputs, {
         withCredentials: true,
       });
@@ -38,6 +40,8 @@ export const LoginPage = () => {
       navigate("/dashboard");
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,7 +70,13 @@ export const LoginPage = () => {
         <Link to="/forgot-password">forgot password</Link>
         {/* temp */}
         <br />
-        <button type="submit">Login!</button>
+        {loading ? (
+          <></>
+        ) : (
+          <>
+            <button type="submit">Login!</button>
+          </>
+        )}
       </form>
     </div>
   );

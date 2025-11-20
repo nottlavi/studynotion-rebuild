@@ -23,6 +23,7 @@ export const NavBar = () => {
         { withCredentials: true }
       );
       if (res) {
+        console.log(res);
         localStorage.removeItem("token");
         dispatch(clearToken());
         navigate("/");
@@ -34,9 +35,7 @@ export const NavBar = () => {
 
   return (
     <div className="bg-black text-white h-10 flex justify-between">
-      <Link to="/">
-        StudyNotion Logo
-      </Link>
+      <Link to="/">StudyNotion Logo</Link>
       {token === "" ? (
         <div className="flex gap-3">
           <Link to="/login">
@@ -47,7 +46,11 @@ export const NavBar = () => {
           </Link>
         </div>
       ) : (
-        <button onClick={logoutHandler}>Log Out!</button>
+        <div className="flex items-center gap-2">
+          {/* temp jugaad to access dashboard */}
+          <Link to="/dashboard/my-profile">Dashboard</Link>
+          <button onClick={logoutHandler}>Log Out!</button>
+        </div>
       )}
     </div>
   );

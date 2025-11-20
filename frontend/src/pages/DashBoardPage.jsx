@@ -6,7 +6,6 @@ import { ProfilePage } from "./dashboard/ProfilePage";
 export const DashBoardPage = () => {
   return (
     <div>
-      DashBoard demo
       <Outlet />
     </div>
   );

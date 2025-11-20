@@ -14,15 +14,21 @@ import { NotFound } from "./pages/NotFound";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { NavBar } from "./pages/NavBar";
 
+//importing redux state here
+import { setToken } from "./slices/userSlice";
+import { useDispatch } from "react-redux";
+
 const App = () => {
   //importing imp info from redux here
   const token = localStorage.getItem("token");
 
   // defining all the dependencies here
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (token) {
-      console.log("here is your token", token);
+      //rehydrating the redux state for token here from localstorage because redux initializes to initial state after refresh or sesion restart
+      dispatch(setToken(token));
     } else {
       console.log("token not found");
     }

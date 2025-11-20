@@ -195,6 +195,7 @@ exports.login = async (req, res) => {
       secure: false,
       path: "/",
       sameSite: "lax",
+      maxAge: 10 * 24 * 60 * 60 * 1000,
     });
 
     //returning response here
@@ -209,7 +210,7 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.logout = async (res) => {
+exports.logout = async (req, res) => {
   try {
     res.clearCookie("jwt", {
       httpOnly: true,
@@ -218,7 +219,7 @@ exports.logout = async (res) => {
       sameSite: "lax",
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "cookie cleared",
     });
@@ -351,6 +352,26 @@ exports.changePassword = async (req, res) => {
     });
   } catch (err) {
     return res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.getProfileByToken = async (req, res) => {
+  try {
+    //fetching user id from the jwt middleware
+    const userId = req.user.userId;
+
+    //fetching the user from the db
+    const user = await userModel.findById(userId).select("-password");
+
+    return res.status(200).json({
+      success: true,
+      user: user,
+    });
+  } catch (err) {
+    return res.status(500).json({
       success: false,
       message: err.message,
     });
