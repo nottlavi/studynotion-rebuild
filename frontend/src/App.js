@@ -3,6 +3,8 @@ import { Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
+import { ProtectedRoute } from "./ProtectedRoute";
+
 //importing the pages here
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
@@ -14,6 +16,7 @@ import { NotFound } from "./pages/NotFound";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { NavBar } from "./pages/NavBar";
 import { UpdateProfile } from "./pages/dashboard/UpdateProfile";
+import { MyCourses } from "./pages/MyCourses";
 
 //importing redux state here
 import { setToken } from "./slices/userSlice";
@@ -42,12 +45,7 @@ const App = () => {
         <Route path="/" element={<HomePage />}></Route>
         <Route path="/signup" element={<SignUpPage />}></Route>
         <Route path="/verify-email" element={<VerifyEmailPage />}></Route>
-        {/* {token ? (
-          <Route path="/login" element={<DashBoardPage />}></Route>
-        ) : (
-          <Route path="/login" element={<LoginPage />}></Route>
-        )} */}
-        {/* the better way to approach the below functionality */}
+
         <Route
           path="/login"
           element={token ? <Navigate to="/dashboard" replace /> : <LoginPage />}
@@ -66,8 +64,13 @@ const App = () => {
             )
           }
         >
+          <Route index element={<Navigate to="my-profile" replace />} />
           <Route path="my-profile" element={<ProfilePage />} />
           <Route path="settings" element={<UpdateProfile />} />
+          {/* instructor only routes */}
+          <Route element={<ProtectedRoute allowedRoles={["Instructor"]} />}>
+            <Route path="my-courses" element={<MyCourses />} />
+          </Route>
         </Route>
 
         <Route path="/forgot-password" element={<ForgotPassword />} />

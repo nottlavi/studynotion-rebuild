@@ -37,7 +37,7 @@ export const LoginPage = () => {
       // temporary fix for now
       window.location.reload();
       console.log("login successful, navigating now...");
-      navigate("/dashboard");
+      navigate("/dashboard/my-profile");
     } catch (err) {
       console.log(err);
     } finally {
