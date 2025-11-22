@@ -19,19 +19,20 @@ exports.createCourse = async (req, res) => {
     }
 
     //else fetching info required to create the course from the request
-    const { title } = req.body;
+    const { title, tags } = req.body;
 
-    if(!title) {
+    if (!title || !tags) {
       return res.status(404).json({
         success: false,
-        message: "all input fields are required"
-      })
+        message: "all input fields are required",
+      });
     }
 
     //creating the course here
     const newCourse = await courseModel.create({
       title: title,
       instructor: userId,
+      tags: tags,
     });
 
     //pushing the course in the user's entry

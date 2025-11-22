@@ -60,7 +60,13 @@ export const DashBoardPage = () => {
           <div>
             <hr />
             Instructor
-            <div>My Courses</div>
+            <Link to="/dashboard/my-courses">
+              <div
+                className={currentBoy === "my-courses" ? "bg-yellow-100" : ""}
+              >
+                My Courses
+              </div>
+            </Link>
           </div>
         )}
         <hr />

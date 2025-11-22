@@ -17,6 +17,7 @@ import { ForgotPassword } from "./pages/ForgotPassword";
 import { NavBar } from "./pages/NavBar";
 import { UpdateProfile } from "./pages/dashboard/UpdateProfile";
 import { MyCourses } from "./pages/MyCourses";
+import { AddCourse } from "./pages/dashboard/AddCourse";
 
 //importing redux state here
 import { setToken } from "./slices/userSlice";
@@ -70,6 +71,9 @@ const App = () => {
           {/* instructor only routes */}
           <Route element={<ProtectedRoute allowedRoles={["Instructor"]} />}>
             <Route path="my-courses" element={<MyCourses />} />
+          </Route>
+          <Route element={<ProtectedRoute allowedRoles={["Instructor"]} />}>
+            <Route path="add-course" element={<AddCourse />} />
           </Route>
         </Route>
 
