@@ -7,6 +7,7 @@ export const AddCourse = () => {
   const [tags, setTags] = useState([]);
   // this is just for the single tag which is being typed in, in this moment
   const [tag, setTag] = useState("");
+  const [category, setCategory] = useState("");
 
   //managing all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -23,7 +24,7 @@ export const AddCourse = () => {
     try {
       const res = await axios.post(
         `${BASE_URL}/courses/create-course`,
-        { title, tags },
+        { title, tags, category },
         { withCredentials: true }
       );
       if (res) {
@@ -67,6 +68,18 @@ export const AddCourse = () => {
         <button onClick={addTag} type="button">
           add tag!
         </button>
+        {/* section for category selection*/}
+        <select
+          value={category}
+          onChange={(e) => {
+            setCategory(e.target.value);
+          }}
+        >
+          <option value="">Choose Category</option>
+          <option value="web-development">Web Development</option>
+          <option value="java">Java</option>
+          <option value="python">Python</option>
+        </select>
         <br />
         <button type="submit">next</button>
       </form>

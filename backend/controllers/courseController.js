@@ -1,3 +1,4 @@
+const categoryModel = require("../models/categoryModel");
 const courseModel = require("../models/courseModel");
 const userModel = require("../models/userModel");
 
@@ -18,13 +19,23 @@ exports.createCourse = async (req, res) => {
       });
     }
 
-    //else fetching info required to create the course from the request
-    const { title, tags } = req.body;
+    //else fetching info required to create the course from the request also here category is the name (e.g. web-development, java e.t.c. which are created by the admin)
+    const { title, tags, category } = req.body;
 
-    if (!title || !tags) {
+    if (!title || !category) {
       return res.status(404).json({
         success: false,
         message: "all input fields are required",
+      });
+    }
+
+    //finding the category id for which request is received
+    const categoryEntry = await categoryModel.findOne({ name: category });
+
+    if (!categoryEntry) {
+      return res.status(404).json({
+        success: false,
+        message: "no such category found exists",
       });
     }
 
@@ -33,6 +44,7 @@ exports.createCourse = async (req, res) => {
       title: title,
       instructor: userId,
       tags: tags,
+      category: categoryEntry._id,
     });
 
     //pushing the course in the user's entry
@@ -40,9 +52,14 @@ exports.createCourse = async (req, res) => {
       $push: { courses: newCourse._id },
     });
 
+    //also pushing this course in the category entry
+    categoryEntry.courses.push(newCourse._id);
+    await categoryEntry.save();
+
     return res.status(200).json({
       success: true,
-      message: "course created successfully",
+      message: "course created successfully with the following details",
+      course: newCourse,
     });
   } catch (err) {
     return res.status(500).json({
