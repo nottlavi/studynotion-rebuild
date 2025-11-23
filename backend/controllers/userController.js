@@ -364,7 +364,10 @@ exports.getProfileByToken = async (req, res) => {
     const userId = req.user.userId;
 
     //fetching the user from the db
-    const user = await userModel.findById(userId).select("-password");
+    const user = await userModel
+      .findById(userId)
+      .select("-password")
+      .populate("courses");
 
     return res.status(200).json({
       success: true,
