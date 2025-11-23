@@ -37,3 +37,38 @@ exports.createCategory = async (req, res) => {
     });
   }
 };
+
+exports.getCategoryDetailsById = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+    if (!categoryId) {
+      return res.status(404).json({
+        success: false,
+        message: "categoryId is required",
+      });
+    }
+
+    // find category by ID
+    const category = await categoryModel
+      .findById(categoryId)
+      .populate("courses");
+
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "no such category exists in the db",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "category details fetched",
+      category: category,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};

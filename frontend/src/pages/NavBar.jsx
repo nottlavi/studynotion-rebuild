@@ -61,7 +61,7 @@ export const NavBar = () => {
               <Stack gap="4" direction="row">
                 <Stack gap="3">
                   <Stack gap="1">
-                    <Link>
+                    <Link to={`/course-category/69228e714031567fc2572924`}>
                       <Text textStyle="sm">Web Development</Text>
                     </Link>
                     <Link>

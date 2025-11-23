@@ -18,6 +18,7 @@ import { NavBar } from "./pages/NavBar";
 import { UpdateProfile } from "./pages/dashboard/UpdateProfile";
 import { MyCourses } from "./pages/MyCourses";
 import { AddCourse } from "./pages/dashboard/AddCourse";
+import { CourseCategory } from "./pages/CourseCategory";
 
 //importing redux state here
 import { setToken } from "./slices/userSlice";
@@ -78,6 +79,11 @@ const App = () => {
         </Route>
 
         <Route path="/forgot-password" element={<ForgotPassword />} />
+
+        <Route
+          path="/course-category/:categoryId"
+          element={<CourseCategory />}
+        />
 
         {/* route for non existing pages */}
         <Route path="*" element={<NotFound />} />
