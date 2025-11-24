@@ -68,3 +68,39 @@ exports.createCourse = async (req, res) => {
     });
   }
 };
+
+exports.getCourseDetailsById = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    if (!courseId) {
+      return res.status(401).json({
+        success: false,
+        message: "no course id found in the url",
+      });
+    }
+
+    //finding a course with such id
+    const courseEntry = await courseModel
+      .findById(courseId)
+      .populate("instructor");
+    if (!courseId) {
+      return res.status(404).json({
+        success: false,
+        message: "no such course found in the db",
+      });
+    }
+
+    //finally returning the success response
+    return res.status(200).json({
+      success: true,
+      message: "course with following details fetched",
+      course: courseEntry,
+    });
+  } catch (err) {
+    return res.status().json({
+      success: false,
+      message: err.message,
+    });
+  }
+};

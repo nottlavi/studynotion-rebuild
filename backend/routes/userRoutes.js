@@ -30,4 +30,4 @@ router.post("/change-password", changePassword);
 router.get("/get-profile", verifyJWT, getProfileByToken);
 
 router.put("/update-profile", verifyJWT, updateProfile);
-module.exports = router;  
+module.exports = router;

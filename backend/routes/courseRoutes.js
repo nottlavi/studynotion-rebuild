@@ -6,8 +6,12 @@ const router = express.Router();
 const { verifyJWT } = require("../middlewares/userMiddleware");
 
 //importing the
-const { createCourse } = require("../controllers/courseController");
+const {
+  createCourse,
+  getCourseDetailsById,
+} = require("../controllers/courseController");
 
 router.post("/create-course", verifyJWT, createCourse);
+router.get("/get-course-by-id/:courseId", getCourseDetailsById);
 
 module.exports = router;
