@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema(
         ref: "Course",
       },
     ],
+    profile: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Profile",
+    },
   },
   { timestamps: true }
 );

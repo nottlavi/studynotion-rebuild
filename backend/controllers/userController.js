@@ -2,6 +2,7 @@
 const userModel = require("../models/userModel");
 const OTPModel = require("../models/OTPModel");
 const tempOTPModel = require("../models/tempOTPModel");
+const profileModel = require("../models/profileModel");
 
 //importing dependencies here
 const otpGenerator = require("otp-generator");
@@ -126,6 +127,9 @@ exports.verifyEmail = async (req, res) => {
       });
     }
 
+    //creating a profile for this user
+    const profile = await profileModel.create({});
+
     //creating the user entry here
     const newUser = await userModel.create({
       firstName: existingEntry.firstName,
@@ -133,6 +137,7 @@ exports.verifyEmail = async (req, res) => {
       email: existingEntry.email,
       password: existingEntry.password,
       accountType: existingEntry.accountType,
+      profile: profile._id,
     });
 
     //deleting the user from otp model
@@ -367,7 +372,8 @@ exports.getProfileByToken = async (req, res) => {
     const user = await userModel
       .findById(userId)
       .select("-password")
-      .populate("courses");
+      .populate("courses")
+      .populate("profile");
 
     return res.status(200).json({
       success: true,
@@ -384,20 +390,50 @@ exports.getProfileByToken = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const { userId } = req.user;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "middleware authentication failed",
+      });
+    }
 
-    const user = await userModel.findById(userId);
+    const updates = {};
 
-    const { firstName, lastName } = req.body;
+    if (req.body.firstName) updates.firstName = req.body.firstName;
+    if (req.body.lastName) updates.lastName = req.body.lastName;
+    if (req.body.dob) updates.dob = req.body.dob;
+    if (req.body.gender) updates.gender = req.body.gender;
+    if (req.body.contactNumber) updates.contactNumber = req.body.contactNumber;
+    if (req.body.about) updates.about = req.body.about;
+
+    const userToUpdate = await userModel.findById(userId);
+
+    const profileToUpdateId = userToUpdate.profile;
+
+    if (updates.contactNumber && updates.contactNumber.length !== 10)
+      return res
+        .status(400)
+        .json({ success: false, message: "please enter a valid phone number" });
 
     const updatedUser = await userModel.findByIdAndUpdate(
       userId,
-      { firstName, lastName },
-      { new: true, runValidators: true, select: "-password" }
+      { $set: updates },
+      { new: true }
+    );
+
+    const updatedProfile = await profileModel.findByIdAndUpdate(
+      profileToUpdateId,
+      {
+        $set: updates,
+      },
+      { new: true }
     );
 
     return res.status(200).json({
       success: true,
+      message: "user updated successfully with the following details",
       user: updatedUser,
+      profile: updatedProfile,
     });
   } catch (err) {
     return res.status(500).json({
