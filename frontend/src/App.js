@@ -51,7 +51,13 @@ const App = () => {
 
         <Route
           path="/login"
-          element={token ? <Navigate to="/dashboard" replace /> : <LoginPage />}
+          element={
+            token ? (
+              <Navigate to="/dashboard/my-profile" replace />
+            ) : (
+              <LoginPage />
+            )
+          }
         />
 
         {/* routes for dashboard */}

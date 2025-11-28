@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 
 //importing redux stuff here
 import { useDispatch, useSelector } from "react-redux";
-import { clearToken } from "../slices/userSlice";
+import { clearProfile, clearToken } from "../slices/userSlice";
 
 //importing chakra ui stuff here
 import {
@@ -37,6 +37,7 @@ export const NavBar = () => {
       if (res) {
         console.log(res);
         localStorage.removeItem("token");
+        dispatch(clearProfile());
         dispatch(clearToken());
         navigate("/");
       }

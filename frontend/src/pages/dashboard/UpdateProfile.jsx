@@ -9,7 +9,7 @@ export const UpdateProfile = () => {
   // console.log(profile)
 
   //managing all the states here
-  // all the input states
+  // all the input states for profile update
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dob, setDOB] = useState("");
@@ -18,6 +18,9 @@ export const UpdateProfile = () => {
   const [about, setAbout] = useState("");
   //this state is to block the user to use the button when its invalid for them to send a backend req
   const [blocked, setBlocked] = useState(true);
+  //all the input states for change password
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
   //managing all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -45,8 +48,7 @@ export const UpdateProfile = () => {
       const genderChange = gender !== profile?.profile?.gender && gender !== "";
       const contactNumberChange =
         contactNumber !== profile?.profile?.contactNumber &&
-        contactNumber !== "" &&
-        contactNumber.length === 10;
+        contactNumber !== "";
       const aboutChange = about !== profile?.profile?.about && about !== "";
 
       if (
@@ -58,15 +60,13 @@ export const UpdateProfile = () => {
         aboutChange
       ) {
         setBlocked(false);
-      } else if (contactNumberChange && contactNumber < 10) {
-        setBlocked(true);
       } else {
         setBlocked(true);
       }
     }
   }, [firstName, lastName, dob, gender, contactNumber, about]);
 
-  //the function to call the backend
+  //the function to call the backend for profile updation
   const updateProfile = async (e) => {
     e.preventDefault();
     try {
@@ -75,12 +75,30 @@ export const UpdateProfile = () => {
         { firstName, lastName, dob, gender, contactNumber, about },
         { withCredentials: true }
       );
-
       if (res) {
         console.log(res);
       }
     } catch (err) {
       console.log(err.response.data);
+    }
+  };
+
+  // function to call the backend for password updation
+  const updatePassword = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.put(
+        `${BASE_URL}/users/update-password`,
+        { currentPassword, newPassword },
+        { withCredentials: true }
+      );
+      if (res) {
+        console.log(res);
+        setCurrentPassword("");
+        setNewPassword("");
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -197,23 +215,38 @@ export const UpdateProfile = () => {
       {/* div where users can update their password */}
       <div className="flex flex-col gap-3">
         <div>Password</div>
-        <div className="flex gap-4">
-          <div className="flex flex-col">
-            <div>Old Password</div>
-            <input type="password" />
+        <form onSubmit={updatePassword}>
+          {/* container for input fields */}
+          <div className="flex gap-4">
+            <div className="flex flex-col">
+              <div>Old Password</div>
+              <input
+                type="password"
+                value={currentPassword}
+                onChange={(e) => {
+                  setCurrentPassword(e.target.value);
+                }}
+              />
+            </div>
+            <div className="flex flex-col">
+              <label>New Password</label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                }}
+              />
+            </div>
           </div>
-          <div className="flex flex-col">
-            <div>New Password</div>
-            <input type="password" />
+          {/* container for button */}
+          <div className="flex gap-4">
+            <Link to="/dashboard/my-profile">
+              <button>Cancel</button>
+            </Link>
+            <button type="submit">Update</button>
           </div>
-        </div>
-      </div>
-      {/* button container for the above div */}
-      <div className="flex gap-4">
-        <Link to="/dashboard/my-profile">
-          <button>Cancel</button>
-        </Link>
-        <button>Update</button>
+        </form>
       </div>
     </div>
   );

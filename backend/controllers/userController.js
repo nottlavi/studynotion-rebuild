@@ -442,3 +442,44 @@ exports.updateProfile = async (req, res) => {
     });
   }
 };
+
+exports.updatePassword = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "all input fields are required",
+      });
+    }
+
+    const user = await userModel.findById(userId);
+
+    //comparing the password here
+    const compare = await bcrypt.compare(currentPassword, user.password);
+
+    if (!compare) {
+      return res.status(400).json({
+        success: false,
+        message: "incorrect password enteret",
+      });
+    }
+
+    //hashing the new password entered and storing it in the db
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "password updated successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
