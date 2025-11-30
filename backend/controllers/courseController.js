@@ -20,9 +20,29 @@ exports.createCourse = async (req, res) => {
     }
 
     //else fetching info required to create the course from the request also here category is the name (e.g. web-development, java e.t.c. which are created by the admin)
-    const { title, tags, category } = req.body;
+    const {
+      title,
+      tags,
+      category,
+      description,
+      price,
+      thumbnail,
+      benifits,
+      requirements,
+      sections,
+    } = req.body;
 
-    if (!title || !category) {
+    if (
+      !title ||
+      !category ||
+      !tags ||
+      !description ||
+      !price ||
+      !thumbnail ||
+      !benifits ||
+      !requirements ||
+      !sections
+    ) {
       return res.status(404).json({
         success: false,
         message: "all input fields are required",
@@ -35,9 +55,11 @@ exports.createCourse = async (req, res) => {
     if (!categoryEntry) {
       return res.status(404).json({
         success: false,
-        message: "no such category found exists",
+        message: "no such category exists",
       });
     }
+
+    //if i create a new section here.
 
     //creating the course here
     const newCourse = await courseModel.create({
@@ -45,6 +67,12 @@ exports.createCourse = async (req, res) => {
       instructor: userId,
       tags: tags,
       category: categoryEntry._id,
+      description: description,
+      price: price,
+      thumbnail: thumbnail,
+      benifits: benifits,
+      requirements: requirements,
+      sections: sections,
     });
 
     //pushing the course in the user's entry
