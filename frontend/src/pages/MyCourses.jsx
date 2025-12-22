@@ -16,12 +16,17 @@ export const MyCourses = () => {
     }
   }, [profile]);
 
+
   return (
     <div className="flex gap-5">
       <div>
         My Courses
         {ownedCourses.map((ele, idx) => {
-          return <div key={idx}>{ele.title}</div>;
+          return (
+            <Link to={`/course/${ele._id}`}>
+              <div key={idx}>{ele.title}</div>
+            </Link>
+          );
         })}
       </div>
 
