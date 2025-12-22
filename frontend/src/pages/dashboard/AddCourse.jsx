@@ -34,7 +34,7 @@ export const AddCourse = () => {
   //this is the whole array which will be sent to backend
   const [requirements, setRequirements] = useState([]);
 
-  const [thumbnail, setThumbnail] = useState({ url: "", publicId: "" });
+  const [thumbnail, setThumbnail] = useState(null);
   const [section, setSection] = useState("");
 
   //this is for all the section which will be created
@@ -68,6 +68,8 @@ export const AddCourse = () => {
   const [tempName, setTempName] = useState("");
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  const [sectionIdCreated, setSectionIdCreated] = useState([]);
 
   //state to manage the lecture which is being edited rn
   const [tempLecture, setTempLecture] = useState({});
@@ -186,14 +188,14 @@ export const AddCourse = () => {
       return;
     } else {
       //creating the section in the backend using this below api call to pass down object id of the section because course creation required section id not the sections array
-      console.log(sections);
-      const res = await axios.post(
-        `${BASE_URL}/section/create-section`,
-        { title: section },
-        { withCredentials: true }
-      );
-
-      console.log(res);
+      for (let i = 0; i < sections.length; i++) {
+        const res = await axios.post(
+          `${BASE_URL}/section/create-section`,
+          { title: sections[i] },
+          { withCredentials: true }
+        );
+        setSectionIdCreated((prev) => [...prev, res.data.new_section._id]);
+      }
       setStage(3);
     }
   };
@@ -217,7 +219,16 @@ export const AddCourse = () => {
     setThumbnail({ url: result.secure_url, publicId: result.public_id });
   };
 
-  const removeThumbnail = async () => {};
+  const removeThumbnail = async (public_id) => {
+    try {
+      const res = await axios.post(`${BASE_URL}/courses/delete-thumbnail`, {
+        publicId: public_id,
+      });
+      setThumbnail(null);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   //function to create the course using backend
   const createCourse = async (e) => {
@@ -231,10 +242,10 @@ export const AddCourse = () => {
           category,
           description,
           price,
-          thumbnail,
+          thumbnail: thumbnail.url,
           benifits,
           requirements,
-          sections,
+          sections: sectionIdCreated,
         },
         { withCredentials: true }
       );
@@ -330,7 +341,14 @@ export const AddCourse = () => {
               {thumbnail ? (
                 <div>
                   <img src={thumbnail.url} />
-                  <button onClick={removeThumbnail}>Clear</button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      removeThumbnail(thumbnail.publicId);
+                    }}
+                  >
+                    Clear
+                  </button>
                 </div>
               ) : (
                 <input

@@ -17,7 +17,7 @@ export const MyCourses = () => {
   }, [profile]);
 
   return (
-    <div className="flex justify-between">
+    <div className="flex gap-5">
       <div>
         My Courses
         {ownedCourses.map((ele, idx) => {

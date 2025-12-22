@@ -5,7 +5,10 @@ const router = express.Router();
 //importing middleware(s) here
 const { verifyJWT } = require("../middlewares/userMiddleware");
 
-//importing the
+//importing cloudinary config here
+const cloudinary = require("../config/cloudinary");
+
+//importing the controllers
 const {
   createCourse,
   getCourseDetailsById,
@@ -25,10 +28,24 @@ router.post("/delete-thumbnail", async (req, res) => {
           "no public id for this cloudinary asset found in the request body",
       });
     }
+
+    const result = await cloudinary.uploader.destroy(publicId);
+
+    if (result.result !== "ok") {
+      return res.status(400).json({
+        success: false,
+        message: result.result,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "asset deleted successfully",
+    });
   } catch (err) {
     return res.status(500).json({
       success: false,
-      message: err,
+      message: err.message,
     });
   }
 });
