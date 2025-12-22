@@ -10,6 +10,8 @@ import { FaPlay, FaCaretDown } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import { FaPencilAlt } from "react-icons/fa";
 
+//importing components here
+
 //chakra ui stuff
 import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react";
 
@@ -65,7 +67,7 @@ export const AddCourse = () => {
   //stage to store the temporary edited new name
   const [tempName, setTempName] = useState("");
 
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   //state to manage the lecture which is being edited rn
   const [tempLecture, setTempLecture] = useState({});
@@ -178,6 +180,34 @@ export const AddCourse = () => {
     );
   };
 
+  const stage2Checker = (e) => {
+    e.preventDefault();
+    if (sections.length === 0 || megaLectureStorage.length === 0) {
+      return;
+    } else {
+      setStage(3);
+    }
+  };
+
+  const uploadThumbnail = async (file) => {
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", "hi1wsn1z");
+
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/dguufm5le/image/upload",
+      {
+        method: "POST",
+        body: data,
+      }
+    );
+
+    if (!res.ok) console.log(await res.text);
+
+    const result = await res.json();
+    return result.secure_url;
+  };
+
   //function to create the course using backend
   const createCourse = async (e) => {
     e.preventDefault();
@@ -201,7 +231,7 @@ export const AddCourse = () => {
         console.log(res);
       }
     } catch (err) {
-      console.log(err.message);
+      console.log(err);
     }
   };
 
@@ -288,7 +318,7 @@ export const AddCourse = () => {
               <label>Course Thumbnail</label>
               {thumbnail ? (
                 <div>
-                  <img src={URL.createObjectURL(thumbnail)} />
+                  <img src={thumbnail} />
                   <button
                     onClick={() => {
                       setThumbnail(null);
@@ -301,8 +331,11 @@ export const AddCourse = () => {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => {
-                    setThumbnail(e.target.files[0]);
+                  onChange={async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    const url = await uploadThumbnail(file);
+                    setThumbnail(url);
                   }}
                 />
               )}
@@ -683,9 +716,15 @@ export const AddCourse = () => {
               })}
             </div>
           </div>
+          <button type="submit" onClick={stage2Checker}>
+            next
+          </button>
         </form>
       ) : (
-        <div>stage 3</div>
+        // stage 3 / final stage
+        <form onClick={createCourse}>
+          <button type="submit">Publish?</button>
+        </form>
       )}
     </div>
   );
