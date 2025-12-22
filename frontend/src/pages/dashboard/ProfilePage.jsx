@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 export const ProfilePage = () => {
   //redux stuff here
   const profile = useSelector((state) => state.user.profile);
-  console.log(profile);
 
   return (
     <div className="flex flex-col gap-4">

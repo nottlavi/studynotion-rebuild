@@ -165,10 +165,17 @@ export const AddCourse = () => {
   };
 
   const updateLecture = (idx) => {
-    {
-      megaLectureStorage[idx].lectureTitle = tempLectureTitle;
-      megaLectureStorage[idx].lectureDescription = tempLectureDescription;
-    }
+    setMegaLectureStorage((prev) =>
+      prev.map((lec, i) =>
+        i === idx
+          ? {
+              ...lec,
+              lectureTitle: tempLectureTitle,
+              lectureDescription: tempLectureDescription,
+            }
+          : lec
+      )
+    );
   };
 
   //function to create the course using backend
