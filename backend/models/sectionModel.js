@@ -8,13 +8,11 @@ const sectionSchema = new mongoose.Schema({
   course: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Course",
-    required: true,
   },
   subsections: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "SubSection",
-      required: true,
     },
   ],
 });

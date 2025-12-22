@@ -34,7 +34,7 @@ export const AddCourse = () => {
   //this is the whole array which will be sent to backend
   const [requirements, setRequirements] = useState([]);
 
-  const [thumbnail, setThumbnail] = useState(null);
+  const [thumbnail, setThumbnail] = useState({ url: "", publicId: "" });
   const [section, setSection] = useState("");
 
   //this is for all the section which will be created
@@ -180,11 +180,20 @@ export const AddCourse = () => {
     );
   };
 
-  const stage2Checker = (e) => {
+  const stage2Checker = async (e) => {
     e.preventDefault();
     if (sections.length === 0 || megaLectureStorage.length === 0) {
       return;
     } else {
+      //creating the section in the backend using this below api call to pass down object id of the section because course creation required section id not the sections array
+      console.log(sections);
+      const res = await axios.post(
+        `${BASE_URL}/section/create-section`,
+        { title: section },
+        { withCredentials: true }
+      );
+
+      console.log(res);
       setStage(3);
     }
   };
@@ -205,8 +214,10 @@ export const AddCourse = () => {
     if (!res.ok) console.log(await res.text);
 
     const result = await res.json();
-    return result.secure_url;
+    setThumbnail({ url: result.secure_url, publicId: result.public_id });
   };
+
+  const removeThumbnail = async () => {};
 
   //function to create the course using backend
   const createCourse = async (e) => {
@@ -318,14 +329,8 @@ export const AddCourse = () => {
               <label>Course Thumbnail</label>
               {thumbnail ? (
                 <div>
-                  <img src={thumbnail} />
-                  <button
-                    onClick={() => {
-                      setThumbnail(null);
-                    }}
-                  >
-                    Clear
-                  </button>
+                  <img src={thumbnail.url} />
+                  <button onClick={removeThumbnail}>Clear</button>
                 </div>
               ) : (
                 <input
@@ -334,8 +339,7 @@ export const AddCourse = () => {
                   onChange={async (e) => {
                     const file = e.target.files[0];
                     if (!file) return;
-                    const url = await uploadThumbnail(file);
-                    setThumbnail(url);
+                    await uploadThumbnail(file);
                   }}
                 />
               )}

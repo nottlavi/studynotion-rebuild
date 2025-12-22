@@ -11,6 +11,7 @@ const database = require("./config/database");
 const userRoutes = require("./routes/userRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const sectionRoutes = require("./routes/sectionRoutes");
 
 const PORT = process.env.PORT || 4000;
 
@@ -26,6 +27,7 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use("/api/users", userRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/category", categoryRoutes);
+app.use("/api/section", sectionRoutes);
 
 //check if server is running
 app.get("/", (req, res) => {
