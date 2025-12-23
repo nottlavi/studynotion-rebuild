@@ -4,6 +4,7 @@ import axios from "axios";
 
 //importing react icons here
 import { GoDotFill } from "react-icons/go";
+import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
 
 export const CoursePage = () => {
   //managing dependencies here
@@ -14,6 +15,9 @@ export const CoursePage = () => {
   //managing states here
   const [currentCourse, setCurrentCourse] = useState({});
   console.log(currentCourse);
+
+  //state to manage the expanded section
+  const [expandMenu, setExpandMenu] = useState(false);
 
   useEffect(() => {
     const fetchCourseDetails = async () => {
@@ -78,9 +82,57 @@ export const CoursePage = () => {
               <p>? m ? s total length</p>
             </div>
             {/* the second section which contains the expand section toggle  */}
-            <div>Expand All Sections</div>
+            {expandMenu ? (
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  setExpandMenu(!expandMenu);
+                }}
+              >
+                Collapse All Sections
+              </div>
+            ) : (
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  setExpandMenu(!expandMenu);
+                }}
+              >
+                Expand All Sections
+              </div>
+            )}
           </div>
         </div>
+        {/* the actual section collapsable*/}
+        {expandMenu ? (
+          //when expanded
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              setExpandMenu(false);
+            }}
+          >
+            {/* section name and arrow icon */}
+            <div>
+              <MdKeyboardArrowDown />
+            </div>
+          </div>
+        ) : (
+          // when collapsed
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              setExpandMenu(true);
+            }}
+          >
+            {/* section name and arrow icon*/}
+            <div>
+              <MdKeyboardArrowRight />
+            </div>
+            {/* lecture count */}
+            <div></div>
+          </div>
+        )}
         {/* the author div */}
         <div className="flex gap-4 flex-col">
           <p>Author</p>
