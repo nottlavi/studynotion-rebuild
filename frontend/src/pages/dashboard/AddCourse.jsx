@@ -230,6 +230,29 @@ export const AddCourse = () => {
     }
   };
 
+  const uploadVideo = async (file) => {
+    try {
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "hi1wsn1z");
+
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/dguufm5le/video/upload",
+        { method: "POST", body: data }
+      );
+
+      if (!res.ok) {
+        console.log(res);
+      }
+
+      const result = await res.json();
+
+      setLectureVideo({ url: result.secure_url, publicId: result.public_id });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   //function to create the course using backend
   const createCourse = async (e) => {
     e.preventDefault();
@@ -547,9 +570,10 @@ export const AddCourse = () => {
                                                   </label>
                                                   {tempLecture?.lectureVideo && (
                                                     <video
-                                                      src={URL.createObjectURL(
+                                                      src={
                                                         tempLecture.lectureVideo
-                                                      )}
+                                                          .url
+                                                      }
                                                       controls
                                                     />
                                                   )}
@@ -631,6 +655,7 @@ export const AddCourse = () => {
                               );
                             })}
                         </div>
+                        {/* the overlay modal for adding a lecture */}
                         <Dialog.Root
                           open={isLectureDialogOpen}
                           onOpenChange={(e) => setIsLectureDialogOpen(e.open)}
@@ -661,9 +686,7 @@ export const AddCourse = () => {
                                       {lectureVideo ? (
                                         <div>
                                           <video
-                                            src={URL.createObjectURL(
-                                              lectureVideo
-                                            )}
+                                            src={lectureVideo.url}
                                             controls
                                           />
                                           <button
@@ -680,7 +703,9 @@ export const AddCourse = () => {
                                           accept="video/*"
                                           id="lectureVideo"
                                           onChange={(e) => {
-                                            setLectureVideo(e.target.files[0]);
+                                            const file = e.target.files[0];
+                                            if (!file) return;
+                                            uploadVideo(file);
                                           }}
                                         />
                                       )}
