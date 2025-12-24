@@ -50,4 +50,36 @@ router.post("/delete-thumbnail", async (req, res) => {
   }
 });
 
+router.post("/auto-delete-media", async (req, res) => {
+  try {
+    const { array, keepPublicId } = req.body;
+    console.log(array);
+
+    if (!array || !keepPublicId) {
+      return res
+        .status(404)
+        .json({ success: false, message: "all inputs required" });
+    }
+
+    for (let i = 0; i < array.length; i++) {
+      if (array[i].publicId === keepPublicId) return;
+
+      if (array[i].timeCreated + 1 * 60 * 60 * 1000 < Date.now()) {
+        const result = await cloudinary.uploader.destroy(array[i].publicId);
+        console.log(result);
+      }
+    }
+
+    return res.status(200).json({
+      success: false,
+      message: "cloudinary cache cleared",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
 module.exports = router;

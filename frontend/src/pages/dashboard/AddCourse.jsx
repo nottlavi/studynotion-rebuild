@@ -217,6 +217,31 @@ export const AddCourse = () => {
 
     const result = await res.json();
     setThumbnail({ url: result.secure_url, publicId: result.public_id });
+
+    //all nice and clear above this, but to delete the cached assets refer the below code
+
+    const prevIds = JSON.parse(localStorage.getItem("tempIds")) || [];
+
+    console.log(prevIds);
+
+    const newTempIds = [
+      ...prevIds,
+      { publicId: result.public_id, timeCreated: Date.now(), status: false },
+    ];
+
+    localStorage.setItem("tempIds", JSON.stringify(newTempIds));
+
+    const backendResult = await axios.post(
+      `${BASE_URL}/courses/auto-delete-media`,
+      {
+        array: newTempIds,
+        keepPublicId: null,
+      }
+    );
+    console.log(backendResult);
+
+    const cleaned = newTempIds.slice(-1);
+    localStorage.setItem("tempIds", JSON.stringify(cleaned));
   };
 
   const removeThumbnail = async (public_id) => {
@@ -274,6 +299,21 @@ export const AddCourse = () => {
       );
       if (res) {
         console.log(res);
+
+        //come back here
+        // this is the public id of the final thumbnail, i have verified it, now i need to save it from auto deletion
+        const goodId = thumbnail.publicId;
+
+        const array = localStorage.getItem("tempIds");
+
+        const backendResult = await axios.post(
+          `${BASE_URL}/courses/auto-delete-media`,
+          {
+            array: array,
+            keepPublicId: goodId,
+          }
+        );
+        console.log(backendResult);
       }
     } catch (err) {
       console.log(err);
