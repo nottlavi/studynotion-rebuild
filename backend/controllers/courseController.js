@@ -111,7 +111,8 @@ exports.getCourseDetailsById = async (req, res) => {
     //finding a course with such id
     const courseEntry = await courseModel
       .findById(courseId)
-      .populate("instructor");
+      .populate("instructor")
+      .populate({ path: "sections", populate: { path: "subsections" } });
     if (!courseId) {
       return res.status(404).json({
         success: false,

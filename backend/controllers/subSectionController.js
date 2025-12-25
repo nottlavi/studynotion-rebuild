@@ -1,6 +1,7 @@
 const subSectionModel = require("../models/subSectionModel");
+const sectionModel = require("../models/sectionModel");
 
-exports.createSubSection = async () => {
+exports.createSubSection = async (req, res) => {
   try {
     //fetching details about the subsection/lecture from the request body
     const { title, description, videoUrl, section } = req.body;
@@ -19,6 +20,15 @@ exports.createSubSection = async () => {
       videoUrl: videoUrl,
       section: section,
     });
+
+    //pushing this sub section in the section entry to which it belongs
+    await sectionModel.findByIdAndUpdate(
+      section,
+      {
+        $push: { subsections: newSubSection._id },
+      },
+      { new: true }
+    );
 
     return res.status(200).json({
       success: true,

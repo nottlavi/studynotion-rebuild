@@ -77,6 +77,9 @@ export const AddCourse = () => {
   const [tempLectureDescription, setTempLectureDescription] = useState("");
   const [tempLectureVideo, setTempLectureVideo] = useState("");
 
+  // state to manage the section id which will be sent to backend
+  const [tempSectionId, setTempSectionId] = useState(null);
+
   //managing all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -132,7 +135,7 @@ export const AddCourse = () => {
     }
   };
 
-  //function to check if a lecture can be added and when clicked save create a lecture array with the same index of the section on which save button was clicked
+  //function to check if a lecture can be added and when clicked save create a lecture array with the same index of the section on which save button was clicked, the idx comes from sections.map
   const lectureReqChecker = (idx) => {
     if (!lectureDescription || !lectureTitle || !lectureVideo) return;
     else {
@@ -146,6 +149,8 @@ export const AddCourse = () => {
           lectureVideo: lectureVideo,
         },
       ]);
+      //creating sub section here in the backend, so that the coursePage might have data of the sub section
+
       //doing this because on clicing save i want all the details to be cleared because once you click save, you are done with this particular lecture
       setLectureDescription("");
       setLectureTitle("");
@@ -182,6 +187,7 @@ export const AddCourse = () => {
     );
   };
 
+  //function which will act when user passes 2nd stage
   const stage2Checker = async (e) => {
     e.preventDefault();
     if (sections.length === 0 || megaLectureStorage.length === 0) {
@@ -195,6 +201,18 @@ export const AddCourse = () => {
           { withCredentials: true }
         );
         setSectionIdCreated((prev) => [...prev, res.data.new_section._id]);
+      }
+
+      //for sub sections
+      for (let i = 0; i < megaLectureStorage.length; i++) {
+        const sectionId = sectionIdCreated[megaLectureStorage[i].sectionIdx];
+
+        await axios.post(`${BASE_URL}/subsection/create-sub-section`, {
+          title: megaLectureStorage[i].lectureTitle,
+          description: megaLectureStorage[i].lectureDescription,
+          videoUrl: megaLectureStorage[i].lectureVideo.url,
+          section: sectionId,
+        });
       }
       setStage(3);
     }
@@ -235,7 +253,7 @@ export const AddCourse = () => {
       `${BASE_URL}/courses/auto-delete-media`,
       {
         array: newTempIds,
-        keepPublicId: null,
+        keepPublicId: 1,
       }
     );
     console.log(backendResult);
@@ -322,497 +340,505 @@ export const AddCourse = () => {
 
   return (
     <div>
-      {stage === 0 ? (
-        <form onSubmit={stageHandler}>
-          <div className="flex flex-col gap-3">
-            {/* section for the title */}
-            <div className="flex flex-col gap-1">
-              <label htmlFor="title">
-                Course Title <sup className="text-red-600">*</sup>
-              </label>
-              <input
-                id="title"
-                type="text"
-                value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                }}
-              />
-            </div>
-            {/* section for description */}
-            <div className="flex flex-col gap-1">
-              <label htmlFor="description">Course Short Description</label>
-              <input
-                type="text"
-                id="description"
-                value={description}
-                onChange={(e) => {
-                  setDescription(e.target.value);
-                }}
-              />
-            </div>
-            {/* section for price */}
-            <div className="flex flex-col gap-1">
-              <label htmlFor="price">Enter Course Price:</label>
-              <input
-                type="number"
-                value={price}
-                onChange={(e) => {
-                  setPrice(e.target.value);
-                }}
-              />
-            </div>
-            {/* section for category selection*/}
-            <div className="flex flex-col gap-1">
-              <label htmlFor="category"> Course Category</label>
-              <select
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                }}
-                id="category"
-              >
-                <option value="">Choose Category</option>
-                <option value="web-development">Web Development</option>
-                <option value="java">Java</option>
-                <option value="python">Python</option>
-              </select>
-            </div>
-            {/* section for tags */}
-            <div className="flex flex-col gap-1">
-              {tags.map((ele, idx) => {
-                return <div key={idx}>{ele}</div>;
-              })}
-              <label htmlFor="tags">
-                tag(s) <sup className="text-red-600">*</sup>
-              </label>
-              <input
-                id="title"
-                type="text"
-                value={tag}
-                onChange={(e) => {
-                  setTag(e.target.value);
-                }}
-              />
-              <button onClick={addTag} type="button">
-                add tag!
-              </button>
-            </div>
-            {/* section for thumbnail */}
-            <div className="flex flex-col gap-1">
-              <label>Course Thumbnail</label>
-              {thumbnail ? (
-                <div>
-                  <img src={thumbnail.url} />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      removeThumbnail(thumbnail.publicId);
+      {
+        //  stage 1 title and info ground
+        stage === 0 ? (
+          <form onSubmit={stageHandler}>
+            <div className="flex flex-col gap-3">
+              {/* section for the title */}
+              <div className="flex flex-col gap-1">
+                <label htmlFor="title">
+                  Course Title <sup className="text-red-600">*</sup>
+                </label>
+                <input
+                  id="title"
+                  type="text"
+                  value={title}
+                  onChange={(e) => {
+                    setTitle(e.target.value);
+                  }}
+                />
+              </div>
+              {/* section for description */}
+              <div className="flex flex-col gap-1">
+                <label htmlFor="description">Course Short Description</label>
+                <input
+                  type="text"
+                  id="description"
+                  value={description}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                  }}
+                />
+              </div>
+              {/* section for price */}
+              <div className="flex flex-col gap-1">
+                <label htmlFor="price">Enter Course Price:</label>
+                <input
+                  type="number"
+                  value={price}
+                  onChange={(e) => {
+                    setPrice(e.target.value);
+                  }}
+                />
+              </div>
+              {/* section for category selection*/}
+              <div className="flex flex-col gap-1">
+                <label htmlFor="category"> Course Category</label>
+                <select
+                  value={category}
+                  onChange={(e) => {
+                    setCategory(e.target.value);
+                  }}
+                  id="category"
+                >
+                  <option value="">Choose Category</option>
+                  <option value="web-development">Web Development</option>
+                  <option value="java">Java</option>
+                  <option value="python">Python</option>
+                </select>
+              </div>
+              {/* section for tags */}
+              <div className="flex flex-col gap-1">
+                {tags.map((ele, idx) => {
+                  return <div key={idx}>{ele}</div>;
+                })}
+                <label htmlFor="tags">
+                  tag(s) <sup className="text-red-600">*</sup>
+                </label>
+                <input
+                  id="title"
+                  type="text"
+                  value={tag}
+                  onChange={(e) => {
+                    setTag(e.target.value);
+                  }}
+                />
+                <button onClick={addTag} type="button">
+                  add tag!
+                </button>
+              </div>
+              {/* section for thumbnail */}
+              <div className="flex flex-col gap-1">
+                <label>Course Thumbnail</label>
+                {thumbnail ? (
+                  <div>
+                    <img src={thumbnail.url} />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        removeThumbnail(thumbnail.publicId);
+                      }}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                ) : (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files[0];
+                      if (!file) return;
+                      await uploadThumbnail(file);
                     }}
-                  >
-                    Clear
-                  </button>
-                </div>
+                  />
+                )}
+              </div>
+              {/* div for benifits of the course */}
+              <div className="flex flex-col gap-1">
+                <label htmlFor="benifits">Benifits of the Course</label>
+                <input
+                  type="text"
+                  id="benifits"
+                  value={benifits}
+                  onChange={(e) => {
+                    setBenifits(e.target.value);
+                  }}
+                />
+              </div>
+              {/* requirements / instructions div */}
+              <div className="flex flex-col gap-1">
+                {requirements.map((ele, idx) => (
+                  <div key={idx}>{ele}</div>
+                ))}
+                <label htmlFor="requirements">Requirements/Instructions</label>
+                <input
+                  type="text"
+                  id="requirements"
+                  value={requirement}
+                  onChange={(e) => {
+                    setRequirement(e.target.value);
+                  }}
+                />
+                <button type="button" onClick={addRequirement}>
+                  add!
+                </button>
+              </div>
+              <button type="submit">next</button>
+            </div>
+          </form>
+        ) : // 2nd stage lecture / section ground
+        stage === 1 ? (
+          <form className="flex flex-col gap-3">
+            Course Builder
+            {/* div for section name */}
+            <div className="flex flex-col gap-1">
+              {/* label and input field for user to enter the name */}
+              <label htmlFor="sectioName">Section Name</label>
+              {editSection ? (
+                <input
+                  value={tempName}
+                  onChange={(e) => {
+                    setTempName(e.target.value);
+                  }}
+                  placeholder={sections[underEditId]}
+                />
               ) : (
                 <input
-                  type="file"
-                  accept="image/*"
-                  onChange={async (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    await uploadThumbnail(file);
+                  id="sectionName"
+                  type="text"
+                  value={section}
+                  onChange={(e) => {
+                    setSection(e.target.value);
                   }}
                 />
               )}
-            </div>
-            {/* div for benifits of the course */}
-            <div className="flex flex-col gap-1">
-              <label htmlFor="benifits">Benifits of the Course</label>
-              <input
-                type="text"
-                id="benifits"
-                value={benifits}
-                onChange={(e) => {
-                  setBenifits(e.target.value);
-                }}
-              />
-            </div>
-            {/* requirements / instructions div */}
-            <div className="flex flex-col gap-1">
-              {requirements.map((ele, idx) => (
-                <div key={idx}>{ele}</div>
-              ))}
-              <label htmlFor="requirements">Requirements/Instructions</label>
-              <input
-                type="text"
-                id="requirements"
-                value={requirement}
-                onChange={(e) => {
-                  setRequirement(e.target.value);
-                }}
-              />
-              <button type="button" onClick={addRequirement}>
-                add!
-              </button>
-            </div>
-            <button type="submit">next</button>
-          </div>
-        </form>
-      ) : stage === 1 ? (
-        <form className="flex flex-col gap-3">
-          Course Builder
-          {/* div for section name */}
-          <div className="flex flex-col gap-1">
-            {/* label and input field for user to enter the name */}
-            <label htmlFor="sectioName">Section Name</label>
-            {editSection ? (
-              <input
-                value={tempName}
-                onChange={(e) => {
-                  setTempName(e.target.value);
-                }}
-                placeholder={sections[underEditId]}
-              />
-            ) : (
-              <input
-                id="sectionName"
-                type="text"
-                value={section}
-                onChange={(e) => {
-                  setSection(e.target.value);
-                }}
-              />
-            )}
-            {/* button to add section OR when you click on edit state to show cancel and edit button*/}
-            <div>
-              {editSection ? (
-                <div className="flex gap-2">
-                  <button
-                    className="flex gap-2 items-center"
-                    type="button"
-                    onClick={handleSectionEdit}
-                  >
-                    Edit Section Name
-                    <FaPencilAlt />
-                  </button>
-                  <button
-                    className="underline text-gray-500 text-sm"
-                    type="button"
-                    onClick={() => {
-                      setEditSection(!editSection);
-                      setTempName("");
-                    }}
-                  >
-                    Cancel Edit
-                  </button>
-                </div>
-              ) : (
-                <button
-                  className="flex items-center gap-1"
-                  type="button"
-                  onClick={addSection}
-                >
-                  Create Section
-                  <IoMdAddCircleOutline className="text-yellow-300" />
-                </button>
-              )}
-            </div>
-            {/* all the sections will be rendered here */}
-            <div>
-              {sections.map((ele, idx) => {
-                return (
-                  // the individual section
-                  <div className="flex flex-col" key={idx}>
-                    {/* the primary ui which is seen w/o any buttons clicked */}
-                    <div
-                      className="flex gap-2 justify-between cursor-pointer "
+              {/* button to add section OR when you click on edit state to show cancel and edit button*/}
+              <div>
+                {editSection ? (
+                  <div className="flex gap-2">
+                    <button
+                      className="flex gap-2 items-center"
+                      type="button"
+                      onClick={handleSectionEdit}
+                    >
+                      Edit Section Name
+                      <FaPencilAlt />
+                    </button>
+                    <button
+                      className="underline text-gray-500 text-sm"
+                      type="button"
                       onClick={() => {
-                        setExpandMenu(expandMenu === idx ? null : idx);
+                        setEditSection(!editSection);
+                        setTempName("");
                       }}
                     >
-                      {/* closing menu and section name */}
-                      <div className="flex gap-1 items-center">
-                        <IoIosMenu />
-                        <div>{ele}</div>
-                      </div>
-                      {/* action buttons */}
-                      <div className="flex gap-2 items-center">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setUnderEditId(idx);
-                            setEditSection(!editSection);
-                          }}
-                        >
-                          <FaPen className="text-sm" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            removeSection(ele);
-                          }}
-                        >
-                          <RiDeleteBin5Line />
-                        </button>
-                        <PiLineVerticalThin />
-                        {expandMenu === idx ? (
-                          <FaCaretDown className="text-xl" />
-                        ) : (
-                          <FaPlay className="text-xs" />
-                        )}
-                      </div>
-                    </div>
-                    {/* lecture ground // this section's visiblity will depend on the click on the above div*/}
-                    {expandMenu === idx ? (
-                      <div className="flex gap-1 items-center flex-col">
-                        <div className="flex flex-col gap-4">
-                          {megaLectureStorage
-                            .filter((lecture) => lecture.sectionIdx === idx)
-                            .map((ele, idx) => {
-                              return (
-                                <div
-                                  key={idx}
-                                  className="flex items-center justify-between"
-                                >
-                                  {/* div for lecture title and that weird icon */}
-                                  <div>{ele.lectureTitle}</div>
-                                  {/* div for action buttons */}
-                                  <div className="flex">
-                                    {/* the whole clickable modal which will open when clicked on edit lecture button */}
-                                    <Dialog.Root>
-                                      <Dialog.Trigger asChild>
-                                        <Button
-                                          variant="outline"
-                                          size="sm"
-                                          onClick={() => editLectureHelper(idx)}
-                                        >
-                                          <FaPencilAlt />
-                                        </Button>
-                                      </Dialog.Trigger>
-                                      <Portal>
-                                        <Dialog.Backdrop />
-                                        <Dialog.Positioner>
-                                          <Dialog.Content>
-                                            <Dialog.Header>
-                                              <Dialog.Title>
-                                                Editing Lecture
-                                              </Dialog.Title>
-                                            </Dialog.Header>
-                                            <Dialog.Body>
-                                              <form>
-                                                {/* div for lecture video */}
-                                                <div>
-                                                  <label>
-                                                    Lecture Video{" "}
-                                                    <span className="text-red-700">
-                                                      *
-                                                    </span>
-                                                  </label>
-                                                  {tempLecture?.lectureVideo && (
-                                                    <video
-                                                      src={
-                                                        tempLecture.lectureVideo
-                                                          .url
-                                                      }
-                                                      controls
-                                                    />
-                                                  )}
-                                                </div>
-                                                {/* div for lecture title */}
-                                                <div>
-                                                  <label>
-                                                    Lecture Title{" "}
-                                                    <span className="text-red-700">
-                                                      *
-                                                    </span>
-                                                  </label>
-                                                  <input
-                                                    placeholder={
-                                                      tempLecture?.lectureTitle
-                                                    }
-                                                    value={tempLectureTitle}
-                                                    onChange={(e) => {
-                                                      setTempLectureTitle(
-                                                        e.target.value
-                                                      );
-                                                    }}
-                                                  />
-                                                </div>
-                                                {/* div for lecture description */}
-                                                <div>
-                                                  <label>
-                                                    Lecture Description{" "}
-                                                    <span className="text-red-700">
-                                                      *
-                                                    </span>
-                                                  </label>
-                                                  <input
-                                                    placeholder={
-                                                      tempLecture?.lectureDescription
-                                                    }
-                                                    value={
-                                                      tempLectureDescription
-                                                    }
-                                                    onChange={(e) => {
-                                                      setTempLectureDescription(
-                                                        e.target.value
-                                                      );
-                                                    }}
-                                                  />
-                                                </div>
-                                              </form>
-                                            </Dialog.Body>
-                                            <Dialog.Footer>
-                                              <Dialog.ActionTrigger asChild>
-                                                <Button variant="outline">
-                                                  Cancel
-                                                </Button>
-                                              </Dialog.ActionTrigger>
-                                              <Button
-                                                onClick={() =>
-                                                  updateLecture(idx)
-                                                }
-                                              >
-                                                Save
-                                              </Button>
-                                            </Dialog.Footer>
-                                            <Dialog.CloseTrigger asChild>
-                                              <CloseButton size="sm" />
-                                            </Dialog.CloseTrigger>
-                                          </Dialog.Content>
-                                        </Dialog.Positioner>
-                                      </Portal>
-                                    </Dialog.Root>
-                                    <button
-                                      onClick={() => {
-                                        deleteLecture(ele);
-                                      }}
-                                    >
-                                      <RiDeleteBin5Line />
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            })}
+                      Cancel Edit
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="flex items-center gap-1"
+                    type="button"
+                    onClick={addSection}
+                  >
+                    Create Section
+                    <IoMdAddCircleOutline className="text-yellow-300" />
+                  </button>
+                )}
+              </div>
+              {/* all the sections will be rendered here */}
+              <div>
+                {sections.map((ele, idx) => {
+                  return (
+                    // the individual section
+                    <div className="flex flex-col" key={idx}>
+                      {/* the primary ui which is seen w/o any buttons clicked */}
+                      <div
+                        className="flex gap-2 justify-between cursor-pointer "
+                        onClick={() => {
+                          setExpandMenu(expandMenu === idx ? null : idx);
+                        }}
+                      >
+                        {/* closing menu and section name */}
+                        <div className="flex gap-1 items-center">
+                          <IoIosMenu />
+                          <div>{ele}</div>
                         </div>
-                        {/* the overlay modal for adding a lecture */}
-                        <Dialog.Root
-                          open={isLectureDialogOpen}
-                          onOpenChange={(e) => setIsLectureDialogOpen(e.open)}
-                        >
-                          <Dialog.Trigger
-                            asChild
-                            onClick={() => setIsLectureDialogOpen(true)}
+                        {/* action buttons */}
+                        <div className="flex gap-2 items-center">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setUnderEditId(idx);
+                              setEditSection(!editSection);
+                            }}
                           >
-                            <Button variant="outline" size="sm">
-                              <IoMdAdd className="text-yellow-400" /> Add
-                              Lecture
-                            </Button>
-                          </Dialog.Trigger>
-                          <Portal>
-                            <Dialog.Backdrop />
-                            <Dialog.Positioner>
-                              <Dialog.Content>
-                                <Dialog.Header>
-                                  <Dialog.Title>Adding Lecture</Dialog.Title>
-                                </Dialog.Header>
-                                <Dialog.Body>
-                                  <form>
-                                    {/* div for lecture video */}
-                                    <div>
-                                      <label htmlFor="lectureVideo">
-                                        Lecture Video
-                                      </label>
-                                      {lectureVideo ? (
-                                        <div>
-                                          <video
-                                            src={lectureVideo.url}
-                                            controls
-                                          />
-                                          <button
-                                            onClick={() => {
-                                              setLectureVideo(null);
-                                            }}
+                            <FaPen className="text-sm" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              removeSection(ele);
+                            }}
+                          >
+                            <RiDeleteBin5Line />
+                          </button>
+                          <PiLineVerticalThin />
+                          {expandMenu === idx ? (
+                            <FaCaretDown className="text-xl" />
+                          ) : (
+                            <FaPlay className="text-xs" />
+                          )}
+                        </div>
+                      </div>
+                      {/* lecture ground // this section's visiblity will depend on the click on the above div*/}
+                      {expandMenu === idx ? (
+                        <div className="flex gap-1 items-center flex-col">
+                          <div className="flex flex-col gap-4">
+                            {megaLectureStorage
+                              .filter((lecture) => lecture.sectionIdx === idx)
+                              .map((ele, idx) => {
+                                return (
+                                  <div
+                                    key={idx}
+                                    className="flex items-center justify-between"
+                                  >
+                                    {/* div for lecture title and that weird icon */}
+                                    <div>{ele.lectureTitle}</div>
+                                    {/* div for action buttons */}
+                                    <div className="flex">
+                                      {/* the whole clickable modal which will open when clicked on edit lecture button */}
+                                      <Dialog.Root>
+                                        <Dialog.Trigger asChild>
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() =>
+                                              editLectureHelper(idx)
+                                            }
                                           >
-                                            clear
-                                          </button>
-                                        </div>
-                                      ) : (
+                                            <FaPencilAlt />
+                                          </Button>
+                                        </Dialog.Trigger>
+                                        <Portal>
+                                          <Dialog.Backdrop />
+                                          <Dialog.Positioner>
+                                            <Dialog.Content>
+                                              <Dialog.Header>
+                                                <Dialog.Title>
+                                                  Editing Lecture
+                                                </Dialog.Title>
+                                              </Dialog.Header>
+                                              <Dialog.Body>
+                                                <form>
+                                                  {/* div for lecture video */}
+                                                  <div>
+                                                    <label>
+                                                      Lecture Video{" "}
+                                                      <span className="text-red-700">
+                                                        *
+                                                      </span>
+                                                    </label>
+                                                    {tempLecture?.lectureVideo && (
+                                                      <video
+                                                        src={
+                                                          tempLecture
+                                                            .lectureVideo.url
+                                                        }
+                                                        controls
+                                                      />
+                                                    )}
+                                                  </div>
+                                                  {/* div for lecture title */}
+                                                  <div>
+                                                    <label>
+                                                      Lecture Title{" "}
+                                                      <span className="text-red-700">
+                                                        *
+                                                      </span>
+                                                    </label>
+                                                    <input
+                                                      placeholder={
+                                                        tempLecture?.lectureTitle
+                                                      }
+                                                      value={tempLectureTitle}
+                                                      onChange={(e) => {
+                                                        setTempLectureTitle(
+                                                          e.target.value
+                                                        );
+                                                      }}
+                                                    />
+                                                  </div>
+                                                  {/* div for lecture description */}
+                                                  <div>
+                                                    <label>
+                                                      Lecture Description{" "}
+                                                      <span className="text-red-700">
+                                                        *
+                                                      </span>
+                                                    </label>
+                                                    <input
+                                                      placeholder={
+                                                        tempLecture?.lectureDescription
+                                                      }
+                                                      value={
+                                                        tempLectureDescription
+                                                      }
+                                                      onChange={(e) => {
+                                                        setTempLectureDescription(
+                                                          e.target.value
+                                                        );
+                                                      }}
+                                                    />
+                                                  </div>
+                                                </form>
+                                              </Dialog.Body>
+                                              <Dialog.Footer>
+                                                <Dialog.ActionTrigger asChild>
+                                                  <Button variant="outline">
+                                                    Cancel
+                                                  </Button>
+                                                </Dialog.ActionTrigger>
+                                                <Button
+                                                  onClick={() =>
+                                                    updateLecture(idx)
+                                                  }
+                                                >
+                                                  Save
+                                                </Button>
+                                              </Dialog.Footer>
+                                              <Dialog.CloseTrigger asChild>
+                                                <CloseButton size="sm" />
+                                              </Dialog.CloseTrigger>
+                                            </Dialog.Content>
+                                          </Dialog.Positioner>
+                                        </Portal>
+                                      </Dialog.Root>
+                                      <button
+                                        onClick={() => {
+                                          deleteLecture(ele);
+                                        }}
+                                      >
+                                        <RiDeleteBin5Line />
+                                      </button>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                          </div>
+                          {/* the overlay modal for adding a lecture */}
+                          <Dialog.Root
+                            open={isLectureDialogOpen}
+                            onOpenChange={(e) => setIsLectureDialogOpen(e.open)}
+                          >
+                            <Dialog.Trigger
+                              asChild
+                              onClick={() => setIsLectureDialogOpen(true)}
+                            >
+                              <Button variant="outline" size="sm">
+                                <IoMdAdd className="text-yellow-400" /> Add
+                                Lecture
+                              </Button>
+                            </Dialog.Trigger>
+                            <Portal>
+                              <Dialog.Backdrop />
+                              <Dialog.Positioner>
+                                <Dialog.Content>
+                                  <Dialog.Header>
+                                    <Dialog.Title>Adding Lecture</Dialog.Title>
+                                  </Dialog.Header>
+                                  <Dialog.Body>
+                                    <form>
+                                      {/* div for lecture video */}
+                                      <div>
+                                        <label htmlFor="lectureVideo">
+                                          Lecture Video
+                                        </label>
+                                        {lectureVideo ? (
+                                          <div>
+                                            <video
+                                              src={lectureVideo.url}
+                                              controls
+                                            />
+                                            <button
+                                              onClick={() => {
+                                                setLectureVideo(null);
+                                              }}
+                                            >
+                                              clear
+                                            </button>
+                                          </div>
+                                        ) : (
+                                          <input
+                                            type="file"
+                                            accept="video/*"
+                                            id="lectureVideo"
+                                            onChange={(e) => {
+                                              const file = e.target.files[0];
+                                              if (!file) return;
+                                              uploadVideo(file);
+                                            }}
+                                          />
+                                        )}
+                                      </div>
+                                      {/* div for lecture title */}
+                                      <div>
+                                        <label htmlFor="lectureTitle">
+                                          Lecture Title
+                                        </label>
                                         <input
-                                          type="file"
-                                          accept="video/*"
-                                          id="lectureVideo"
+                                          id="lectureTitle"
+                                          value={lectureTitle}
                                           onChange={(e) => {
-                                            const file = e.target.files[0];
-                                            if (!file) return;
-                                            uploadVideo(file);
+                                            setLectureTitle(e.target.value);
                                           }}
                                         />
-                                      )}
-                                    </div>
-                                    {/* div for lecture title */}
-                                    <div>
-                                      <label htmlFor="lectureTitle">
-                                        Lecture Title
-                                      </label>
-                                      <input
-                                        id="lectureTitle"
-                                        value={lectureTitle}
-                                        onChange={(e) => {
-                                          setLectureTitle(e.target.value);
-                                        }}
-                                      />
-                                    </div>
-                                    {/* div for lecture description */}
-                                    <div>
-                                      <label htmlFor="lectureDescription">
-                                        Lecture Description
-                                      </label>
-                                      <input
-                                        id="lectureDescription"
-                                        value={lectureDescription}
-                                        onChange={(e) => {
-                                          setLectureDescription(e.target.value);
-                                        }}
-                                      />
-                                    </div>
-                                  </form>
-                                </Dialog.Body>
-                                <Dialog.Footer>
-                                  <Button
-                                    onClick={() => {
-                                      lectureReqChecker(idx);
-                                    }}
-                                  >
-                                    Save
-                                  </Button>
-                                </Dialog.Footer>
-                                <Dialog.CloseTrigger asChild>
-                                  <CloseButton size="sm" />
-                                </Dialog.CloseTrigger>
-                              </Dialog.Content>
-                            </Dialog.Positioner>
-                          </Portal>
-                        </Dialog.Root>
-                      </div>
-                    ) : (
-                      <div></div>
-                    )}
-                  </div>
-                );
-              })}
+                                      </div>
+                                      {/* div for lecture description */}
+                                      <div>
+                                        <label htmlFor="lectureDescription">
+                                          Lecture Description
+                                        </label>
+                                        <input
+                                          id="lectureDescription"
+                                          value={lectureDescription}
+                                          onChange={(e) => {
+                                            setLectureDescription(
+                                              e.target.value
+                                            );
+                                          }}
+                                        />
+                                      </div>
+                                    </form>
+                                  </Dialog.Body>
+                                  <Dialog.Footer>
+                                    <Button
+                                      onClick={() => {
+                                        lectureReqChecker(idx);
+                                      }}
+                                    >
+                                      Save
+                                    </Button>
+                                  </Dialog.Footer>
+                                  <Dialog.CloseTrigger asChild>
+                                    <CloseButton size="sm" />
+                                  </Dialog.CloseTrigger>
+                                </Dialog.Content>
+                              </Dialog.Positioner>
+                            </Portal>
+                          </Dialog.Root>
+                        </div>
+                      ) : (
+                        <div></div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-          <button type="submit" onClick={stage2Checker}>
-            next
-          </button>
-        </form>
-      ) : (
-        // stage 3 / final stage
-        <form onClick={createCourse}>
-          <button type="submit">Publish?</button>
-        </form>
-      )}
+            <button type="submit" onClick={stage2Checker}>
+              next
+            </button>
+          </form>
+        ) : (
+          // stage 3 / final stage
+          <form onClick={createCourse}>
+            <button type="submit">Publish?</button>
+          </form>
+        )
+      }
     </div>
   );
 };
