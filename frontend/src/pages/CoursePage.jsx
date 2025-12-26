@@ -2,9 +2,14 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
+//importing pages here
+import { ReviewComponent } from "../components/semi/ReviewComponent";
+
 //importing react icons here
 import { GoDotFill } from "react-icons/go";
 import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
+import { IoVideocam } from "react-icons/io5";
+import { FaShareSquare } from "react-icons/fa";
 
 export const CoursePage = () => {
   //managing dependencies here
@@ -18,7 +23,10 @@ export const CoursePage = () => {
 
   //state to manage the expanded section
   const [expandMenu, setExpandMenu] = useState(false);
+  //state to expand one particular section this will be through element id
+  const [expandOneSection, setExpandOneSection] = useState();
 
+  //this useEffect fetches course details on every course id change
   useEffect(() => {
     const fetchCourseDetails = async () => {
       try {
@@ -38,7 +46,7 @@ export const CoursePage = () => {
   return (
     <div>
       {/* section 1 */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 relative">
         {/* div for course title */}
         <div> {currentCourse?.title}</div>
         {/* div for course description */}
@@ -57,6 +65,25 @@ export const CoursePage = () => {
             {currentCourse?.createdAt &&
               new Date(currentCourse.createdAt).toLocaleTimeString()}
           </div>
+        </div>
+      </div>
+      {/* floating menu */}
+      <div className="absolute right-3 top-12 flex flex-col">
+        {/* course thumbnail */}
+        <img src={currentCourse?.thumbnail} />
+        {/* div for course price */}
+        <div>₹ {currentCourse?.price}</div>
+        <button>Buy Now</button>
+        <div>30-Day Money-Back Guarantee</div>
+        <div>This Course Includes: </div>
+        {/* share thing div */}
+        <div
+          className="flex gap-2 items-center cursor-pointer"
+          onClick={() => {
+            navigator.clipboard.writeText(window.location.href);
+          }}
+        >
+          <FaShareSquare /> Share
         </div>
       </div>
       {/* section 2 */}
@@ -103,36 +130,67 @@ export const CoursePage = () => {
             )}
           </div>
         </div>
-        {/* the actual section collapsable*/}
-        {expandMenu ? (
-          //when expanded
-          <div
-            className="cursor-pointer"
-            onClick={() => {
-              setExpandMenu(false);
-            }}
-          >
-            {/* section name and arrow icon */}
-            <div>
-              <MdKeyboardArrowDown />
-            </div>
-          </div>
-        ) : (
-          // when collapsed
-          <div
-            className="cursor-pointer"
-            onClick={() => {
-              setExpandMenu(true);
-            }}
-          >
-            {/* section name and arrow icon*/}
-            <div>
-              <MdKeyboardArrowRight />
-            </div>
-            {/* lecture count */}
-            <div></div>
-          </div>
-        )}
+        {/* div for rendering sections and subsections */}
+        <div>
+          {/* there might be multiple sections, this map function iterates and makes
+        an individual gray zone for each section */}
+          {currentCourse?.sections?.map((ele) =>
+            expandMenu || ele._id === expandOneSection ? (
+              // when the particular section is expanded
+              <div
+                key={ele._id}
+                className="cursor-pointer bg-gray-500 opacity-50 flex justify-between flex-col border-gray-400 border-[0.1px]"
+                onClick={() => {
+                  setExpandOneSection(null);
+                }}
+              >
+                {/* the exact same part as in when not expanded */}
+                <div className="flex w-full justify-between">
+                  {/* the left part which contains the arrow and the section name */}
+                  <div className="flex gap-4 items-center">
+                    <MdKeyboardArrowDown />
+                    {ele?.title}
+                  </div>
+                  {/* the right part which shows no of lectures */}
+                  <div className="">{ele?.subsections.length} lecture(s)</div>
+                </div>
+                {/* the part exclusive for expanded */}
+                <div className="bg-black flex gap-2 items-center">
+                  {ele.subsections.length > 0 ? (
+                    <div>
+                      <IoVideocam />
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                  {/* there can be multiple sub sections/lectures for a single section
+                so i am mapping it */}
+                  {ele.subsections.map((lecture) => (
+                    // the div for individual lecture title (just display)
+                    <div key={lecture._id}>{lecture.title}</div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              // when the particular section is not expanded
+              <div
+                key={ele._id}
+                className="cursor-pointer bg-gray-500 opacity-50 flex justify-between border-gray-400 border-[0.1px]"
+                onClick={() => {
+                  setExpandOneSection(ele._id);
+                }}
+              >
+                {/* the left part which contains the arrow and the section name */}
+                <div className="flex gap-4 items-center">
+                  <MdKeyboardArrowRight />
+                  {ele?.title}
+                </div>
+                {/* the right part which shows no of lectures */}
+                <div className="">{ele?.subsections.length} lecture(s)</div>
+              </div>
+            )
+          )}
+        </div>
         {/* the author div */}
         <div className="flex gap-4 flex-col">
           <p>Author</p>
@@ -141,6 +199,8 @@ export const CoursePage = () => {
             {`${currentCourse?.instructor?.lastName}`}
           </p>
         </div>
+        {/* reviews div */}
+        <ReviewComponent />
       </div>
     </div>
   );
