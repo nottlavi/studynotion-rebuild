@@ -47,6 +47,13 @@ export const CoursePage = () => {
     <div>
       {/* section 1 */}
       <div className="flex flex-col gap-2 relative">
+        {/* div for path */}
+        <div>
+          Home / Learning /{" "}
+          {currentCourse?.category?.name === "web-development"
+            ? "Web Development"
+            : ""}
+        </div>
         {/* div for course title */}
         <div> {currentCourse?.title}</div>
         {/* div for course description */}
@@ -78,7 +85,7 @@ export const CoursePage = () => {
         <div>This Course Includes: </div>
         {/* share thing div */}
         <div
-          className="flex gap-2 items-center cursor-pointer"
+          className="flex gap-2 items-center cursor-pointer text-yellow-500"
           onClick={() => {
             navigator.clipboard.writeText(window.location.href);
           }}

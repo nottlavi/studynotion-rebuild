@@ -20,6 +20,8 @@ import { MyCourses } from "./pages/MyCourses";
 import { AddCourse } from "./pages/dashboard/AddCourse";
 import { CourseCategory } from "./pages/CourseCategory";
 import { CoursePage } from "./pages/CoursePage";
+import { AboutPage } from "./pages/AboutPage";
+import { ContactUsPage } from "./pages/ContactUsPage";
 
 //importing redux state here
 import { setToken } from "./slices/userSlice";
@@ -93,6 +95,9 @@ const App = () => {
         />
 
         <Route path="/course/:courseId" element={<CoursePage />} />
+
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactUsPage />} />
 
         {/* route for non existing pages */}
         <Route path="*" element={<NotFound />} />
