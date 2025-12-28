@@ -3,6 +3,7 @@ const userModel = require("../models/userModel");
 const OTPModel = require("../models/OTPModel");
 const tempOTPModel = require("../models/tempOTPModel");
 const profileModel = require("../models/profileModel");
+const cartModel = require("../models/cartModel");
 
 //importing dependencies here
 const otpGenerator = require("otp-generator");
@@ -138,6 +139,11 @@ exports.verifyEmail = async (req, res) => {
       password: existingEntry.password,
       accountType: existingEntry.accountType,
       profile: profile._id,
+    });
+
+    // creating a cart for this user
+    const newCart = await cartModel.create({
+      user: newUser._id,
     });
 
     //deleting the user from otp model
