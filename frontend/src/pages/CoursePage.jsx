@@ -19,7 +19,6 @@ export const CoursePage = () => {
 
   //managing states here
   const [currentCourse, setCurrentCourse] = useState({});
-  console.log(currentCourse);
 
   //state to manage the expanded section
   const [expandMenu, setExpandMenu] = useState(false);
