@@ -11,20 +11,44 @@ import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
 import { IoVideocam } from "react-icons/io5";
 import { FaShareSquare } from "react-icons/fa";
 
+//importing redux stuff here
+import { useSelector } from "react-redux";
+
 export const CoursePage = () => {
-  //managing dependencies here
-  //this is being fetched from the url the user is currently on
-  const { courseId } = useParams();
+  ///all redux stuff here
+  const profile = useSelector((state) => state.user.profile);
+  console.log(profile);
+
+  ///all dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
+  //this is being fetched from the url, the user is currently on
+  const { courseId } = useParams();
 
-  //managing states here
+  ///all states here
   const [currentCourse, setCurrentCourse] = useState({});
-
   //state to manage the expanded section
   const [expandMenu, setExpandMenu] = useState(false);
   //state to expand one particular section this will be through element id
   const [expandOneSection, setExpandOneSection] = useState();
 
+  ///all the functions here
+  //function to call backend to add a course to cart
+  const addToCartHandler = async (e) => {
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/cart/add-to-cart`,
+        { courseId: currentCourse._id },
+        { withCredentials: true }
+      );
+      if (res) {
+        console.log(res);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  ///all useEffects here
   //this useEffect fetches course details on every course id change
   useEffect(() => {
     const fetchCourseDetails = async () => {
@@ -80,6 +104,7 @@ export const CoursePage = () => {
         {/* div for course price */}
         <div>₹ {currentCourse?.price}</div>
         <button>Buy Now</button>
+        <button onClick={addToCartHandler}>Add to Cart</button>
         <div>30-Day Money-Back Guarantee</div>
         <div>This Course Includes: </div>
         {/* share thing div */}

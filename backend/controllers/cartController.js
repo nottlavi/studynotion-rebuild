@@ -6,14 +6,17 @@ exports.addToCart = async (req, res) => {
     const { courseId } = req.body;
     const { userId } = req.user;
 
-    console.log(courseId, userId);
-
     if (!courseId) {
       return res.status(404).json({
         success: false,
         message: "no course id found which will be inserted",
       });
     }
+
+    if (!userId)
+      return res
+        .status(404)
+        .json({ success: false, message: "no user id found" });
 
     //finding the cart with this user id, this cart was created when the user was created for the first time in the db
     const userCart = await cartModel.findOne({ user: userId });

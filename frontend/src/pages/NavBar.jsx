@@ -7,19 +7,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearProfile, clearToken } from "../slices/userSlice";
 
 //importing chakra ui stuff here
-import {
-  Avatar,
-  HStack,
-  HoverCard,
-  Icon,
-  Portal,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { HoverCard, Portal, Stack, Text } from "@chakra-ui/react";
 
 //importing react icons here
 import { FaAngleDown } from "react-icons/fa6";
 import { useState } from "react";
+import { IoCartOutline } from "react-icons/io5";
 
 export const NavBar = () => {
   //managing states here
@@ -34,7 +27,6 @@ export const NavBar = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const path = location.pathname;
-  console.log(path);
 
   //function for calling backend logout function
   const logoutHandler = async () => {
@@ -134,6 +126,10 @@ export const NavBar = () => {
           </div>
         ) : (
           <div className="flex items-center gap-2">
+            {/* cart here */}
+            <Link to={"/dashboard/cart"}>
+              <IoCartOutline />
+            </Link>
             {/* temp jugaad to access dashboard */}
             <Link to="/dashboard/my-profile">Dashboard</Link>
             <button onClick={logoutHandler}>Log Out!</button>

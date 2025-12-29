@@ -22,6 +22,7 @@ import { CourseCategory } from "./pages/CourseCategory";
 import { CoursePage } from "./pages/CoursePage";
 import { AboutPage } from "./pages/AboutPage";
 import { ContactUsPage } from "./pages/ContactUsPage";
+import { CartPage } from "./pages/dashboard/CartPage";
 
 //importing redux state here
 import { setToken } from "./slices/userSlice";
@@ -50,7 +51,6 @@ const App = () => {
         <Route path="/" element={<HomePage />}></Route>
         <Route path="/signup" element={<SignUpPage />}></Route>
         <Route path="/verify-email" element={<VerifyEmailPage />}></Route>
-
         <Route
           path="/login"
           element={
@@ -78,6 +78,7 @@ const App = () => {
           <Route index element={<Navigate to="my-profile" replace />} />
           <Route path="my-profile" element={<ProfilePage />} />
           <Route path="settings" element={<UpdateProfile />} />
+          <Route path="cart" element={<CartPage />} />
           {/* instructor only routes */}
           <Route element={<ProtectedRoute allowedRoles={["Instructor"]} />}>
             <Route path="my-courses" element={<MyCourses />} />
@@ -88,14 +89,11 @@ const App = () => {
         </Route>
 
         <Route path="/forgot-password" element={<ForgotPassword />} />
-
         <Route
           path="/course-category/:categoryId"
           element={<CourseCategory />}
         />
-
         <Route path="/course/:courseId" element={<CoursePage />} />
-
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactUsPage />} />
 
