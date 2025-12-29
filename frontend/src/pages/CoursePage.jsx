@@ -12,12 +12,13 @@ import { IoVideocam } from "react-icons/io5";
 import { FaShareSquare } from "react-icons/fa";
 
 //importing redux stuff here
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { addToCart } from "../slices/cartSlice";
 
 export const CoursePage = () => {
   ///all redux stuff here
   const profile = useSelector((state) => state.user.profile);
-  console.log(profile);
+  const dispatch = useDispatch();
 
   ///all dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -42,6 +43,7 @@ export const CoursePage = () => {
       );
       if (res) {
         console.log(res);
+        dispatch(addToCart());
       }
     } catch (err) {
       console.log(err);

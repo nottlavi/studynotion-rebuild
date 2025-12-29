@@ -11,24 +11,23 @@ import { HoverCard, Portal, Stack, Text } from "@chakra-ui/react";
 
 //importing react icons here
 import { FaAngleDown } from "react-icons/fa6";
-import { useState } from "react";
 import { IoCartOutline } from "react-icons/io5";
 
 export const NavBar = () => {
-  //managing states here
-  const [clickedPart, setClickedPart] = useState("");
+  ///all states here
 
-  //all the redux stuff here
+  ///all redux stuff here
   const token = useSelector((state) => state.user.token);
+  const count = useSelector((state) => state.cart.count);
 
-  // managing all the dependencies here
+  //all dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
   const path = location.pathname;
 
-  //function for calling backend logout function
+  //all functions here
   const logoutHandler = async () => {
     try {
       const res = await axios.post(
@@ -129,6 +128,8 @@ export const NavBar = () => {
             {/* cart here */}
             <Link to={"/dashboard/cart"}>
               <IoCartOutline />
+              {/* in this div i will show the no of items in the div */}
+              <div>{count}</div>
             </Link>
             {/* temp jugaad to access dashboard */}
             <Link to="/dashboard/my-profile">Dashboard</Link>
