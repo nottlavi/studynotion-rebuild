@@ -5,8 +5,9 @@ const router = express.Router();
 const { verifyJWT } = require("../middlewares/userMiddleware");
 
 //importing controllers here
-const { addToCart } = require("../controllers/cartController");
+const { addToCart, getCartByUserId } = require("../controllers/cartController");
 
 router.post("/add-to-cart", verifyJWT, addToCart);
+router.get("/get-cart-by-user-id", verifyJWT, getCartByUserId);
 
 module.exports = router;

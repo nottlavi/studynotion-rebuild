@@ -1,4 +1,3 @@
-//importing models here
 const cartModel = require("../models/cartModel");
 
 exports.addToCart = async (req, res) => {
@@ -40,6 +39,28 @@ exports.addToCart = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "course added to cart",
+      cart: userCart,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.getCartByUserId = async (req, res) => {
+  try {
+    const { userId } = req.user;
+
+    const userCart = await cartModel.findOne({ user: userId }).populate({
+      path: "courses",
+      populate: { path: "category" },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "cart details fetched successfilly",
       cart: userCart,
     });
   } catch (err) {
