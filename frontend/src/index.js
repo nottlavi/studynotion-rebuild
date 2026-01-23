@@ -6,7 +6,8 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 //importing redux stuff here
 import { Provider } from "react-redux";
-import { store } from "./store";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "./store";
 //importing chakra ui stuff here
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { ColorModeProvider } from "./components/ui/color-mode";
@@ -18,11 +19,13 @@ root.render(
       <ColorModeProvider />
       <BrowserRouter>
         <Provider store={store}>
-          <App />
+          <PersistGate loading={null} persistor={persistor}>
+            <App />
+          </PersistGate>
         </Provider>
       </BrowserRouter>
     </ChakraProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function

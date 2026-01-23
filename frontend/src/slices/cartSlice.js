@@ -16,7 +16,7 @@ const cartSlice = createSlice({
       state.total += action.payload;
     },
     decreaseTotal: (state, action) => {
-      state.total += action.payload;
+      state.total -= action.payload;
     },
   },
 });
