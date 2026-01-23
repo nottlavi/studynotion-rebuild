@@ -13,7 +13,11 @@ export const CartPage = () => {
   ///all the states here
   const [cartCourses, setCartCourses] = useState([]);
 
-  console.log(cartCourses);
+  ///all the functions here
+  const handleRemove = () => {
+    try {
+    } catch (err) {}
+  };
 
   ///all the redux stuff here
   const profile = useSelector((state) => state.user.profile);
@@ -74,7 +78,7 @@ export const CartPage = () => {
                 {/* for remove from cart and price */}
                 <div>
                   {/* for remove icon/button */}
-                  <div>Remove</div>
+                  <button onClick={handleRemove}>Remove</button>
                   {/* for course price */}
                   <div>{`₹${ele.price}`}</div>
                 </div>
