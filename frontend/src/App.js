@@ -20,6 +20,7 @@ import { CoursePage } from "./pages/CoursePage";
 import { AboutPage } from "./pages/AboutPage";
 import { ContactUsPage } from "./pages/ContactUsPage";
 import { CartPage } from "./pages/dashboard/CartPage";
+import { EnrolledCourses } from "./pages/dashboard/EnrolledCourses";
 
 //importing redux state here
 import { setToken } from "./slices/userSlice";
@@ -82,6 +83,9 @@ const App = () => {
           </Route>
           <Route element={<ProtectedRoute allowedRoles={["Instructor"]} />}>
             <Route path="add-course" element={<AddCourse />} />
+          </Route>
+          <Route element={<ProtectedRoute allowedRoles={["Student"]} />}>
+            <Route path="enrolled-courses" element={<EnrolledCourses />} />
           </Route>
         </Route>
 

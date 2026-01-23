@@ -45,16 +45,20 @@ export const DashBoardPage = () => {
         </Link>
         {profile.accountType === "Student" ? (
           <div>
-            <div
-              className={
-                currentBoy === "enrolled-courses" ? "bg-yellow-100" : ""
-              }
-            >
-              Enrolled Courses
-            </div>
-            <div className={currentBoy === "cart" ? "bg-yellow-100" : ""}>
-              Cart
-            </div>
+            <Link to={"/dashboard/enrolled-courses"}>
+              <div
+                className={
+                  currentBoy === "enrolled-courses" ? "bg-yellow-100" : ""
+                }
+              >
+                Enrolled Courses
+              </div>
+            </Link>
+            <Link to={"/dashboard/cart"}>
+              <div className={currentBoy === "cart" ? "bg-yellow-100" : ""}>
+                Cart
+              </div>
+            </Link>
           </div>
         ) : (
           <div>

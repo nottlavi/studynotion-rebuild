@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+
 //importing redux stuff here
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { removeFromCart, decreaseTotal } from "../../slices/cartSlice";
 
 //importing dependencies here
 import axios from "axios";
@@ -10,21 +12,40 @@ const categoryNameMap = {
 };
 
 export const CartPage = () => {
+  ///all the redux stuff here
+  const profile = useSelector((state) => state.user.profile);
+  const cartTotal = useSelector((state) => state.cart.total);
+  const dispatch = useDispatch();
+
+  ///all the dependencies here
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
+
   ///all the states here
   const [cartCourses, setCartCourses] = useState([]);
 
   ///all the functions here
-  const handleRemove = () => {
+  //function to remove course from the cart
+  const handleRemove = async (courseId, price) => {
     try {
-    } catch (err) {}
+      const res = await axios.put(
+        `${BASE_URL}/cart/remove-from-cart`,
+        { courseId: courseId },
+        { withCredentials: true },
+      );
+
+      if (res) {
+        //updating the ui here after backend deleted the course from the cart
+        setCartCourses((prev) =>
+          prev.filter((course) => course._id !== courseId),
+        );
+        //updating redux here
+        dispatch(removeFromCart());
+        dispatch(decreaseTotal(price));
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
-
-  ///all the redux stuff here
-  const profile = useSelector((state) => state.user.profile);
-  const cartTotal = useSelector((state) => state.cart.total);
-
-  ///all the dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   ///all useEffects here
   //to fetch cart details on profile change
@@ -78,7 +99,9 @@ export const CartPage = () => {
                 {/* for remove from cart and price */}
                 <div>
                   {/* for remove icon/button */}
-                  <button onClick={handleRemove}>Remove</button>
+                  <button onClick={() => handleRemove(ele._id, ele.price)}>
+                    Remove
+                  </button>
                   {/* for course price */}
                   <div>{`₹${ele.price}`}</div>
                 </div>
