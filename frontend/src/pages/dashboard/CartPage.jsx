@@ -1,5 +1,5 @@
-//importing redux stuff here
 import { useEffect, useState } from "react";
+//importing redux stuff here
 import { useSelector } from "react-redux";
 
 //importing dependencies here
@@ -9,8 +9,6 @@ const categoryNameMap = {
   "web-development": "Web Development",
 };
 
-let total = 0;
-
 export const CartPage = () => {
   ///all the states here
   const [cartCourses, setCartCourses] = useState([]);
@@ -19,6 +17,7 @@ export const CartPage = () => {
 
   ///all the redux stuff here
   const profile = useSelector((state) => state.user.profile);
+  const cartTotal = useSelector((state) => state.cart.total);
 
   ///all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -38,13 +37,6 @@ export const CartPage = () => {
     };
     fetchCartDetails();
   }, [profile]);
-
-  //to update the course total in real time
-  useEffect(() => {
-    for (let i = 0; i < cartCourses.length; i++) {
-      total += cartCourses[i].price;
-    }
-  }, [cartCourses]);
 
   return (
     <div>
@@ -95,7 +87,7 @@ export const CartPage = () => {
           {/* total div */}
           <div>
             <p>Total:</p>
-            <p>{`₹ ${total}`}</p>
+            <p>{`₹ ${cartTotal}`}</p>
           </div>
           {/* Buy Now button */}
           <button>Buy Now</button>

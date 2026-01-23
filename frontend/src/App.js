@@ -1,8 +1,5 @@
-import React, { useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
-
+import { useEffect } from "react";
+import { Route, Routes, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 //importing the pages here

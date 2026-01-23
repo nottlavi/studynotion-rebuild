@@ -13,11 +13,10 @@ import { FaShareSquare } from "react-icons/fa";
 
 //importing redux stuff here
 import { useSelector, useDispatch } from "react-redux";
-import { addToCart } from "../slices/cartSlice";
+import { addToCart, increaseTotal } from "../slices/cartSlice";
 
 export const CoursePage = () => {
   ///all redux stuff here
-  const profile = useSelector((state) => state.user.profile);
   const dispatch = useDispatch();
 
   ///all dependencies here
@@ -39,11 +38,12 @@ export const CoursePage = () => {
       const res = await axios.post(
         `${BASE_URL}/cart/add-to-cart`,
         { courseId: currentCourse._id },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (res) {
         console.log(res);
         dispatch(addToCart());
+        dispatch(increaseTotal(currentCourse.price));
       }
     } catch (err) {
       console.log(err);
@@ -56,7 +56,7 @@ export const CoursePage = () => {
     const fetchCourseDetails = async () => {
       try {
         const res = await axios.get(
-          `${BASE_URL}/courses/get-course-by-id/${courseId}`
+          `${BASE_URL}/courses/get-course-by-id/${courseId}`,
         );
         if (res) {
           setCurrentCourse(res.data.course);
@@ -221,7 +221,7 @@ export const CoursePage = () => {
                 {/* the right part which shows no of lectures */}
                 <div className="">{ele?.subsections.length} lecture(s)</div>
               </div>
-            )
+            ),
           )}
         </div>
         {/* the author div */}
