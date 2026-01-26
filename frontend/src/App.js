@@ -24,21 +24,19 @@ import { EnrolledCourses } from "./pages/dashboard/EnrolledCourses";
 
 //importing redux state here
 import { setToken } from "./slices/userSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const App = () => {
   //importing imp info from redux here
-  const token = localStorage.getItem("token");
+  const token = useSelector((state) => state.user.token);
 
   // defining all the dependencies here
   const dispatch = useDispatch();
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
     if (token) {
-      //rehydrating the redux state for token here from localstorage because redux initializes to initial state after refresh or sesion restart
       dispatch(setToken(token));
-    } else {
-      console.log("token not found");
     }
   }, [token]);
 

@@ -1,12 +1,15 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+
+//importing redux stuff here
+import { useSelector, useDispatch } from "react-redux";
+import { setProfile } from "../../slices/userSlice";
 
 export const UpdateProfile = () => {
   //managing all the redux stuff here
   const profile = useSelector((state) => state.user.profile);
-  // console.log(profile)
+  const dispatch = useDispatch();
 
   //managing all the states here
   // all the input states for profile update
@@ -73,10 +76,12 @@ export const UpdateProfile = () => {
       const res = await axios.put(
         `${BASE_URL}/users/update-profile`,
         { firstName, lastName, dob, gender, contactNumber, about },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (res) {
         console.log(res);
+        dispatch(setProfile(res?.data?.user));
+        console.log(res?.data?.user);
       }
     } catch (err) {
       console.log(err.response.data);
@@ -90,7 +95,7 @@ export const UpdateProfile = () => {
       const res = await axios.put(
         `${BASE_URL}/users/update-password`,
         { currentPassword, newPassword },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (res) {
         console.log(res);
