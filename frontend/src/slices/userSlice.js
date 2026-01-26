@@ -40,4 +40,5 @@ export const {
   setProfile,
   clearProfile,
 } = userSlice.actions;
+
 export default userSlice.reducer;

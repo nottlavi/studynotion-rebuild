@@ -1,5 +1,6 @@
 import { Outlet, useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
+import { useLogout } from "../hooks/useLogout";
 import axios from "axios";
 //importing redux stuff here
 import { useSelector, useDispatch } from "react-redux";
@@ -15,7 +16,9 @@ export const DashBoardPage = () => {
   const token = useSelector((state) => state.user.token);
   const profile = useSelector((state) => state.user.profile);
 
+  ///all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
+  const logout = useLogout();
 
   useEffect(() => {
     const getProfileByToken = async () => {
@@ -79,7 +82,9 @@ export const DashBoardPage = () => {
             Settings
           </div>
         </Link>
-        <button className="flex">Log Out</button>
+        <button className="flex" onClick={logout}>
+          Log Out
+        </button>
       </div>
       <Outlet />
     </div>

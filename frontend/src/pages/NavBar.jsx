@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useLogout } from "../hooks/useLogout";
 
 //importing redux stuff here
 import { useDispatch, useSelector } from "react-redux";
@@ -26,6 +26,7 @@ export const NavBar = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const path = location.pathname;
+  const logout = useLogout();
 
   //all functions here
   const logoutHandler = async () => {
@@ -33,7 +34,7 @@ export const NavBar = () => {
       const res = await axios.post(
         `${BASE_URL}/users/logout`,
         {},
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (res) {
         console.log(res);
@@ -133,7 +134,7 @@ export const NavBar = () => {
             </Link>
             {/* temp jugaad to access dashboard */}
             <Link to="/dashboard/my-profile">Dashboard</Link>
-            <button onClick={logoutHandler}>Log Out!</button>
+            <button onClick={logout}>Log Out!</button>
           </div>
         )}
       </div>
