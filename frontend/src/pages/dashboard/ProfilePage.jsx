@@ -80,8 +80,8 @@ export const ProfilePage = () => {
           <div className="flex flex-col gap-2">
             <p>Phone Number</p>
             <p>
-              {profile?.profile?.contactNo
-                ? profile?.profile?.contactNo
+              {profile?.profile?.contactNumber
+                ? profile?.profile?.contactNumber
                 : "Add Contact Number"}
             </p>
           </div>
@@ -102,7 +102,7 @@ export const ProfilePage = () => {
             <p>Date of Birth</p>
             <p>
               {profile?.profile?.dob
-                ? profile?.profile?.dob
+                ? new Date(profile?.profile?.dob).toLocaleDateString("en-GB")
                 : "Add Date of Birth"}
             </p>
           </div>

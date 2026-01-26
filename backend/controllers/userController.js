@@ -67,7 +67,7 @@ exports.signup = async (req, res) => {
       email,
       "verification otp",
       `here is your otp: ${otp}`,
-      ""
+      "",
     );
 
     if (isMailSent) {
@@ -275,7 +275,7 @@ exports.sendOTP = async (req, res) => {
   const isMailSent = await sendMail(
     email,
     "otp for verification",
-    `here is your otp: ${otp}`
+    `here is your otp: ${otp}`,
   );
 
   if (isMailSent) {
@@ -354,7 +354,7 @@ exports.changePassword = async (req, res) => {
     //finding the user and updating their password
     await userModel.findOneAndUpdate(
       { email: email },
-      { password: hashedPassword }
+      { password: hashedPassword },
     );
 
     return res.status(200).json({
@@ -416,6 +416,10 @@ exports.updateProfile = async (req, res) => {
 
     const profileToUpdateId = userToUpdate.profile;
 
+    updates.contactNumber = String(updates.contactNumber);
+
+    console.log(updates.contactNumber.length || "bro this is a number");
+
     if (updates.contactNumber && updates.contactNumber.length !== 10)
       return res
         .status(400)
@@ -424,22 +428,26 @@ exports.updateProfile = async (req, res) => {
     const updatedUser = await userModel.findByIdAndUpdate(
       userId,
       { $set: updates },
-      { new: true }
+      { new: true },
     );
 
-    const updatedProfile = await profileModel.findByIdAndUpdate(
+    await profileModel.findByIdAndUpdate(
       profileToUpdateId,
       {
         $set: updates,
       },
-      { new: true }
+      { new: true },
     );
+
+    const populatedUser = await userModel
+      .findById(updatedUser._id)
+      .populate("profile")
+      .select("-password");
 
     return res.status(200).json({
       success: true,
       message: "user updated successfully with the following details",
-      user: updatedUser,
-      profile: updatedProfile,
+      user: populatedUser,
     });
   } catch (err) {
     return res.status(500).json({

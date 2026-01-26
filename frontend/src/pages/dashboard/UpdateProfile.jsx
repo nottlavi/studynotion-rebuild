@@ -19,6 +19,8 @@ export const UpdateProfile = () => {
   const [gender, setGender] = useState();
   const [contactNumber, setContactNumber] = useState("");
   const [about, setAbout] = useState("");
+  // state to manage profile so that initial profile can be compared to changed
+  const [initialProfile, setInitialProfile] = useState({});
   //this state is to block the user to use the button when its invalid for them to send a backend req
   const [blocked, setBlocked] = useState(true);
   //all the input states for change password
@@ -38,6 +40,7 @@ export const UpdateProfile = () => {
       setGender(profile.profile?.gender || "");
       setContactNumber(profile.profile?.contactNumber || "");
       setAbout(profile.profile?.about || "");
+      setInitialProfile(profile);
     }
   }, [profile]);
 
@@ -72,12 +75,20 @@ export const UpdateProfile = () => {
   //the function to call the backend for profile updation
   const updateProfile = async (e) => {
     e.preventDefault();
+
+    const sendObj = {
+      firstName,
+      lastName,
+      dob,
+      gender,
+      contactNumber,
+      about,
+    };
+
     try {
-      const res = await axios.put(
-        `${BASE_URL}/users/update-profile`,
-        { firstName, lastName, dob, gender, contactNumber, about },
-        { withCredentials: true },
-      );
+      const res = await axios.put(`${BASE_URL}/users/update-profile`, sendObj, {
+        withCredentials: true,
+      });
       if (res) {
         console.log(res);
         dispatch(setProfile(res?.data?.user));
