@@ -76,6 +76,8 @@ export const AddCourse = () => {
   const [tempLectureTitle, setTempLectureTitle] = useState("");
   const [tempLectureDescription, setTempLectureDescription] = useState("");
   const [tempLectureVideo, setTempLectureVideo] = useState("");
+  const [isSubSectionCreationBlocked, setIsSubSectionCreationBlocked] =
+    useState(false);
 
   // state to manage the section id which will be sent to backend
   const [tempSectionId, setTempSectionId] = useState(null);
@@ -83,7 +85,7 @@ export const AddCourse = () => {
   //managing all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-  //allfunctions starts here
+  ///all functions starts here
 
   //function to update the tags array
   const addTag = async () => {
@@ -161,7 +163,7 @@ export const AddCourse = () => {
 
   const handleSectionEdit = () => {
     setSections((prev) =>
-      prev.map((sec, idx) => (idx === underEditId ? tempName : sec))
+      prev.map((sec, idx) => (idx === underEditId ? tempName : sec)),
     );
 
     setEditSection(false);
@@ -182,39 +184,59 @@ export const AddCourse = () => {
               lectureTitle: tempLectureTitle,
               lectureDescription: tempLectureDescription,
             }
-          : lec
-      )
+          : lec,
+      ),
     );
   };
 
   //function which will act when user passes 2nd stage
   const stage2Checker = async (e) => {
     e.preventDefault();
+
     if (sections.length === 0 || megaLectureStorage.length === 0) {
       return;
-    } else {
-      //creating the section in the backend using this below api call to pass down object id of the section because course creation required section id not the sections array
+    }
+
+    try {
+      setIsSubSectionCreationBlocked(true);
+
+      // ✅ 1. Create sections and store IDs locally
+      const createdSectionIds = [];
+
       for (let i = 0; i < sections.length; i++) {
         const res = await axios.post(
           `${BASE_URL}/section/create-section`,
           { title: sections[i] },
-          { withCredentials: true }
+          { withCredentials: true },
         );
-        setSectionIdCreated((prev) => [...prev, res.data.new_section._id]);
+
+        createdSectionIds.push(res.data.new_section._id);
       }
 
-      //for sub sections
+      // ✅ update state ONCE
+      setSectionIdCreated(createdSectionIds);
+
+      // ✅ 2. Create subsections using local array (NOT state)
       for (let i = 0; i < megaLectureStorage.length; i++) {
-        const sectionId = sectionIdCreated[megaLectureStorage[i].sectionIdx];
+        const sectionId = createdSectionIds[megaLectureStorage[i].sectionIdx];
 
-        await axios.post(`${BASE_URL}/subsection/create-sub-section`, {
-          title: megaLectureStorage[i].lectureTitle,
-          description: megaLectureStorage[i].lectureDescription,
-          videoUrl: megaLectureStorage[i].lectureVideo.url,
-          section: sectionId,
-        });
+        await axios.post(
+          `${BASE_URL}/subsection/create-sub-section`,
+          {
+            title: megaLectureStorage[i].lectureTitle,
+            description: megaLectureStorage[i].lectureDescription,
+            videoUrl: megaLectureStorage[i].lectureVideo.url,
+            section: sectionId,
+          },
+          { withCredentials: true },
+        );
       }
+
       setStage(3);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsSubSectionCreationBlocked(false);
     }
   };
 
@@ -228,7 +250,7 @@ export const AddCourse = () => {
       {
         method: "POST",
         body: data,
-      }
+      },
     );
 
     if (!res.ok) console.log(await res.text);
@@ -254,7 +276,7 @@ export const AddCourse = () => {
       {
         array: newTempIds,
         keepPublicId: 1,
-      }
+      },
     );
     console.log(backendResult);
 
@@ -281,7 +303,7 @@ export const AddCourse = () => {
 
       const res = await fetch(
         "https://api.cloudinary.com/v1_1/dguufm5le/video/upload",
-        { method: "POST", body: data }
+        { method: "POST", body: data },
       );
 
       if (!res.ok) {
@@ -313,7 +335,7 @@ export const AddCourse = () => {
           requirements,
           sections: sectionIdCreated,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (res) {
         console.log(res);
@@ -329,7 +351,7 @@ export const AddCourse = () => {
           {
             array: array,
             keepPublicId: goodId,
-          }
+          },
         );
         console.log(backendResult);
       }
@@ -423,7 +445,7 @@ export const AddCourse = () => {
                 <label>Course Thumbnail</label>
                 {thumbnail ? (
                   <div>
-                    <img src={thumbnail.url} />
+                    <img src={thumbnail.url} height={200} width={200} />
                     <button
                       type="button"
                       onClick={() => {
@@ -656,7 +678,7 @@ export const AddCourse = () => {
                                                       value={tempLectureTitle}
                                                       onChange={(e) => {
                                                         setTempLectureTitle(
-                                                          e.target.value
+                                                          e.target.value,
                                                         );
                                                       }}
                                                     />
@@ -678,7 +700,7 @@ export const AddCourse = () => {
                                                       }
                                                       onChange={(e) => {
                                                         setTempLectureDescription(
-                                                          e.target.value
+                                                          e.target.value,
                                                         );
                                                       }}
                                                     />
@@ -796,7 +818,7 @@ export const AddCourse = () => {
                                           value={lectureDescription}
                                           onChange={(e) => {
                                             setLectureDescription(
-                                              e.target.value
+                                              e.target.value,
                                             );
                                           }}
                                         />
@@ -828,7 +850,11 @@ export const AddCourse = () => {
                 })}
               </div>
             </div>
-            <button type="submit" onClick={stage2Checker}>
+            <button
+              type="submit"
+              onClick={stage2Checker}
+              disabled={isSubSectionCreationBlocked}
+            >
               next
             </button>
           </form>

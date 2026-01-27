@@ -6,6 +6,8 @@ exports.createSubSection = async (req, res) => {
     //fetching details about the subsection/lecture from the request body
     const { title, description, videoUrl, section } = req.body;
 
+    console.log(title, description, videoUrl, section);
+
     if (!title || !description || !videoUrl || !section) {
       return res.status(404).json({
         success: false,
@@ -27,7 +29,7 @@ exports.createSubSection = async (req, res) => {
       {
         $push: { subsections: newSubSection._id },
       },
-      { new: true }
+      { new: true },
     );
 
     return res.status(200).json({

@@ -28,25 +28,7 @@ export const NavBar = () => {
   const path = location.pathname;
   const logout = useLogout();
 
-  //all functions here
-  const logoutHandler = async () => {
-    try {
-      const res = await axios.post(
-        `${BASE_URL}/users/logout`,
-        {},
-        { withCredentials: true },
-      );
-      if (res) {
-        console.log(res);
-        localStorage.removeItem("token");
-        dispatch(clearProfile());
-        dispatch(clearToken());
-        navigate("/");
-      }
-    } catch (err) {
-      console.log("internal server error at logout caller function");
-    }
-  };
+  ///all the functions here
 
   return (
     <div className="bg-black text-white h-10 flex justify-between">
@@ -75,19 +57,19 @@ export const NavBar = () => {
                 <Stack gap="4" direction="row">
                   <Stack gap="3">
                     <Stack gap="1">
-                      <Link to={`/course-category/69228e714031567fc2572924`}>
+                      <Link to={`/course-category/6978c3293f8f362f1f92317c`}>
                         <Text textStyle="sm">Web Development</Text>
                       </Link>
-                      <Link>
+                      <Link to={`/course-category/6978c32f3f8f362f1f92317e`}>
                         <Text textStyle="sm">Java</Text>
                       </Link>
-                      <Link>
+                      <Link to={`/course-category/6978c4053f8f362f1f923191`}>
                         <Text textStyle="sm">Python</Text>
                       </Link>
-                      <Link>
+                      <Link to={`/course-category/6978c4113f8f362f1f923193`}>
                         <Text textStyle="sm">System Design</Text>
                       </Link>
-                      <Link>
+                      <Link to={`/course-category/6978c41a3f8f362f1f923195`}>
                         <Text textStyle="sm">C++</Text>
                       </Link>
                     </Stack>
