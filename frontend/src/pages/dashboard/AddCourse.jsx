@@ -179,6 +179,9 @@ export const AddCourse = () => {
 
   const editLectureHelper = (idx) => {
     setTempLecture(megaLectureStorage[idx]);
+    console.log(megaLectureStorage);
+    console.log(idx);
+    console.log(megaLectureStorage[idx]);
     setTempLectureTitle(megaLectureStorage[idx].lectureTitle);
     setTempLectureDescription(megaLectureStorage[idx].lectureDescription);
   };
@@ -285,7 +288,6 @@ export const AddCourse = () => {
         keepPublicId: 1,
       },
     );
-    console.log(backendResult);
 
     const cleaned = newTempIds.slice(-1);
     localStorage.setItem("tempIds", JSON.stringify(cleaned));
@@ -642,7 +644,7 @@ export const AddCourse = () => {
                                             variant="outline"
                                             size="sm"
                                             onClick={() =>
-                                              editLectureHelper(idx)
+                                              editLectureHelper(ele.sectionIdx)
                                             }
                                           >
                                             <FaPencilAlt />
