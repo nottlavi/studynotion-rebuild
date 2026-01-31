@@ -102,7 +102,7 @@ export const CoursePage = () => {
       {/* floating menu */}
       <div className="absolute right-3 top-12 flex flex-col">
         {/* course thumbnail */}
-        <img src={currentCourse?.thumbnail} />
+        <img src={currentCourse?.thumbnail} height={300} width={300} />
         {/* div for course price */}
         <div>₹ {currentCourse?.price}</div>
         <button>Buy Now</button>

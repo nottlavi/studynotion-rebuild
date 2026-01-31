@@ -82,11 +82,13 @@ export const AddCourse = () => {
   // state to manage the section id which will be sent to backend
   const [tempSectionId, setTempSectionId] = useState(null);
 
-  //managing all the dependencies here
+  //state to manage the the lecture list of the currently expnaded section(will be used for editing a lecture)
+  const [filteredMegaLecture, setFilteredMegaLecture] = useState({});
+
+  ///all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-  ///all functions starts here
-
+  ///all the functions starts here
   //function to update the tags array
   const addTag = async () => {
     if (tag.trim() === "") return;
@@ -110,8 +112,12 @@ export const AddCourse = () => {
   };
 
   //function to delete a particular section
-  const removeSection = async (ele) => {
-    setSections(sections.filter((value) => value !== ele));
+  const removeSection = (idx) => {
+    setSections((prev) => prev.filter((_, i) => i !== idx));
+
+    setMegaLectureStorage((prev) =>
+      prev.filter((lecture) => lecture.sectionIdx !== idx),
+    );
   };
 
   //function to delete a particular lecture
@@ -173,18 +179,21 @@ export const AddCourse = () => {
 
   const editLectureHelper = (idx) => {
     setTempLecture(megaLectureStorage[idx]);
+    setTempLectureTitle(megaLectureStorage[idx].lectureTitle);
+    setTempLectureDescription(megaLectureStorage[idx].lectureDescription);
   };
 
-  const updateLecture = (idx) => {
-    setMegaLectureStorage((prev) =>
-      prev.map((lec, i) =>
-        i === idx
+  //im here this function is causing the data mega lecture storage to be lost
+  const updateLecture = (ele) => {
+    setMegaLectureStorage(
+      megaLectureStorage.map((lecture) =>
+        lecture === ele
           ? {
-              ...lec,
+              ...lecture,
               lectureTitle: tempLectureTitle,
               lectureDescription: tempLectureDescription,
             }
-          : lec,
+          : lecture,
       ),
     );
   };
@@ -213,10 +222,8 @@ export const AddCourse = () => {
         createdSectionIds.push(res.data.new_section._id);
       }
 
-      // ✅ update state ONCE
       setSectionIdCreated(createdSectionIds);
 
-      // ✅ 2. Create subsections using local array (NOT state)
       for (let i = 0; i < megaLectureStorage.length; i++) {
         const sectionId = createdSectionIds[megaLectureStorage[i].sectionIdx];
 
@@ -570,7 +577,13 @@ export const AddCourse = () => {
                       <div
                         className="flex gap-2 justify-between cursor-pointer "
                         onClick={() => {
+                          //check if the current menu clicked is already expanded if yes set expanded menu to none
                           setExpandMenu(expandMenu === idx ? null : idx);
+                          setFilteredMegaLecture(
+                            megaLectureStorage.filter(
+                              (lecture) => lecture.sectionIdx === idx,
+                            ),
+                          );
                         }}
                       >
                         {/* closing menu and section name */}
@@ -592,7 +605,7 @@ export const AddCourse = () => {
                           <button
                             type="button"
                             onClick={() => {
-                              removeSection(ele);
+                              removeSection(idx);
                             }}
                           >
                             <RiDeleteBin5Line />
@@ -609,6 +622,7 @@ export const AddCourse = () => {
                       {expandMenu === idx ? (
                         <div className="flex gap-1 items-center flex-col">
                           <div className="flex flex-col gap-4">
+                            {/* the line below is filtering all the lectures out of all the lectures in the mega storage which have got the section idx as same the section which is currently expanded */}
                             {megaLectureStorage
                               .filter((lecture) => lecture.sectionIdx === idx)
                               .map((ele, idx) => {
@@ -692,6 +706,7 @@ export const AddCourse = () => {
                                                       </span>
                                                     </label>
                                                     <input
+                                                      className="bg-red-400"
                                                       placeholder={
                                                         tempLecture?.lectureDescription
                                                       }
@@ -713,13 +728,15 @@ export const AddCourse = () => {
                                                     Cancel
                                                   </Button>
                                                 </Dialog.ActionTrigger>
-                                                <Button
-                                                  onClick={() =>
-                                                    updateLecture(idx)
-                                                  }
-                                                >
-                                                  Save
-                                                </Button>
+                                                <Dialog.ActionTrigger asChild>
+                                                  <Button
+                                                    onClick={() =>
+                                                      updateLecture(ele)
+                                                    }
+                                                  >
+                                                    Save
+                                                  </Button>
+                                                </Dialog.ActionTrigger>
                                               </Dialog.Footer>
                                               <Dialog.CloseTrigger asChild>
                                                 <CloseButton size="sm" />
@@ -728,6 +745,7 @@ export const AddCourse = () => {
                                           </Dialog.Positioner>
                                         </Portal>
                                       </Dialog.Root>
+                                      {/* delete button for an individual lecture here */}
                                       <button
                                         onClick={() => {
                                           deleteLecture(ele);
