@@ -177,13 +177,14 @@ export const AddCourse = () => {
     setUnderEditId("");
   };
 
-  const editLectureHelper = (idx) => {
-    setTempLecture(megaLectureStorage[idx]);
-    console.log(megaLectureStorage);
-    console.log(idx);
-    console.log(megaLectureStorage[idx]);
-    setTempLectureTitle(megaLectureStorage[idx].lectureTitle);
-    setTempLectureDescription(megaLectureStorage[idx].lectureDescription);
+  const editLectureHelper = (sectionIdx, idx) => {
+    const sectionLectures = megaLectureStorage.filter(
+      (ele) => ele.sectionIdx === sectionIdx,
+    );
+    const exactLecture = sectionLectures[idx];
+    setTempLecture(exactLecture);
+    setTempLectureTitle(exactLecture.lectureTitle);
+    setTempLectureDescription(exactLecture.lectureDescription);
   };
 
   //im here this function is causing the data mega lecture storage to be lost
@@ -644,7 +645,10 @@ export const AddCourse = () => {
                                             variant="outline"
                                             size="sm"
                                             onClick={() =>
-                                              editLectureHelper(ele.sectionIdx)
+                                              editLectureHelper(
+                                                ele.sectionIdx,
+                                                idx,
+                                              )
                                             }
                                           >
                                             <FaPencilAlt />
