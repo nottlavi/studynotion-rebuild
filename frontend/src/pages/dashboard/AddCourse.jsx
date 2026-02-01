@@ -154,9 +154,11 @@ export const AddCourse = () => {
           sectionIdx: idx,
           lectureDescription: lectureDescription,
           lectureTitle: lectureTitle,
-          lectureVideo: lectureVideo,
+          lectureVideo: lectureVideo.url,
         },
       ]);
+
+      console.log(lectureVideo.url);
       //creating sub section here in the backend, so that the coursePage might have data of the sub section
 
       //doing this because on clicing save i want all the details to be cleared because once you click save, you are done with this particular lecture
@@ -196,6 +198,7 @@ export const AddCourse = () => {
               ...lecture,
               lectureTitle: tempLectureTitle,
               lectureDescription: tempLectureDescription,
+              lectureVideo: tempLectureVideo,
             }
           : lecture,
       ),
@@ -369,6 +372,37 @@ export const AddCourse = () => {
       console.log(err);
     }
   };
+
+  const uploadEditedLectureVideo = async (file) => {
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", "hi1wsn1z");
+
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/dguufm5le/video/upload",
+      { method: "POST", body: data },
+    );
+
+    if (!res.ok) {
+      console.log(res);
+    }
+
+    const result = await res.json();
+
+    const newVideo = {
+      url: result.secure_url,
+      publicId: result.public_id,
+    };
+
+    setTempLecture((prev) => ({
+      ...prev,
+      lectureVideo: newVideo.url,
+    }));
+
+    setTempLectureVideo(newVideo.url);
+  };
+
+  console.log(tempLecture?.lectureVideo);
 
   return (
     <div>
@@ -665,9 +699,25 @@ export const AddCourse = () => {
                                               </Dialog.Header>
                                               <Dialog.Body>
                                                 <form>
+                                                  <input
+                                                    type="file"
+                                                    hidden
+                                                    accept="video/*"
+                                                    id="editLectureVideoInput"
+                                                    onChange={(e) => {
+                                                      const file =
+                                                        e.target.files[0];
+                                                      if (!file) {
+                                                        return;
+                                                      }
+                                                      uploadEditedLectureVideo(
+                                                        file,
+                                                      );
+                                                    }}
+                                                  />
                                                   {/* div for lecture video */}
-                                                  <div>
-                                                    <label>
+                                                  <div className="items-center flex flex-col">
+                                                    <label className="text-start">
                                                       Lecture Video{" "}
                                                       <span className="text-red-700">
                                                         *
@@ -676,12 +726,24 @@ export const AddCourse = () => {
                                                     {tempLecture?.lectureVideo && (
                                                       <video
                                                         src={
-                                                          tempLecture
-                                                            .lectureVideo.url
+                                                          tempLecture.lectureVideo
                                                         }
                                                         controls
                                                       />
                                                     )}
+                                                    <button
+                                                      type="button"
+                                                      onClick={(e) => {
+                                                        e.preventDefault();
+                                                        document
+                                                          .getElementById(
+                                                            "editLectureVideoInput",
+                                                          )
+                                                          .click();
+                                                      }}
+                                                    >
+                                                      Change Lecture Video
+                                                    </button>
                                                   </div>
                                                   {/* div for lecture title */}
                                                   <div>
