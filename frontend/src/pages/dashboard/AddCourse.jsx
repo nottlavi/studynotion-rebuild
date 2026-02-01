@@ -45,6 +45,7 @@ export const AddCourse = () => {
 
   const [lectureTitle, setLectureTitle] = useState("");
   const [lectureDescription, setLectureDescription] = useState("");
+  const [duration, setDuration] = useState(0);
 
   //this state is for managing the current view / stage of the website
   const [stage, setStage] = useState(0);
@@ -67,8 +68,6 @@ export const AddCourse = () => {
   //stage to store the temporary edited new name
   const [tempName, setTempName] = useState("");
 
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-
   const [sectionIdCreated, setSectionIdCreated] = useState([]);
 
   //state to manage the lecture which is being edited rn
@@ -78,12 +77,6 @@ export const AddCourse = () => {
   const [tempLectureVideo, setTempLectureVideo] = useState("");
   const [isSubSectionCreationBlocked, setIsSubSectionCreationBlocked] =
     useState(false);
-
-  // state to manage the section id which will be sent to backend
-  const [tempSectionId, setTempSectionId] = useState(null);
-
-  //state to manage the the lecture list of the currently expnaded section(will be used for editing a lecture)
-  const [filteredMegaLecture, setFilteredMegaLecture] = useState({});
 
   ///all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -155,6 +148,7 @@ export const AddCourse = () => {
           lectureDescription: lectureDescription,
           lectureTitle: lectureTitle,
           lectureVideo: lectureVideo.url,
+          duration: duration,
         },
       ]);
 
@@ -189,7 +183,6 @@ export const AddCourse = () => {
     setTempLectureDescription(exactLecture.lectureDescription);
   };
 
-  //im here this function is causing the data mega lecture storage to be lost
   const updateLecture = (ele) => {
     setMegaLectureStorage(
       megaLectureStorage.map((lecture) =>
@@ -234,16 +227,22 @@ export const AddCourse = () => {
       for (let i = 0; i < megaLectureStorage.length; i++) {
         const sectionId = createdSectionIds[megaLectureStorage[i].sectionIdx];
 
-        await axios.post(
+        console.log(megaLectureStorage[i].duration);
+
+        const res = await axios.post(
           `${BASE_URL}/subsection/create-sub-section`,
           {
             title: megaLectureStorage[i].lectureTitle,
             description: megaLectureStorage[i].lectureDescription,
-            videoUrl: megaLectureStorage[i].lectureVideo.url,
+            videoUrl:
+              megaLectureStorage[i]?.lectureVideo.url ||
+              megaLectureStorage[i]?.lectureVideo,
             section: sectionId,
+            duration: megaLectureStorage[i].duration,
           },
           { withCredentials: true },
         );
+        console.log(res);
       }
 
       setStage(3);
@@ -325,7 +324,12 @@ export const AddCourse = () => {
 
       const result = await res.json();
 
-      setLectureVideo({ url: result.secure_url, publicId: result.public_id });
+      setLectureVideo({
+        url: result.secure_url,
+        publicId: result.public_id,
+        duration: result.duration,
+      });
+      setDuration(result.duration);
     } catch (err) {
       console.log(err);
     }
@@ -392,6 +396,7 @@ export const AddCourse = () => {
     const newVideo = {
       url: result.secure_url,
       publicId: result.public_id,
+      duration: result.duration,
     };
 
     setTempLecture((prev) => ({
@@ -401,8 +406,6 @@ export const AddCourse = () => {
 
     setTempLectureVideo(newVideo.url);
   };
-
-  console.log(tempLecture?.lectureVideo);
 
   return (
     <div>
@@ -616,11 +619,6 @@ export const AddCourse = () => {
                         onClick={() => {
                           //check if the current menu clicked is already expanded if yes set expanded menu to none
                           setExpandMenu(expandMenu === idx ? null : idx);
-                          setFilteredMegaLecture(
-                            megaLectureStorage.filter(
-                              (lecture) => lecture.sectionIdx === idx,
-                            ),
-                          );
                         }}
                       >
                         {/* closing menu and section name */}

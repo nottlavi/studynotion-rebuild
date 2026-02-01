@@ -4,11 +4,11 @@ const sectionModel = require("../models/sectionModel");
 exports.createSubSection = async (req, res) => {
   try {
     //fetching details about the subsection/lecture from the request body
-    const { title, description, videoUrl, section } = req.body;
+    const { title, description, videoUrl, section, duration } = req.body;
 
-    console.log(title, description, videoUrl, section);
+    console.log(title, description, videoUrl, section, duration);
 
-    if (!title || !description || !videoUrl || !section) {
+    if (!title || !description || !videoUrl || !section || !duration) {
       return res.status(404).json({
         success: false,
         message: "all input fields required",
@@ -21,6 +21,7 @@ exports.createSubSection = async (req, res) => {
       description: description,
       videoUrl: videoUrl,
       section: section,
+      duration: duration,
     });
 
     //pushing this sub section in the section entry to which it belongs

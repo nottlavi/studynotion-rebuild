@@ -60,13 +60,34 @@ export const CoursePage = () => {
         );
         if (res) {
           setCurrentCourse(res.data.course);
+          console.log(res.data.course);
         }
       } catch (err) {
         console.log(err.message);
       }
     };
     fetchCourseDetails();
-  }, [courseId]);
+  }, [courseId, currentCourse]);
+
+  const totalSubsections =
+    currentCourse?.sections?.reduce(
+      (total, section) => total + section.subsections.length,
+      0,
+    ) || 0;
+
+  const totalLectureSeconds =
+    currentCourse?.sections?.reduce((total, section) => {
+      return (
+        total +
+        section.subsections.reduce(
+          (subTotal, lecture) => subTotal + (lecture.duration || 0),
+          0,
+        )
+      );
+    }, 0) || 0;
+
+  const minutes = Math.floor(totalLectureSeconds);
+  const seconds = Math.round((totalLectureSeconds - minutes) * 60);
 
   return (
     <div>
@@ -136,10 +157,12 @@ export const CoursePage = () => {
             <div className="flex gap-5 items-center">
               <p>{`${currentCourse?.sections?.length} section(s)`}</p>
               <GoDotFill className="text-xs text-gray-600" />
-              <p>? lecture(s)</p>
+              <p>{totalSubsections} lecture(s)</p>
               <GoDotFill className="text-xs text-gray-600" />
 
-              <p>? m ? s total length</p>
+              <p>
+                {minutes} m {seconds} s total length
+              </p>
             </div>
             {/* the second section which contains the expand section toggle  */}
             {expandMenu ? (

@@ -19,6 +19,9 @@ const subSectionSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Section",
   },
+  duration: {
+    type: Number,
+  },
 });
 
 module.exports = mongoose.model("SubSection", subSectionSchema);
