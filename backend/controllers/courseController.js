@@ -134,3 +134,48 @@ exports.getCourseDetailsById = async (req, res) => {
     });
   }
 };
+
+exports.enrollCourse = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { courseId } = req.body;
+
+    if (!userId || !courseId) {
+      return res.status(404).json({
+        success: false,
+        message: "not enough data to proceed",
+      });
+    }
+
+    const course = await courseModel.findById(courseId);
+
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "no such course found",
+      });
+    }
+
+    await userModel.findByIdAndUpdate(userId, {
+      $addToSet: {
+        enrolledCourse: courseId,
+      },
+    });
+
+    await courseModel.findByIdAndUpdate(courseId, {
+      $addToSet: {
+        enrolledUsers: userId,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "enrolled in the course successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};

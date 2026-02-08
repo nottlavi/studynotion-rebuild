@@ -12,6 +12,7 @@ const cloudinary = require("../config/cloudinary");
 const {
   createCourse,
   getCourseDetailsById,
+  enrollCourse,
 } = require("../controllers/courseController");
 
 router.post("/create-course", verifyJWT, createCourse);
@@ -81,5 +82,7 @@ router.post("/auto-delete-media", async (req, res) => {
     });
   }
 });
+
+router.post("/enroll-course", verifyJWT, enrollCourse);
 
 module.exports = router;
