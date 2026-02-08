@@ -12,12 +12,13 @@ import { IoVideocam } from "react-icons/io5";
 import { FaShareSquare } from "react-icons/fa";
 
 //importing redux stuff here
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart, increaseTotal } from "../slices/cartSlice";
 
 export const CoursePage = () => {
   ///all redux stuff here
   const dispatch = useDispatch();
+  const profile = useSelector((state) => state.user.profile);
 
   ///all dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -121,25 +122,29 @@ export const CoursePage = () => {
         </div>
       </div>
       {/* floating menu */}
-      <div className="absolute right-3 top-12 flex flex-col">
-        {/* course thumbnail */}
-        <img src={currentCourse?.thumbnail} height={300} width={300} />
-        {/* div for course price */}
-        <div>₹ {currentCourse?.price}</div>
-        <button>Buy Now</button>
-        <button onClick={addToCartHandler}>Add to Cart</button>
-        <div>30-Day Money-Back Guarantee</div>
-        <div>This Course Includes: </div>
-        {/* share thing div */}
-        <div
-          className="flex gap-2 items-center cursor-pointer text-yellow-500"
-          onClick={() => {
-            navigator.clipboard.writeText(window.location.href);
-          }}
-        >
-          <FaShareSquare /> Share
+      {profile?.accountType === "Instructor" ? (
+        <div></div>
+      ) : (
+        <div className="absolute right-3 top-12 flex flex-col">
+          {/* course thumbnail */}
+          <img src={currentCourse?.thumbnail} height={300} width={300} />
+          {/* div for course price */}
+          <div>₹ {currentCourse?.price}</div>
+          <button>Buy Now</button>
+          <button onClick={addToCartHandler}>Add to Cart</button>
+          <div>30-Day Money-Back Guarantee</div>
+          <div>This Course Includes: </div>
+          {/* share thing div */}
+          <div
+            className="flex gap-2 items-center cursor-pointer text-yellow-500"
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+            }}
+          >
+            <FaShareSquare /> Share
+          </div>
         </div>
-      </div>
+      )}
       {/* section 2 */}
       <div>
         {/* what you will learn div */}
