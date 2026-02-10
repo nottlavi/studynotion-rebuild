@@ -36,10 +36,12 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Profile",
     },
-    enrolledCourse: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Courses",
-    },
+    enrolledCourses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    ],
   },
   { timestamps: true },
 );

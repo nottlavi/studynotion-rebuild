@@ -138,35 +138,43 @@ exports.getCourseDetailsById = async (req, res) => {
 exports.enrollCourse = async (req, res) => {
   try {
     const { userId } = req.user;
-    const { courseId } = req.body;
+    const { courseIds } = req.body;
 
-    if (!userId || !courseId) {
+    if (!userId || !courseIds) {
       return res.status(404).json({
         success: false,
         message: "not enough data to proceed",
       });
     }
 
-    const course = await courseModel.findById(courseId);
+    for (let i = 0; i < courseIds.length; i++) {
+      const course = await courseModel.findById(courseIds[i]);
 
-    if (!course) {
-      return res.status(404).json({
-        success: false,
-        message: "no such course found",
+      if (!course) {
+        return res.status(404).json({
+          success: false,
+          message: "no such course found",
+        });
+      }
+
+      await userModel
+        .findByIdAndUpdate(
+          userId,
+          {
+            $addToSet: {
+              enrolledCourses: courseIds[i],
+            },
+          },
+          { new: true },
+        )
+        .populate("enrolledCourses");
+
+      await courseModel.findByIdAndUpdate(courseIds[i], {
+        $addToSet: {
+          enrolledUsers: userId,
+        },
       });
     }
-
-    await userModel.findByIdAndUpdate(userId, {
-      $addToSet: {
-        enrolledCourse: courseId,
-      },
-    });
-
-    await courseModel.findByIdAndUpdate(courseId, {
-      $addToSet: {
-        enrolledUsers: userId,
-      },
-    });
 
     return res.status(200).json({
       success: true,

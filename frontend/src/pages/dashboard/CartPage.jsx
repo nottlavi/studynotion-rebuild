@@ -22,6 +22,7 @@ export const CartPage = () => {
 
   ///all the states here
   const [cartCourses, setCartCourses] = useState([]);
+  const [courseToBeEnrolled, setCourseToBeEnrolled] = useState([]);
 
   ///all the functions here
   //function to remove course from the cart
@@ -47,6 +48,21 @@ export const CartPage = () => {
     }
   };
 
+  const buyHandler = async () => {
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/courses/enroll-course`,
+        { courseIds: courseToBeEnrolled },
+        { withCredentials: true },
+      );
+      if (res) {
+        console.log(res);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   ///all useEffects here
   //to fetch cart details on profile change
   useEffect(() => {
@@ -55,7 +71,9 @@ export const CartPage = () => {
         const res = await axios.get(`${BASE_URL}/cart/get-cart-by-user-id`, {
           withCredentials: true,
         });
-        setCartCourses(res.data.cart.courses);
+        const courses = res.data.cart.courses;
+        setCartCourses(courses);
+        setCourseToBeEnrolled(courses.map((c) => c._id));
       } catch (err) {
         console.log(err);
       }
@@ -117,7 +135,7 @@ export const CartPage = () => {
             <p>{`₹ ${cartTotal}`}</p>
           </div>
           {/* Buy Now button */}
-          <button>Buy Now</button>
+          <button onClick={buyHandler}>Buy Now</button>
         </div>
       </div>
     </div>

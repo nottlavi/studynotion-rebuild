@@ -25,7 +25,7 @@ export const CoursePage = () => {
   //this is being fetched from the url, the user is currently on
   const { courseId } = useParams();
 
-  ///all states here
+  ///all the states here
   const [currentCourse, setCurrentCourse] = useState({});
   //state to manage the expanded section
   const [expandMenu, setExpandMenu] = useState(false);
@@ -61,7 +61,6 @@ export const CoursePage = () => {
         );
         if (res) {
           setCurrentCourse(res.data.course);
-          console.log(res.data.course);
         }
       } catch (err) {
         console.log(err.message);

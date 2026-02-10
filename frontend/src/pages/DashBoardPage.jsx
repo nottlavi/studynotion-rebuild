@@ -46,7 +46,7 @@ export const DashBoardPage = () => {
             My Profile
           </div>
         </Link>
-        {profile.accountType === "Student" ? (
+        {profile?.accountType === "Student" ? (
           <div>
             <Link to={"/dashboard/enrolled-courses"}>
               <div
