@@ -57,6 +57,25 @@ export const CartPage = () => {
       );
       if (res) {
         console.log(res);
+        for (let i = 0; i < courseToBeEnrolled.length; i++) {
+          try {
+            const res = await axios.put(
+              `${BASE_URL}/cart/remove-from-cart`,
+              {
+                courseId: courseToBeEnrolled[i],
+              },
+              { withCredentials: true },
+            );
+            if (res) {
+              console.log(res);
+              setCartCourses((prev) =>
+                prev.filter((course) => course._id !== courseToBeEnrolled[i]),
+              );
+            }
+          } catch (err) {
+            console.log(err);
+          }
+        }
       }
     } catch (err) {
       console.log(err);
@@ -80,6 +99,8 @@ export const CartPage = () => {
     };
     fetchCartDetails();
   }, [profile]);
+
+  console.log(cartCourses);
 
   return (
     <div>

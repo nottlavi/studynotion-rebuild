@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 //importing react icons here
 import { CiMenuKebab } from "react-icons/ci";
 
+//imporiting headless ui components here
+import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
+
 import { useSelector } from "react-redux";
 
 export const EnrolledCourses = () => {
@@ -76,9 +79,16 @@ export const EnrolledCourses = () => {
               <p>Progress: xx%</p>
             </div>
             {/* menu button div */}
-            <div>
-              <CiMenuKebab />
-            </div>
+            <Menu>
+              <MenuButton>
+                {" "}
+                <CiMenuKebab />
+              </MenuButton>
+              <MenuItems className="flex flex-col gap-1">
+                <MenuItem as="button">Mark as completed</MenuItem>
+                <MenuItem as="button">Remove</MenuItem>
+              </MenuItems>
+            </Menu>
           </div>
         );
       })}

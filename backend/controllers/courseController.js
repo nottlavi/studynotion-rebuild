@@ -147,6 +147,8 @@ exports.enrollCourse = async (req, res) => {
       });
     }
 
+    const user = await userModel.findById(userId);
+
     for (let i = 0; i < courseIds.length; i++) {
       const course = await courseModel.findById(courseIds[i]);
 
@@ -154,6 +156,13 @@ exports.enrollCourse = async (req, res) => {
         return res.status(404).json({
           success: false,
           message: "no such course found",
+        });
+      }
+
+      if (user.enrolledCourses.includes(course._id)) {
+        return res.status(400).json({
+          success: false,
+          message: "course is already enrolled into",
         });
       }
 
