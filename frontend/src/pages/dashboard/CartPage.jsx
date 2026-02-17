@@ -100,8 +100,6 @@ export const CartPage = () => {
     fetchCartDetails();
   }, [profile]);
 
-  console.log(cartCourses);
-
   return (
     <div>
       {/* the cart div */}
