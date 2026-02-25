@@ -48,7 +48,7 @@ export const CartPage = () => {
     }
   };
 
-  const buyHandler = async () => {
+  const buyHandler = async (cartCourses) => {
     try {
       const res = await axios.post(
         `${BASE_URL}/courses/enroll-course`,
@@ -71,6 +71,9 @@ export const CartPage = () => {
               setCartCourses((prev) =>
                 prev.filter((course) => course._id !== courseToBeEnrolled[i]),
               );
+              //updating the redux states here
+              dispatch(removeFromCart());
+              dispatch(decreaseTotal(cartCourses[i].price));
             }
           } catch (err) {
             console.log(err);
@@ -154,7 +157,7 @@ export const CartPage = () => {
             <p>{`₹ ${cartTotal}`}</p>
           </div>
           {/* Buy Now button */}
-          <button onClick={buyHandler}>Buy Now</button>
+          <button onClick={() => buyHandler(cartCourses)}>Buy Now</button>
         </div>
       </div>
     </div>

@@ -29,7 +29,7 @@ export const DashBoardPage = () => {
 
         if (res) {
           dispatch(setProfile(res.data.user));
-          localStorage.setItem(res.data.user);
+          localStorage.setItem("profile", JSON.stringify(res.data.user));
         }
       } catch (err) {
         console.log(err.message);

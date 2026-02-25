@@ -41,9 +41,9 @@ const App = () => {
     }
     const profile = localStorage.getItem("profile");
     if (profile) {
-      dispatch(setProfile(profile));
+      dispatch(setProfile(JSON.parse(profile)));
     }
-  }, [token, profile]);
+  }, [dispatch]);
 
   return (
     <div>

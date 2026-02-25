@@ -20,8 +20,6 @@ export const CoursePage = () => {
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.user.profile);
 
-  console.log(profile);
-
   ///all dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   //this is being fetched from the url, the user is currently on
