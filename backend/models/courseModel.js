@@ -47,10 +47,12 @@ const courseSchema = new mongoose.Schema(
         required: true,
       },
     ],
-    enrolledUsers: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
+    enrolledUsers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true },
 );

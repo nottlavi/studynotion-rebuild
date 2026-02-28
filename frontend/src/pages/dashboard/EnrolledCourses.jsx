@@ -7,9 +7,14 @@ import { CiMenuKebab } from "react-icons/ci";
 //imporiting headless ui components here
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 
+//importing dependencies here
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 export const EnrolledCourses = () => {
+  //all the dependencies here
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
+
   ///all the redux stuff here
   const profile = useSelector((state) => state.user.profile);
 
@@ -23,7 +28,11 @@ export const EnrolledCourses = () => {
     }
   }, [profile]);
 
-  console.log(enrolledCourses);
+  ///all the functions here
+  const handleRemove = async () => {
+    try {
+    } catch (err) {}
+  };
 
   return (
     <div>
@@ -86,7 +95,14 @@ export const EnrolledCourses = () => {
               </MenuButton>
               <MenuItems className="flex flex-col gap-1">
                 <MenuItem as="button">Mark as completed</MenuItem>
-                <MenuItem as="button">Remove</MenuItem>
+                <MenuItem
+                  as="button"
+                  onClick={() => {
+                    handleRemove;
+                  }}
+                >
+                  Remove
+                </MenuItem>
               </MenuItems>
             </Menu>
           </div>

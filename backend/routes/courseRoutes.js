@@ -13,6 +13,7 @@ const {
   createCourse,
   getCourseDetailsById,
   enrollCourse,
+  unEnrollCourse,
 } = require("../controllers/courseController");
 
 router.post("/create-course", verifyJWT, createCourse);
@@ -84,5 +85,6 @@ router.post("/auto-delete-media", async (req, res) => {
 });
 
 router.post("/enroll-course", verifyJWT, enrollCourse);
+router.put("/unenroll-course", verifyJWT, unEnrollCourse);
 
 module.exports = router;

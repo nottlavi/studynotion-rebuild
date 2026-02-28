@@ -196,3 +196,67 @@ exports.enrollCourse = async (req, res) => {
     });
   }
 };
+
+exports.unEnrollCourse = async (req, res) => {
+  try {
+    const { courseId } = req.body;
+    const { userId } = req.user;
+
+    if (!courseId || !userId) {
+      return res.status(404).json({
+        success: false,
+        message: "missing imp fields",
+      });
+    }
+
+    const course = await courseModel.findById(courseId);
+    const user = await userModel.findById(userId);
+
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "no such course found",
+      });
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "no such user found",
+      });
+    }
+
+    if (
+      !course.enrolledUsers.some((id) => id.toString() === userId.toString())
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: "you are not enrolled in this course",
+      });
+    }
+
+    //removing the user id from course entry
+    await courseModel.findByIdAndUpdate(courseId, {
+      $pull: {
+        enrolledUsers: userId,
+      },
+    });
+
+    // removing the course id from user's model
+    await userModel.findByIdAndUpdate(userId, {
+      $pull: {
+        enrolledCourses: courseId,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "un enrolled from the course successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
