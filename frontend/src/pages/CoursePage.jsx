@@ -42,7 +42,6 @@ export const CoursePage = () => {
         { withCredentials: true },
       );
       if (res) {
-        console.log(res);
         dispatch(addToCart());
         dispatch(increaseTotal(currentCourse.price));
       }
