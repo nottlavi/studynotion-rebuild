@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 //importing redux stuff here
 import { useSelector, useDispatch } from "react-redux";
 import { removeFromCart, decreaseTotal } from "../../slices/cartSlice";
+import { fetchUserProfile } from "../../slices/userSlice";
 
 //importing dependencies here
 import axios from "axios";
@@ -79,6 +80,7 @@ export const CartPage = () => {
             console.log(err);
           }
         }
+        await dispatch(fetchUserProfile());
       }
     } catch (err) {
       console.log(err);
