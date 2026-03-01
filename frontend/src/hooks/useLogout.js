@@ -4,6 +4,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { clearProfile, clearToken } from "../slices/userSlice";
 import { useNavigate } from "react-router-dom";
+import { clearCart } from "../slices/cartSlice";
 
 export const useLogout = () => {
   const dispatch = useDispatch();
@@ -21,6 +22,8 @@ export const useLogout = () => {
         localStorage.removeItem("token");
         dispatch(clearProfile());
         dispatch(clearToken());
+        dispatch(clearCart());
+
         navigate("/");
       }
     } catch (err) {
