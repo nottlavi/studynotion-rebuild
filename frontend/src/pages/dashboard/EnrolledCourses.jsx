@@ -29,10 +29,25 @@ export const EnrolledCourses = () => {
   }, [profile]);
 
   ///all the functions here
-  const handleRemove = async () => {
+  const handleRemove = async (courseId) => {
     try {
-    } catch (err) {}
+      const res = await axios.put(
+        `${BASE_URL}/courses/unenroll-course`,
+        { courseId },
+        { withCredentials: true },
+      );
+
+      if (res) {
+        setEnrolledCourses((prevCourses) =>
+          prevCourses.filter((course) => course._id != courseId),
+        );
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+  console.log(enrolledCourses);
 
   return (
     <div>
@@ -98,7 +113,7 @@ export const EnrolledCourses = () => {
                 <MenuItem
                   as="button"
                   onClick={() => {
-                    handleRemove;
+                    handleRemove(ele._id);
                   }}
                 >
                   Remove
