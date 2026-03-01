@@ -42,6 +42,10 @@ const userSchema = new mongoose.Schema(
         ref: "Course",
       },
     ],
+    cart: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cart",
+    },
   },
   { timestamps: true },
 );

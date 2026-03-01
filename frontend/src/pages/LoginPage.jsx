@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+
+//importing redux stuff here
+import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "../slices/userSlice";
+import { FetchUserCartDetails } from "../slices/cartSlice";
+
 import { useNavigate, Link } from "react-router-dom";
 
 export const LoginPage = () => {
@@ -12,12 +16,14 @@ export const LoginPage = () => {
   });
   const [loading, setLoading] = useState(false);
 
-  //managing all the dependencies here
+  ///managing all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  //redux stuff here
 
-  //function to handle change in input fields
+  ///all the functions here
+  // function to handle change in input fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setInputs((prev) => ({ ...prev, [name]: value }));
@@ -34,8 +40,8 @@ export const LoginPage = () => {
       console.log(res);
       dispatch(setToken(res.data.token));
       localStorage.setItem("token", res.data.token);
-      // temporary fix for now
-      window.location.reload();
+      const resCart = await dispatch(FetchUserCartDetails());
+      console.log(resCart);
       console.log("login successful, navigating now...");
       navigate("/dashboard/my-profile");
     } catch (err) {
