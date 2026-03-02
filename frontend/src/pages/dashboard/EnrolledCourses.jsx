@@ -10,6 +10,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 //importing dependencies here
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export const EnrolledCourses = () => {
   //all the dependencies here
@@ -93,7 +94,10 @@ export const EnrolledCourses = () => {
                 className="rounded-md"
               />
               <div className="flex flex-col">
-                <p>{ele?.title}</p>
+                <Link to={`/view/course/${ele._id}`}>
+                  {" "}
+                  <p>{ele?.title}</p>
+                </Link>
                 <p>{ele?.description}</p>
               </div>
             </div>

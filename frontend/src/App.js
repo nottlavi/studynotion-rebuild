@@ -21,6 +21,7 @@ import { AboutPage } from "./pages/AboutPage";
 import { ContactUsPage } from "./pages/ContactUsPage";
 import { CartPage } from "./pages/dashboard/CartPage";
 import { EnrolledCourses } from "./pages/dashboard/EnrolledCourses";
+import { LecturePage } from "./pages/LecturePage";
 
 //importing redux state here
 import { setProfile, setToken } from "./slices/userSlice";
@@ -100,6 +101,11 @@ const App = () => {
         <Route path="/course/:courseId" element={<CoursePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactUsPage />} />
+
+        {/* route for student only / the lecture page / enrolled course viewing page */}
+        <Route element={<ProtectedRoute allowedRoles={["Student"]} />}>
+          <Route path="/view/course/:courseId" element={<LecturePage />} />
+        </Route>
 
         {/* route for non existing pages */}
         <Route path="*" element={<NotFound />} />
