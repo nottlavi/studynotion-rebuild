@@ -166,8 +166,36 @@ exports.enrollCourse = async (req, res) => {
         });
       }
 
-      await userModel
-        .findByIdAndUpdate(
+      // await userModel
+      //   .findByIdAndUpdate(
+      //     userId,
+      //     {
+      //       $addToSet: {
+      //         enrolledCourses: courseIds[i],
+      //       },
+      //     },
+      //     { new: true },
+      //   )
+      //   .populate("enrolledCourses");
+
+  //Task 1: Part 2 starts here
+      const alreadyPurchased = user.purchasedCourses.includes(course._id);
+      let updatedUser;
+      if(!alreadyPurchased){
+        //Logic to add the course for first time in both enrolled and purchased courses fields.
+        updatedUser = await userModel.findByIdAndUpdate(
+          userId,
+          {
+            $addToSet: {
+              enrolledCourses: courseIds[i],
+              purchasedCourses: courseIds[i],
+            },
+          },
+          { new: true },
+        ).populate("enrolledCourses");
+      }else{
+        //Logic to Re-enroll only in enrolled courses.
+        updatedUser = await userModel.findByIdAndUpdate(
           userId,
           {
             $addToSet: {
@@ -175,8 +203,9 @@ exports.enrollCourse = async (req, res) => {
             },
           },
           { new: true },
-        )
-        .populate("enrolledCourses");
+        ).populate("enrolledCourses");
+      }
+ //Task 1: Part 2 ends here
 
       await courseModel.findByIdAndUpdate(courseIds[i], {
         $addToSet: {
@@ -196,3 +225,56 @@ exports.enrollCourse = async (req, res) => {
     });
   }
 };
+
+
+/*unenrollCourse() function starts here. 
+  It can remove courses from enrollCourses field but is not allowed to remove courses from purchasedCourses field.
+*/ 
+// Task 2: Part 1.2 starts here
+exports.unenrollCourse = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { courseId } = req.body;
+
+    if (!userId || !courseId) {
+      return res.status(400).json({
+        success: false,
+        message: "not enough data",
+      });
+    }
+
+    // check if course exists
+    const course = await courseModel.findById(courseId);
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "course not found",
+      });
+    }
+
+    // REMOVE only from enrolledCourses
+    await userModel.findByIdAndUpdate(
+      userId,
+      {
+        $pull: { enrolledCourses: courseId },
+      },
+      { new: true },
+    );
+
+    // also remove user from course's enrolledUsers
+    await courseModel.findByIdAndUpdate(courseId, {
+      $pull: { enrolledUsers: userId },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "unenrolled successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+// Task 2: Part 1.2 ends here
