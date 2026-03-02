@@ -10,7 +10,7 @@ const initialState = {
     purchasedCourses : [],
     
     /*
-    Here in profile defines enrolledCourses and purchasedCourses fields because now bacckend sends them both
+    Here in profile defined enrolledCourses and purchasedCourses fields because now bacckend sends them both
      */
   },
 };
