@@ -5,7 +5,14 @@ import axios from "axios";
 const initialState = {
   email: "",
   token: "",
-  profile: {},
+  profile: {
+    enrolledCourses : [],
+    purchasedCourses : [],
+    
+    /*
+    Here in profile defines enrolledCourses and purchasedCourses fields because now bacckend sends them both
+     */
+  },
 };
 
 export const fetchUserProfile = createAsyncThunk(
