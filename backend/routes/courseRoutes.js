@@ -13,6 +13,7 @@ const {
   createCourse,
   getCourseDetailsById,
   enrollCourse,
+  unenrollCourse,
 } = require("../controllers/courseController");
 
 router.post("/create-course", verifyJWT, createCourse);
