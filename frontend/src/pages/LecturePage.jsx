@@ -1,5 +1,10 @@
-import React from "react";
+///all the imports here
+import { LectureSideBar } from "../components/LectureSideBar";
 
 export const LecturePage = () => {
-  return <div>LecturePage</div>;
+  return (
+    <div className="flex">
+      <LectureSideBar />
+    </div>
+  );
 };
