@@ -48,8 +48,6 @@ export const EnrolledCourses = () => {
     }
   };
 
-  console.log(enrolledCourses);
-
   return (
     <div>
       {/* location and enrolled coursesheading */}
