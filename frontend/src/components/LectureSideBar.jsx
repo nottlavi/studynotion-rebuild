@@ -10,11 +10,6 @@ export const LectureSideBar = () => {
   ///all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const { courseId } = useParams();
-  const totalSubsections =
-    currentCourse?.sections?.reduce(
-      (acc, section) => acc + (section.subsections?.length || 0),
-      0,
-    ) || 0;
 
   ///all the states here
   const [currentCourse, setCurrentCourse] = useState({});
@@ -40,10 +35,20 @@ export const LectureSideBar = () => {
   ///all the functions here
   // function to add the clicked section to the array of expanded sections
   const expandSection = (sectionId) => {
-    setSectionsExpanded((prev) => [...prev, sectionId]);
+    if (!sectionsExpanded.includes(sectionId)) {
+      setSectionsExpanded((prev) => [...prev, sectionId]);
+    } else {
+      setSectionsExpanded((prev) => prev.filter((id) => id !== sectionId));
+    }
   };
 
-  console.log(currentCourse);
+  const totalSubsections =
+    currentCourse?.sections?.reduce(
+      (acc, section) => acc + (section.subsections?.length || 0),
+      0,
+    ) || 0;
+
+  console.log(currentCourse, sectionsExpanded);
   return (
     <div className="flex flex-col">
       {/* the info container */}
@@ -68,10 +73,22 @@ export const LectureSideBar = () => {
           const minutes = Math.floor(sectionDuration / 60);
           const seconds = Math.floor(sectionDuration % 60);
           return (
-            <div key={section._id} className="flex">
-              {section?.title}
-              {`${minutes} minutes ${seconds} seconds`}
-              <IoIosArrowDown />
+            <div
+              key={section._id}
+              className="flex cursor-pointer items-center justify-between"
+              onClick={() => {
+                expandSection(section._id);
+              }}
+            >
+              <div>{section?.title}</div>
+              <div className="flex items-center">
+                {`${minutes}m${seconds}s`}
+                {sectionsExpanded.includes(section._id) ? (
+                  <IoIosArrowUp />
+                ) : (
+                  <IoIosArrowDown />
+                )}
+              </div>
             </div>
           );
         })}
