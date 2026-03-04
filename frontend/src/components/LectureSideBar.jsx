@@ -73,22 +73,37 @@ export const LectureSideBar = () => {
           const minutes = Math.floor(sectionDuration / 60);
           const seconds = Math.floor(sectionDuration % 60);
           return (
-            <div
-              key={section._id}
-              className="flex cursor-pointer items-center justify-between"
-              onClick={() => {
-                expandSection(section._id);
-              }}
-            >
-              <div>{section?.title}</div>
-              <div className="flex items-center">
-                {`${minutes}m${seconds}s`}
-                {sectionsExpanded.includes(section._id) ? (
-                  <IoIosArrowUp />
-                ) : (
-                  <IoIosArrowDown />
-                )}
+            <div key={section._id} className="relative">
+              <div
+                onClick={() => {
+                  expandSection(section._id);
+                }}
+                className="flex cursor-pointer items-center justify-between"
+              >
+                <div>{section?.title}</div>
+                <div className="flex items-center">
+                  {`${minutes}m${seconds}s`}
+                  {sectionsExpanded.includes(section._id) ? (
+                    <IoIosArrowUp />
+                  ) : (
+                    <IoIosArrowDown />
+                  )}
+                </div>
               </div>
+
+              {/* the whole ui below will only be rendered if the current section on the map is expanded */}
+              {sectionsExpanded.includes(section._id) && (
+                //will render all the subsections of this particular section here
+                <div>
+                  {section?.subsections?.map((subsection) => (
+                    // the individual subsection
+                    <div className="flex">
+                      {/* check box */}
+                      {subsection?.title}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           );
         })}
