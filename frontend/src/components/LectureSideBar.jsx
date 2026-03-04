@@ -48,7 +48,6 @@ export const LectureSideBar = () => {
       0,
     ) || 0;
 
-  console.log(currentCourse, sectionsExpanded);
   return (
     <div className="flex flex-col">
       {/* the info container */}
@@ -78,7 +77,7 @@ export const LectureSideBar = () => {
                 onClick={() => {
                   expandSection(section._id);
                 }}
-                className="flex cursor-pointer items-center justify-between"
+                className="flex cursor-pointer items-center justify-between gap-4"
               >
                 <div>{section?.title}</div>
                 <div className="flex items-center">
