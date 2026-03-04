@@ -37,7 +37,10 @@ export const LecturePage = () => {
 
   return (
     <div className="flex">
-      <LectureSideBar />
+      <LectureSideBar
+        setCurrentLecture={setCurrentLecture}
+        currentCourse={currentCourse}
+      />
       {/* the lecture container */}
       <div className="flex flex-col">
         <video

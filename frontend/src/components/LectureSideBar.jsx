@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 //importing icons here
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 
-export const LectureSideBar = () => {
+export const LectureSideBar = ({ setCurrentLecture }) => {
   ///all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const { courseId } = useParams();
@@ -93,10 +93,15 @@ export const LectureSideBar = () => {
               {/* the whole ui below will only be rendered if the current section on the map is expanded */}
               {sectionsExpanded.includes(section._id) && (
                 //will render all the subsections of this particular section here
-                <div>
+                <div className="cursor-pointer">
                   {section?.subsections?.map((subsection) => (
                     // the individual subsection
-                    <div className="flex">
+                    <div
+                      className="flex"
+                      onClick={() => {
+                        setCurrentLecture(subsection);
+                      }}
+                    >
                       {/* check box */}
                       {subsection?.title}
                     </div>
