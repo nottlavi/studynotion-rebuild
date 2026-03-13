@@ -46,6 +46,22 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Cart",
     },
+    ratedCourses: [
+      {
+        courseId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Course",
+        },
+        rating: {
+          type: Number,
+          min: 0,
+          max: 5,
+        },
+        review: {
+          type: String,
+        },
+      },
+    ],
   },
   { timestamps: true },
 );

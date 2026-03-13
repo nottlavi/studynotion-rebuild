@@ -53,6 +53,11 @@ const courseSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+    },
   },
   { timestamps: true },
 );
