@@ -9,8 +9,6 @@ import { LectureSideBar } from "../components/LectureSideBar";
 import { RatingReviewModal } from "../components/RatingReviewModal";
 
 //importing icons here
-import { IoCloseOutline } from "react-icons/io5";
-import { CiStar } from "react-icons/ci";
 
 //importing redux stuff here
 import { useSelector } from "react-redux";
@@ -70,7 +68,11 @@ export const LecturePage = () => {
       </div>
 
       {ratingModal && (
-        <RatingReviewModal profile={profile} setRatingModal={setRatingModal} />
+        <RatingReviewModal
+          profile={profile}
+          setRatingModal={setRatingModal}
+          courseId={courseId}
+        />
       )}
     </div>
   );

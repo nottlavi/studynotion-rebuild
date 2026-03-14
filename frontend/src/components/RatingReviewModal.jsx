@@ -1,7 +1,21 @@
 import { IoCloseOutline } from "react-icons/io5";
-import { CiStar } from "react-icons/ci";
+import { FaStar } from "react-icons/fa";
+import { useEffect, useState } from "react";
 
-export const RatingReviewModal = ({ profile, setRatingModal }) => {
+export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
+  ///all the states here
+  const [currentRating, setCurrentRating] = useState(0);
+
+  useEffect(() => {
+    const ratedCourse = profile?.ratedCourses?.find(
+      (course) => course.courseId == courseId,
+    );
+
+    if (ratedCourse) {
+      setCurrentRating(ratedCourse?.rating);
+    }
+  }, [profile]);
+
   return (
     <div
       className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm"
@@ -34,11 +48,41 @@ export const RatingReviewModal = ({ profile, setRatingModal }) => {
 
         {/* rating */}
         <div className="flex justify-center gap-1 pb-4">
-          <CiStar className="cursor-pointer" />
-          <CiStar className="cursor-pointer" />
-          <CiStar className="cursor-pointer" />
-          <CiStar className="cursor-pointer" />
-          <CiStar className="cursor-pointer" />
+          <FaStar
+            className={
+              currentRating >= 1
+                ? "text-yellow-500 cursor-pointer"
+                : "text-white cursor-pointer"
+            }
+          />
+          <FaStar
+            className={
+              currentRating >= 2
+                ? "text-yellow-500 cursor-pointer"
+                : "text-white cursor-pointer"
+            }
+          />
+          <FaStar
+            className={
+              currentRating >= 3
+                ? "text-yellow-500 cursor-pointer"
+                : "text-white cursor-pointer"
+            }
+          />
+          <FaStar
+            className={
+              currentRating >= 4
+                ? "text-yellow-500 cursor-pointer"
+                : "text-white cursor-pointer"
+            }
+          />
+          <FaStar
+            className={
+              currentRating >= 5
+                ? "text-yellow-500 cursor-pointer"
+                : "text-white cursor-pointer"
+            }
+          />
         </div>
 
         {/* review input */}
@@ -51,7 +95,7 @@ export const RatingReviewModal = ({ profile, setRatingModal }) => {
 
         {/* cancel and save button */}
         <div className="flex justify-end gap-3">
-          <button>Cancel</button>
+          <button onClick={() => setRatingModal(false)}>Cancel</button>
           <button>Save</button>
         </div>
       </div>
