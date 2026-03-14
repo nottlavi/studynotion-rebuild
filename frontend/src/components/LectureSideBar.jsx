@@ -6,7 +6,11 @@ import { useParams } from "react-router-dom";
 //importing icons here
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 
-export const LectureSideBar = ({ setCurrentLecture }) => {
+export const LectureSideBar = ({
+  setCurrentLecture,
+  ratingModal,
+  setRatingModal,
+}) => {
   ///all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const { courseId } = useParams();
@@ -14,6 +18,8 @@ export const LectureSideBar = ({ setCurrentLecture }) => {
   ///all the states here
   const [currentCourse, setCurrentCourse] = useState({});
   const [sectionsExpanded, setSectionsExpanded] = useState([]);
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState("");
 
   ///all the useEffects here
   //useEffect to fetch the course details whenever the course id changes
@@ -42,6 +48,15 @@ export const LectureSideBar = ({ setCurrentLecture }) => {
     }
   };
 
+  //function to add / edit review
+  const reviewHandler = async () => {
+    const res = await axios.post(
+      `${BASE_URL}/rating-review/add`,
+      { courseId: courseId },
+      { withCredentials: true },
+    );
+  };
+
   const totalSubsections =
     currentCourse?.sections?.reduce(
       (acc, section) => acc + (section.subsections?.length || 0),
@@ -58,7 +73,13 @@ export const LectureSideBar = ({ setCurrentLecture }) => {
           <p>x / {totalSubsections}</p>
         </div>
         {/* add review div */}
-        <div>Add Review</div>
+        <button
+          onClick={() => {
+            setRatingModal(true);
+          }}
+        >
+          Add Review
+        </button>
       </div>
       {/* the sections container */}
       <div>

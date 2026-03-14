@@ -7,6 +7,6 @@ const { addRatingReview } = require("../controllers/ratingReviewController");
 //importing middlewares here
 const { verifyJWT } = require("../middlewares/userMiddleware");
 
-router.post("/add-rating-review", verifyJWT, addRatingReview);
+router.post("/add", verifyJWT, addRatingReview);
 
 module.exports = router;
