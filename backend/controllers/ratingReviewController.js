@@ -14,7 +14,7 @@ exports.addRatingReview = async (req, res) => {
       });
     }
 
-    const user = await userModel.findById(userId);
+    const user = await userModel.findById(userId).select("-password");
 
     //checking if the user is enrolled in the course
     if (!user.enrolledCourses.includes(courseId)) {
@@ -27,8 +27,6 @@ exports.addRatingReview = async (req, res) => {
     const ratedCourse = user.ratedCourses.find(
       (course) => course.courseId.toString() === courseId,
     );
-
-    console.log(ratedCourse);
 
     if (!ratedCourse) {
       user.ratedCourses.push({
@@ -46,8 +44,12 @@ exports.addRatingReview = async (req, res) => {
       });
     }
 
-    ratedCourse.rating = rating;
-    ratedCourse.review = review;
+    if (rating != undefined) {
+      ratedCourse.rating = rating;
+    }
+    if (review !== undefined) {
+      ratedCourse.review = review;
+    }
 
     await user.save();
 
@@ -58,5 +60,53 @@ exports.addRatingReview = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
+  }
+};
+
+exports.getRatingReview = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { courseId } = req.body;
+
+    console.log(courseId, userId);
+
+    if (!userId || !courseId) {
+      return res.status(404).json({
+        success: false,
+        message: "missing required fields",
+      });
+    }
+
+    const user = await userModel.findById(userId);
+
+    if (!user.enrolledCourses.includes(courseId)) {
+      return res.status(400).json({
+        success: false,
+        message: "the user is not enrolled in this course",
+      });
+    }
+
+    //finding this particular course in the rated course array of user
+    const ratedCourse = user.ratedCourses.find(
+      (course) => course.courseId == courseId,
+    );
+
+    if (!ratedCourse) {
+      return res.status(400).json({
+        success: false,
+        message: "user hasnt rated the course yet",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "course rating details fetched successfully",
+      rating: ratedCourse,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err,
+    });
   }
 };

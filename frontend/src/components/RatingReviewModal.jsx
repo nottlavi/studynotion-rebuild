@@ -1,8 +1,16 @@
+///all the imports here
+//importing icons here
 import { IoCloseOutline } from "react-icons/io5";
 import { FaStar } from "react-icons/fa";
-import { useEffect, useState } from "react";
+
+//importing dependencies here
+import { cacheSignal, useEffect, useState } from "react";
+import axios from "axios";
 
 export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
+  ///all the dependencies here
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
+
   ///all the states here
   //state to manage the rating which will be sent to the backend
   const [currentRating, setCurrentRating] = useState(0);
@@ -36,6 +44,34 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
       setUnblockButton(false);
     }
   }, [currentRating, currentReview, initialRating, initialReview]);
+
+  ///all the functions here
+  //function to send backend request to update / create rating
+  const saveRating = async () => {
+    const payload = { courseId };
+
+    if (currentRating != initialRating) {
+      payload.rating = currentRating;
+    }
+
+    if (currentReview != initialReview) {
+      payload.review = currentReview;
+    }
+
+    console.log(payload);
+
+    try {
+      const res = await axios.post(`${BASE_URL}/rating-review/add`, payload, {
+        withCredentials: true,
+      });
+
+      console.log("here is your backend result: ", res);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  console.log("here is your redux profile: ", profile);
 
   return (
     <div
@@ -138,7 +174,9 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
         {/* cancel and save button */}
         <div className="flex justify-end gap-3">
           <button onClick={() => setRatingModal(false)}>Cancel</button>
-          <button disabled={!unblockButton}>Save</button>
+          <button disabled={!unblockButton} onClick={saveRating}>
+            Save
+          </button>
         </div>
       </div>
     </div>
