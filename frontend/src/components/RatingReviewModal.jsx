@@ -4,17 +4,38 @@ import { useEffect, useState } from "react";
 
 export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
   ///all the states here
+  //state to manage the rating which will be sent to the backend
   const [currentRating, setCurrentRating] = useState(0);
+  const [currentReview, setCurrentReview] = useState("");
+  //state to check if rating was really changed
+  const [initialRating, setInitialRating] = useState(0);
+  const [initialReview, setInitialReview] = useState("");
 
+  const [unblockButton, setUnblockButton] = useState(false);
+
+  ///all the useEffects here
+  //use effect to change the rating states if profile or course is changed
   useEffect(() => {
     const ratedCourse = profile?.ratedCourses?.find(
       (course) => course.courseId == courseId,
     );
 
     if (ratedCourse) {
-      setCurrentRating(ratedCourse?.rating);
+      setCurrentRating(ratedCourse?.rating || 0);
+      setInitialRating(ratedCourse?.rating || 0);
+      setInitialReview(ratedCourse?.review || "");
+      setCurrentReview(ratedCourse?.review || "");
     }
-  }, [profile]);
+  }, [profile, courseId]);
+
+  //useEffect to toggle the changed state to unblock the save button only if rating of review is changed
+  useEffect(() => {
+    if (currentRating != initialRating || currentReview != initialReview) {
+      setUnblockButton(true);
+    } else {
+      setUnblockButton(false);
+    }
+  }, [currentRating, currentReview, initialRating, initialReview]);
 
   return (
     <div
@@ -54,6 +75,9 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
                 ? "text-yellow-500 cursor-pointer"
                 : "text-white cursor-pointer"
             }
+            onClick={() => {
+              setCurrentRating(1);
+            }}
           />
           <FaStar
             className={
@@ -61,6 +85,9 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
                 ? "text-yellow-500 cursor-pointer"
                 : "text-white cursor-pointer"
             }
+            onClick={() => {
+              setCurrentRating(2);
+            }}
           />
           <FaStar
             className={
@@ -68,6 +95,9 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
                 ? "text-yellow-500 cursor-pointer"
                 : "text-white cursor-pointer"
             }
+            onClick={() => {
+              setCurrentRating(3);
+            }}
           />
           <FaStar
             className={
@@ -75,6 +105,9 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
                 ? "text-yellow-500 cursor-pointer"
                 : "text-white cursor-pointer"
             }
+            onClick={() => {
+              setCurrentRating(4);
+            }}
           />
           <FaStar
             className={
@@ -82,6 +115,9 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
                 ? "text-yellow-500 cursor-pointer"
                 : "text-white cursor-pointer"
             }
+            onClick={() => {
+              setCurrentRating(5);
+            }}
           />
         </div>
 
@@ -90,13 +126,19 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
           <p>
             Add Your Experience <span className="text-red-600">*</span>
           </p>
-          <input type="text" />
+          <input
+            type="text"
+            value={currentReview}
+            onChange={(e) => {
+              setCurrentReview(e.target.value);
+            }}
+          />
         </div>
 
         {/* cancel and save button */}
         <div className="flex justify-end gap-3">
           <button onClick={() => setRatingModal(false)}>Cancel</button>
-          <button>Save</button>
+          <button disabled={!unblockButton}>Save</button>
         </div>
       </div>
     </div>

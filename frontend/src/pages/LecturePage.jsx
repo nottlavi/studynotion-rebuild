@@ -43,9 +43,6 @@ export const LecturePage = () => {
     getCourseDetails();
   }, [courseId]);
 
-  console.log(currentLecture);
-  console.log(profile);
-
   return (
     <div className="flex fixed">
       <LectureSideBar
