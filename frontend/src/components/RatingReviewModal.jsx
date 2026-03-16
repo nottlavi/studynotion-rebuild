@@ -4,7 +4,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import { FaStar } from "react-icons/fa";
 
 //importing dependencies here
-import { cacheSignal, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
@@ -24,16 +24,30 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
   ///all the useEffects here
   //use effect to change the rating states if profile or course is changed
   useEffect(() => {
-    const ratedCourse = profile?.ratedCourses?.find(
-      (course) => course.courseId == courseId,
-    );
+    const fetchRatingDetails = async () => {
+      try {
+        const res = await axios.post(
+          `${BASE_URL}/rating-review/get`,
+          { courseId },
+          { withCredentials: true },
+        );
 
-    if (ratedCourse) {
-      setCurrentRating(ratedCourse?.rating || 0);
-      setInitialRating(ratedCourse?.rating || 0);
-      setInitialReview(ratedCourse?.review || "");
-      setCurrentReview(ratedCourse?.review || "");
-    }
+        if (res) {
+          console.log(res);
+        }
+
+        if (res) {
+          setCurrentRating(res?.data?.rating?.rating || 0);
+          setInitialRating(res?.data?.rating?.rating || 0);
+          setInitialReview(res?.data?.rating?.review || "");
+          setCurrentReview(res?.data?.rating?.review || "");
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchRatingDetails();
   }, [profile, courseId]);
 
   //useEffect to toggle the changed state to unblock the save button only if rating of review is changed
@@ -65,7 +79,9 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
         withCredentials: true,
       });
 
-      console.log("here is your backend result: ", res);
+      if (res) {
+        setRatingModal(false);
+      }
     } catch (err) {
       console.log(err);
     }
