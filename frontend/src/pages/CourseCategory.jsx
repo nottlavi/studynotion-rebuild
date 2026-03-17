@@ -14,7 +14,7 @@ export const CourseCategory = () => {
     const fetchCategoryDetailsById = async (e) => {
       try {
         const res = await axios.get(
-          `${BASE_URL}/category/get-category-by-id/${categoryId}`
+          `${BASE_URL}/category/get-category-by-id/${categoryId}`,
         );
         if (res) {
           setCategoryCourses(res.data.category.courses);
@@ -26,12 +26,23 @@ export const CourseCategory = () => {
     fetchCategoryDetailsById();
   }, [categoryId]);
 
+  useEffect(() => {
+    console.log(categoryCourses);
+  }, [categoryCourses]);
+
   return (
     <div>
       {categoryCourses.map((ele) => {
         return (
-          <Link to={`/course/${ele._id}`} key={ele._id}>
-            <div>{ele.title}</div>
+          // the individual course
+          <Link
+            to={`/course/${ele._id}`}
+            key={ele._id}
+            className="flex flex-col"
+          >
+            <img src={ele?.thumbnail} width={100} height={100} />
+            <div>{ele?.title}</div>
+            <div>{ele?.price}</div>
           </Link>
         );
       })}

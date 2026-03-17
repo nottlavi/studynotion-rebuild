@@ -1,3 +1,4 @@
+const courseModel = require("../models/courseModel");
 const userModel = require("../models/userModel");
 
 exports.addRatingReview = async (req, res) => {
@@ -15,8 +16,13 @@ exports.addRatingReview = async (req, res) => {
     }
 
     const user = await userModel.findById(userId).select("-password");
+    const course = await courseModel.findById(courseId);
 
-    //checking if the user is enrolled in the course
+    //this constant here to update the course avg rating and count whenever a user rates
+    const oldAverage = course.rating.average;
+    const oldCount = course.rating.count;
+
+    //checking if the user is enrolled in the course or not
     if (!user.enrolledCourses.includes(courseId)) {
       return res.status(400).json({
         success: false,
@@ -37,6 +43,11 @@ exports.addRatingReview = async (req, res) => {
 
       await user.save();
 
+      course.rating.average = (oldAverage * oldCount + rating) / (oldCount + 1);
+      course.rating.count += 1;
+
+      await course.save();
+
       return res.status(200).json({
         success: true,
         message: "successfully rated the course",
@@ -44,14 +55,22 @@ exports.addRatingReview = async (req, res) => {
       });
     }
 
-    if (rating != undefined) {
+    const oldUserRating = ratedCourse.rating;
+
+    if (rating !== undefined) {
       ratedCourse.rating = rating;
     }
     if (review !== undefined) {
       ratedCourse.review = review;
     }
 
+    if (rating !== undefined) {
+      course.rating.average =
+        (oldAverage * oldCount - oldUserRating + rating) / oldCount;
+    }
+
     await user.save();
+    await course.save();
 
     return res.status(200).json({
       success: true,

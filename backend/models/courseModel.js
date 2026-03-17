@@ -54,9 +54,16 @@ const courseSchema = new mongoose.Schema(
       },
     ],
     rating: {
-      type: Number,
-      min: 0,
-      max: 5,
+      average: {
+        type: Number,
+        min: 0,
+        max: 5,
+        default: 0,
+      },
+      count: {
+        type: Number,
+        default: 0,
+      },
     },
   },
   { timestamps: true },
