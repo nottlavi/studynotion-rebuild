@@ -9,7 +9,7 @@ import { ReviewComponent } from "../components/semi/ReviewComponent";
 import { GoDotFill } from "react-icons/go";
 import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
 import { IoVideocam } from "react-icons/io5";
-import { FaShareSquare } from "react-icons/fa";
+import { FaShareSquare, FaStar } from "react-icons/fa";
 
 //importing redux stuff here
 import { useDispatch, useSelector } from "react-redux";
@@ -103,6 +103,51 @@ export const CoursePage = () => {
         <div> {currentCourse?.title}</div>
         {/* div for course description */}
         <div>{currentCourse?.description}</div>
+        {/* div for course ratings and no of students already enrolled */}
+        <div className="flex gap-1 items-center">
+          <p>{currentCourse?.rating?.average}</p>
+          {/* the rating stars div */}
+          <div className="flex gap-1">
+            <FaStar
+              className={
+                currentCourse?.rating?.average >= 1
+                  ? "text-yellow-500"
+                  : "text-white"
+              }
+            />
+            <FaStar
+              className={
+                currentCourse?.rating?.average >= 2
+                  ? "text-yellow-500"
+                  : "text-white"
+              }
+            />
+            <FaStar
+              className={
+                currentCourse?.rating?.average >= 3
+                  ? "text-yellow-500"
+                  : "text-white"
+              }
+            />
+            <FaStar
+              className={
+                currentCourse?.rating?.average >= 4
+                  ? "text-yellow-500"
+                  : "text-white"
+              }
+            />
+            <FaStar
+              className={
+                currentCourse?.rating?.average >= 5
+                  ? "text-yellow-500"
+                  : "text-white"
+              }
+            />
+          </div>
+          {/* total no of ratings */}
+          <p>({currentCourse?.rating?.count} ratings)</p>
+          <p>{currentCourse?.enrolledUsers?.length} student(s)</p>
+        </div>
         <div>
           created by {currentCourse?.instructor?.firstName}{" "}
           {currentCourse?.instructor?.lastName}
