@@ -270,7 +270,7 @@ exports.deleteCourse = async (req, res) => {
     const { userId } = req.user;
 
     if (!courseId || !userId) {
-      return res.status().json({
+      return res.status(400).json({
         success: false,
         message: "in-sufficient credentials",
       });
@@ -330,9 +330,11 @@ exports.deleteCourse = async (req, res) => {
       message: "course deleted successfully",
     });
   } catch (err) {
+    console.error("DELETE COURSE ERROR:", err); // 👈 ADD THIS
+
     return res.status(500).json({
       success: false,
-      message: err.message,
+      message: err.message || err,
     });
   }
 };

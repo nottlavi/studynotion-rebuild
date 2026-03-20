@@ -75,6 +75,7 @@ export const MyCourses = () => {
           deleteModalOpen={deleteModalOpen}
           setDeleteModalOpen={setDeleteModalOpen}
           courseDeleted={courseDeleted}
+          setOwnedCourses={setOwnedCourses}
         />
       )}
 
