@@ -14,6 +14,7 @@ const {
   getCourseDetailsById,
   enrollCourse,
   unEnrollCourse,
+  deleteCourse,
 } = require("../controllers/courseController");
 
 router.post("/create-course", verifyJWT, createCourse);
@@ -86,5 +87,6 @@ router.post("/auto-delete-media", async (req, res) => {
 
 router.post("/enroll-course", verifyJWT, enrollCourse);
 router.put("/unenroll-course", verifyJWT, unEnrollCourse);
+router.delete("/delete-course", verifyJWT, deleteCourse);
 
 module.exports = router;

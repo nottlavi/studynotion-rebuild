@@ -1,6 +1,9 @@
 const categoryModel = require("../models/categoryModel");
 const courseModel = require("../models/courseModel");
 const userModel = require("../models/userModel");
+const sectionModel = require("../models/sectionModel");
+const subSectionModel = require("../models/subSectionModel");
+const reviewModel = require("../models/reviewModel");
 
 //only instructor should access this function
 exports.createCourse = async (req, res) => {
@@ -252,6 +255,79 @@ exports.unEnrollCourse = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "un enrolled from the course successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.deleteCourse = async (req, res) => {
+  try {
+    const { courseId } = req.body;
+    const { userId } = req.user;
+
+    if (!courseId || !userId) {
+      return res.status().json({
+        success: false,
+        message: "in-sufficient credentials",
+      });
+    }
+
+    const user = await userModel.findById(userId);
+    const course = await courseModel.findById(courseId);
+
+    if (user.accountType !== "Instructor") {
+      return res.status(400).json({
+        success: false,
+        message: "you are not an instructor",
+      });
+    }
+
+    if (!course) {
+      return res.status(400).json({
+        success: false,
+        message: "no such course exists in the db",
+      });
+    }
+
+    if (!user.courses.includes(courseId)) {
+      return res.status(400).json({
+        success: false,
+        message: "you do not own the course which you wish to delete",
+      });
+    }
+
+    //removing the course from the entries of the user who have enrolled in this course
+    await userModel.updateMany(
+      { enrolledCourses: courseId },
+      { $pull: { enrolledCourses: courseId } },
+    );
+
+    //removing thr course from the the instructors entry
+    await userModel.findByIdAndUpdate(userId, { $pull: { courses: courseId } });
+
+    //removing it from the category
+    await categoryModel.updateOne(
+      { courses: courseId },
+      { $pull: { courses: courseId } },
+    );
+
+    // deleting all subsections belonging to these sections
+    await subSectionModel.deleteMany({ section: { $in: course.sections } });
+
+    // deleting all sections of this course
+    await sectionModel.deleteMany({ _id: { $in: course.sections } });
+
+    await reviewModel.deleteMany({ course: courseId });
+
+    await courseModel.findByIdAndDelete(courseId);
+
+    return res.status(200).json({
+      success: true,
+      message: "course deleted successfully",
     });
   } catch (err) {
     return res.status(500).json({

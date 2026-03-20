@@ -378,14 +378,15 @@ exports.getProfileByToken = async (req, res) => {
     const user = await userModel
       .findById(userId)
       .select("-password")
-      .populate("courses")
+      .populate({
+        path: "courses",
+        populate: { path: "sections", populate: { path: "subsections" } },
+      })
       .populate("profile")
       .populate({
         path: "enrolledCourses",
         populate: { path: "sections", populate: { path: "subsections" } },
       });
-
-    console.log(user);
 
     return res.status(200).json({
       success: true,
