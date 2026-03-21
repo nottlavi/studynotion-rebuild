@@ -89,133 +89,128 @@ export const CoursePage = () => {
   const seconds = Math.round((totalLectureSeconds - minutes) * 60);
 
   return (
-    <div>
-      {/* section 1 */}
-      <div className="flex flex-col gap-2 relative">
-        {/* div for path */}
-        <div>
-          Home / Learning /{" "}
-          {currentCourse?.category?.name === "web-development"
-            ? "Web Development"
-            : ""}
-        </div>
-        {/* div for course title */}
-        <div> {currentCourse?.title}</div>
-        {/* div for course description */}
-        <div>{currentCourse?.description}</div>
-        {/* div for course ratings and no of students already enrolled */}
-        <div className="flex gap-1 items-center">
-          <p>{currentCourse?.rating?.average}</p>
-          {/* the rating stars div */}
-          <div className="flex gap-1">
-            <FaStar
-              className={
-                currentCourse?.rating?.average >= 1
-                  ? "text-yellow-500"
-                  : "text-white"
-              }
-            />
-            <FaStar
-              className={
-                currentCourse?.rating?.average >= 2
-                  ? "text-yellow-500"
-                  : "text-white"
-              }
-            />
-            <FaStar
-              className={
-                currentCourse?.rating?.average >= 3
-                  ? "text-yellow-500"
-                  : "text-white"
-              }
-            />
-            <FaStar
-              className={
-                currentCourse?.rating?.average >= 4
-                  ? "text-yellow-500"
-                  : "text-white"
-              }
-            />
-            <FaStar
-              className={
-                currentCourse?.rating?.average >= 5
-                  ? "text-yellow-500"
-                  : "text-white"
-              }
-            />
+    <main className="site-shell float-in">
+      <div className="grid lg:grid-cols-[1fr_320px] gap-4 relative">
+        <div className="page-hero flex flex-col gap-2">
+          <div className="text-sm text-slate-500">
+            Home / Learning /{" "}
+            {currentCourse?.category?.name === "web-development"
+              ? "Web Development"
+              : ""}
           </div>
-          {/* total no of ratings */}
-          <p>({currentCourse?.rating?.count} ratings)</p>
-          <p>{currentCourse?.enrolledUsers?.length} student(s)</p>
-        </div>
-        <div>
-          created by {currentCourse?.instructor?.firstName}{" "}
-          {currentCourse?.instructor?.lastName}
-        </div>
-        <div className="flex gap-2">
-          <div>
-            {currentCourse?.createdAt &&
-              new Date(currentCourse.createdAt).toLocaleDateString()}
+          <div className="text-3xl font-extrabold">{currentCourse?.title}</div>
+          <div className="text-slate-700">{currentCourse?.description}</div>
+          <div className="flex gap-1 items-center flex-wrap">
+            <p>{currentCourse?.rating?.average}</p>
+            <div className="flex gap-1">
+              <FaStar
+                className={
+                  currentCourse?.rating?.average >= 1
+                    ? "text-yellow-500"
+                    : "text-white"
+                }
+              />
+              <FaStar
+                className={
+                  currentCourse?.rating?.average >= 2
+                    ? "text-yellow-500"
+                    : "text-white"
+                }
+              />
+              <FaStar
+                className={
+                  currentCourse?.rating?.average >= 3
+                    ? "text-yellow-500"
+                    : "text-white"
+                }
+              />
+              <FaStar
+                className={
+                  currentCourse?.rating?.average >= 4
+                    ? "text-yellow-500"
+                    : "text-white"
+                }
+              />
+              <FaStar
+                className={
+                  currentCourse?.rating?.average >= 5
+                    ? "text-yellow-500"
+                    : "text-white"
+                }
+              />
+            </div>
+            <p>({currentCourse?.rating?.count} ratings)</p>
+            <p>{currentCourse?.enrolledUsers?.length} student(s)</p>
           </div>
-          <div>|</div>
-          <div>
-            {currentCourse?.createdAt &&
-              new Date(currentCourse.createdAt).toLocaleTimeString()}
+          <div className="text-slate-700">
+            created by {currentCourse?.instructor?.firstName}{" "}
+            {currentCourse?.instructor?.lastName}
+          </div>
+          <div className="flex gap-2 text-sm text-slate-500">
+            <div>
+              {currentCourse?.createdAt &&
+                new Date(currentCourse.createdAt).toLocaleDateString()}
+            </div>
+            <div>|</div>
+            <div>
+              {currentCourse?.createdAt &&
+                new Date(currentCourse.createdAt).toLocaleTimeString()}
+            </div>
           </div>
         </div>
+
+        {profile?.accountType === "Instructor" ? (
+          <div></div>
+        ) : (
+          <aside className="glass-panel p-3 h-fit lg:sticky lg:top-24 flex flex-col gap-2">
+            <img
+              src={currentCourse?.thumbnail}
+              height={300}
+              width={300}
+              className="rounded-xl w-full object-cover"
+            />
+            <div className="text-3xl font-extrabold text-blue-700">
+              ₹ {currentCourse?.price}
+            </div>
+            <button>Buy Now</button>
+            <button onClick={addToCartHandler}>Add to Cart</button>
+            <div className="text-sm text-slate-500">
+              30-Day Money-Back Guarantee
+            </div>
+            <div className="font-semibold">This Course Includes:</div>
+            <div
+              className="flex gap-2 items-center cursor-pointer text-blue-700 font-semibold"
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+              }}
+            >
+              <FaShareSquare /> Share
+            </div>
+          </aside>
+        )}
       </div>
-      {/* floating menu */}
-      {profile?.accountType === "Instructor" ? (
-        <div></div>
-      ) : (
-        <div className="absolute right-3 top-12 flex flex-col">
-          {/* course thumbnail */}
-          <img src={currentCourse?.thumbnail} height={300} width={300} />
-          {/* div for course price */}
-          <div>₹ {currentCourse?.price}</div>
-          <button>Buy Now</button>
-          <button onClick={addToCartHandler}>Add to Cart</button>
-          <div>30-Day Money-Back Guarantee</div>
-          <div>This Course Includes: </div>
-          {/* share thing div */}
-          <div
-            className="flex gap-2 items-center cursor-pointer text-yellow-500"
-            onClick={() => {
-              navigator.clipboard.writeText(window.location.href);
-            }}
-          >
-            <FaShareSquare /> Share
-          </div>
+
+      <div className="mt-4 flex flex-col gap-4">
+        <div className="section-card">
+          <p className="text-2xl font-bold">What You Will Learn?</p>
+          <div className="mt-2 text-slate-700">{currentCourse?.benifits}</div>
         </div>
-      )}
-      {/* section 2 */}
-      <div>
-        {/* what you will learn div */}
-        <div>
-          <p>What You Will Learn?</p>
-          {/* dynamic info from backend */}
-          <div>{currentCourse?.benifits}</div>
-        </div>
-        {/* course content div */}
-        <div>
-          <p>Course Content</p>
-          {/* this div contains the no of sections, no of lectures and toggle sections button */}
-          <div className="flex items-center w-[60%] justify-between">
-            {/* the first section which contains all the numbers */}
-            <div className="flex gap-5 items-center">
+
+        <div className="section-card">
+          <p className="text-2xl font-bold">Course Content</p>
+          <div className="flex items-center justify-between flex-wrap gap-2 mt-2">
+            <div className="flex gap-5 items-center text-sm text-slate-600 flex-wrap">
               <p>{`${currentCourse?.sections?.length} section(s)`}</p>
               <GoDotFill className="text-xs text-gray-600" />
               <p>{totalSubsections} lecture(s)</p>
               <GoDotFill className="text-xs text-gray-600" />
-
               <p>
                 {minutes} m {seconds} s total length
               </p>
             </div>
-            {/* the second section which contains the expand section toggle  */}
             {expandMenu ? (
               <div
-                className="cursor-pointer"
+                className="cursor-pointer text-blue-700 font-semibold"
                 onClick={() => {
                   setExpandMenu(!expandMenu);
                 }}
@@ -224,7 +219,7 @@ export const CoursePage = () => {
               </div>
             ) : (
               <div
-                className="cursor-pointer"
+                className="cursor-pointer text-blue-700 font-semibold"
                 onClick={() => {
                   setExpandMenu(!expandMenu);
                 }}
@@ -233,79 +228,68 @@ export const CoursePage = () => {
               </div>
             )}
           </div>
-        </div>
-        {/* div for rendering sections and subsections */}
-        <div>
-          {/* there might be multiple sections, this map function iterates and makes
-        an individual gray zone for each section */}
-          {currentCourse?.sections?.map((ele) =>
-            expandMenu || ele._id === expandOneSection ? (
-              // when the particular section is expanded
-              <div
-                key={ele._id}
-                className="cursor-pointer bg-gray-500 opacity-50 flex justify-between flex-col border-gray-400 border-[0.1px]"
-                onClick={() => {
-                  setExpandOneSection(null);
-                }}
-              >
-                {/* the exact same part as in when not expanded */}
-                <div className="flex w-full justify-between">
-                  {/* the left part which contains the arrow and the section name */}
+
+          <div className="mt-2">
+            {currentCourse?.sections?.map((ele) =>
+              expandMenu || ele._id === expandOneSection ? (
+                <div
+                  key={ele._id}
+                  className="cursor-pointer mt-2 section-card !bg-slate-50 flex justify-between flex-col"
+                  onClick={() => {
+                    setExpandOneSection(null);
+                  }}
+                >
+                  <div className="flex w-full justify-between">
+                    <div className="flex gap-4 items-center">
+                      <MdKeyboardArrowDown />
+                      {ele?.title}
+                    </div>
+                    <div>{ele?.subsections.length} lecture(s)</div>
+                  </div>
+                  <div className="bg-white rounded-lg p-2 mt-2 flex gap-2 items-center flex-wrap">
+                    {ele.subsections.length > 0 ? (
+                      <div>
+                        <IoVideocam />
+                      </div>
+                    ) : (
+                      <div></div>
+                    )}
+                    {ele.subsections.map((lecture) => (
+                      <div key={lecture._id}>{lecture.title}</div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  key={ele._id}
+                  className="cursor-pointer mt-2 section-card !bg-slate-50 flex justify-between"
+                  onClick={() => {
+                    setExpandOneSection(ele._id);
+                  }}
+                >
                   <div className="flex gap-4 items-center">
-                    <MdKeyboardArrowDown />
+                    <MdKeyboardArrowRight />
                     {ele?.title}
                   </div>
-                  {/* the right part which shows no of lectures */}
-                  <div className="">{ele?.subsections.length} lecture(s)</div>
+                  <div>{ele?.subsections.length} lecture(s)</div>
                 </div>
-                {/* the part exclusive for expanded */}
-                <div className="bg-black flex gap-2 items-center">
-                  {ele.subsections.length > 0 ? (
-                    <div>
-                      <IoVideocam />
-                    </div>
-                  ) : (
-                    <div></div>
-                  )}
-                  {/* there can be multiple sub sections/lectures for a single section
-                so i am mapping it */}
-                  {ele.subsections.map((lecture) => (
-                    // the div for individual lecture title (just display)
-                    <div key={lecture._id}>{lecture.title}</div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              // when the particular section is not expanded
-              <div
-                key={ele._id}
-                className="cursor-pointer bg-gray-500 opacity-50 flex justify-between border-gray-400 border-[0.1px]"
-                onClick={() => {
-                  setExpandOneSection(ele._id);
-                }}
-              >
-                {/* the left part which contains the arrow and the section name */}
-                <div className="flex gap-4 items-center">
-                  <MdKeyboardArrowRight />
-                  {ele?.title}
-                </div>
-                {/* the right part which shows no of lectures */}
-                <div className="">{ele?.subsections.length} lecture(s)</div>
-              </div>
-            ),
-          )}
+              ),
+            )}
+          </div>
         </div>
-        {/* the author div */}
-        <div className="flex gap-4 flex-col">
-          <p>Author</p>
-          <p>
+
+        <div className="section-card flex gap-2 flex-col">
+          <p className="text-xl font-bold">Author</p>
+          <p className="text-slate-700">
             {`${currentCourse?.instructor?.firstName}`}{" "}
             {`${currentCourse?.instructor?.lastName}`}
           </p>
         </div>
-        {/* reviews div */}
-        <ReviewComponent />
+
+        <div className="section-card">
+          <ReviewComponent />
+        </div>
       </div>
-    </div>
+    </main>
   );
 };

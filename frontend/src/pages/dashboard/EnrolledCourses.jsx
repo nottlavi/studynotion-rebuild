@@ -52,17 +52,34 @@ export const EnrolledCourses = () => {
     <div>
       {/* location and enrolled coursesheading */}
       <div className="flex flex-col gap-3">
-        <div>Home / Dashboard / Enrolled Courses</div>
-        <div>Enrolled Courses</div>
+        <div className="text-sm text-slate-500">
+          Home / Dashboard / Enrolled Courses
+        </div>
+        <div className="text-2xl font-extrabold">Enrolled Courses</div>
       </div>
       {/* filter buttons div */}
-      <div className="flex gap-4">
-        <div>All</div>
-        <div>Pending</div>
-        <div>Completed</div>
+      <div className="flex gap-3 mt-3">
+        <button
+          type="button"
+          className="!bg-white !text-slate-700 !border !border-slate-300"
+        >
+          All
+        </button>
+        <button
+          type="button"
+          className="!bg-white !text-slate-700 !border !border-slate-300"
+        >
+          Pending
+        </button>
+        <button
+          type="button"
+          className="!bg-white !text-slate-700 !border !border-slate-300"
+        >
+          Completed
+        </button>
       </div>
       {/* table header div */}
-      <div className="flex justify-between">
+      <div className="section-card flex justify-between mt-3 bg-slate-50">
         <p>Course Name</p>
         {/* duration and progress div */}
         <div className="flex gap-3">
@@ -82,7 +99,7 @@ export const EnrolledCourses = () => {
           );
         }, 0);
         return (
-          <div key={ele._id} className="flex justify-between">
+          <div key={ele._id} className="section-card flex justify-between mt-2">
             {/* title and thumbnail div */}
             <div className="flex gap-2 items-start">
               <img
@@ -93,10 +110,9 @@ export const EnrolledCourses = () => {
               />
               <div className="flex flex-col">
                 <Link to={`/view/course/${ele._id}`}>
-                  {" "}
-                  <p>{ele?.title}</p>
+                  <p className="font-bold">{ele?.title}</p>
                 </Link>
-                <p>{ele?.description}</p>
+                <p className="text-slate-600">{ele?.description}</p>
               </div>
             </div>
             {/* duration and progress div */}
@@ -107,13 +123,15 @@ export const EnrolledCourses = () => {
             {/* menu button div */}
             <Menu>
               <MenuButton>
-                {" "}
                 <CiMenuKebab />
               </MenuButton>
-              <MenuItems className="flex flex-col gap-1">
-                <MenuItem as="button">Mark as completed</MenuItem>
+              <MenuItems className="flex flex-col gap-1 section-card !p-2">
+                <MenuItem as="button" className="text-left">
+                  Mark as completed
+                </MenuItem>
                 <MenuItem
                   as="button"
+                  className="text-left !bg-white !text-red-600 !border !border-red-200"
                   onClick={() => {
                     handleRemove(ele._id);
                   }}

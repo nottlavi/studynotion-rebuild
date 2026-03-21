@@ -21,7 +21,7 @@ export const VerifyEmailPage = () => {
       const res = await axios.post(
         `${BASE_URL}/users/verify-email`,
         { otp: OTP, email },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (res.error) {
         console.log(res.error);
@@ -35,20 +35,32 @@ export const VerifyEmailPage = () => {
   };
 
   return (
-    <div>
-      {/* the main form */}
-      <form onSubmit={verifyEmail}>
-        {/* div for otp input */}
-        <label htmlFor="OTP">OTP: </label>
-        <input
-          id="OTP"
-          value={OTP}
-          onChange={(e) => {
-            setOTP(e.target.value);
-          }}
-        />
-        <button type="submit">verify email!</button>
-      </form>
-    </div>
+    <main className="site-shell">
+      <section className="max-w-lg mx-auto glass-panel p-6 md:p-8 float-in">
+        <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+          Email Verification
+        </p>
+        <h1 className="text-3xl font-extrabold mt-1">Confirm Your Email</h1>
+        <p className="text-slate-600 mt-2">
+          Enter the one-time password sent to your inbox to activate your
+          account.
+        </p>
+
+        <form onSubmit={verifyEmail} className="flex flex-col gap-3 mt-5">
+          <label htmlFor="OTP" className="font-medium text-slate-700">
+            OTP
+          </label>
+          <input
+            id="OTP"
+            value={OTP}
+            onChange={(e) => {
+              setOTP(e.target.value);
+            }}
+            placeholder="Enter OTP"
+          />
+          <button type="submit">Verify Email</button>
+        </form>
+      </section>
+    </main>
   );
 };

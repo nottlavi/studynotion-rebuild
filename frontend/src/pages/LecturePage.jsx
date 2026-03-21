@@ -44,24 +44,27 @@ export const LecturePage = () => {
   }, [courseId]);
 
   return (
-    <div className="flex fixed">
-      <LectureSideBar
-        setCurrentLecture={setCurrentLecture}
-        currentCourse={currentCourse}
-        ratingModal={ratingModal}
-        setRatingModal={setRatingModal}
-      />
-      {/* the lecture container */}
-      <div className="flex flex-col">
-        <video
-          src={currentLecture?.videoUrl}
-          controls
-          height={1000}
-          width={1000}
-        />
-        {/* for lecture title */}
-        <p>{currentLecture?.title}</p>
-        <p>{currentLecture?.description}</p>
+    <main className="site-shell float-in">
+      <div className="grid lg:grid-cols-[320px_1fr] gap-4 items-start">
+        <div className="glass-panel p-3">
+          <LectureSideBar
+            setCurrentLecture={setCurrentLecture}
+            currentCourse={currentCourse}
+            ratingModal={ratingModal}
+            setRatingModal={setRatingModal}
+          />
+        </div>
+        <div className="glass-panel p-3 md:p-4 flex flex-col gap-3">
+          <video
+            src={currentLecture?.videoUrl}
+            controls
+            height={1000}
+            width={1000}
+            className="rounded-xl w-full max-h-[70vh] bg-black"
+          />
+          <p className="text-2xl font-bold">{currentLecture?.title}</p>
+          <p className="text-slate-700">{currentLecture?.description}</p>
+        </div>
       </div>
 
       {ratingModal && (
@@ -71,6 +74,6 @@ export const LecturePage = () => {
           courseId={courseId}
         />
       )}
-    </div>
+    </main>
   );
 };

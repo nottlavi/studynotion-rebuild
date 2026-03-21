@@ -1,17 +1,212 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+:root {
+  --bg-1: #070b12;
+  --bg-2: #101826;
+  --ink-1: #e8eefc;
+  --ink-2: #a2b0cb;
+  --brand-1: #4f8dff;
+  --brand-2: #1fc7a5;
+  --accent-1: #ff9a3d;
+  --line-1: rgba(167, 187, 224, 0.24);
+  --surface-1: rgba(12, 19, 32, 0.76);
+  --surface-2: #121b2d;
+  --radius-xl: 18px;
+  --radius-lg: 14px;
+  --shadow-1: 0 16px 34px rgba(2, 8, 22, 0.55);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+body {
+  margin: 0;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  color: var(--ink-1);
+  background:
+    radial-gradient(circle at 8% 6%, rgba(255, 154, 61, 0.2), transparent 35%),
+    radial-gradient(
+      circle at 82% 10%,
+      rgba(79, 141, 255, 0.22),
+      transparent 34%
+    ),
+    linear-gradient(140deg, var(--bg-1), var(--bg-2));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+.edtech-app {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  background: linear-gradient(120deg, var(--brand-1), var(--brand-2));
+  color: #fff;
+  font-weight: 700;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  padding: 0.58rem 1rem;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(79, 141, 255, 0.35);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+  box-shadow: none;
+}
+
+input,
+textarea,
+select {
+  border: 1px solid var(--line-1);
+  border-radius: 12px;
+  padding: 0.64rem 0.72rem;
+  background: rgba(15, 24, 40, 0.92);
+  color: var(--ink-1);
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--brand-1);
+  box-shadow: 0 0 0 3px rgba(79, 141, 255, 0.2);
+}
+
+.site-shell {
+  width: min(1120px, calc(100vw - 2rem));
+  margin: 1.2rem auto 2.5rem;
+}
+
+.glass-panel {
+  background: var(--surface-1);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(138, 162, 205, 0.28);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-1);
+}
+
+.section-card {
+  background: var(--surface-2);
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+}
+
+.page-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(138, 162, 205, 0.24);
+  background:
+    radial-gradient(circle at 88% 8%, rgba(31, 199, 165, 0.2), transparent 42%),
+    radial-gradient(circle at 2% 80%, rgba(79, 141, 255, 0.2), transparent 32%),
+    linear-gradient(120deg, rgba(14, 22, 37, 0.94), rgba(19, 30, 49, 0.96));
+  padding: 1.4rem;
+}
+
+.page-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -120px -120px auto;
+  width: 280px;
+  height: 280px;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 154, 61, 0.22),
+    transparent 60%
+  );
+}
+
+.float-in {
+  animation: float-in 0.5s ease forwards;
+}
+
+@keyframes float-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Compatibility overrides for existing Tailwind utility classes in components. */
+.edtech-app .text-slate-900 {
+  color: #edf2ff !important;
+}
+
+.edtech-app .text-slate-800 {
+  color: #dce6ff !important;
+}
+
+.edtech-app .text-slate-700,
+.edtech-app .text-slate-600,
+.edtech-app .text-slate-500 {
+  color: #aab8d8 !important;
+}
+
+.edtech-app .bg-white,
+.edtech-app .\!bg-white {
+  background-color: #18243b !important;
+}
+
+.edtech-app .bg-slate-50 {
+  background-color: #162238 !important;
+}
+
+.edtech-app .border-slate-200,
+.edtech-app .\!border-slate-300 {
+  border-color: rgba(145, 168, 210, 0.35) !important;
+}
+
+.edtech-app .\!text-slate-800,
+.edtech-app .\!text-slate-700,
+.edtech-app .\!text-slate-900 {
+  color: #e5edff !important;
+}
+
+@media (max-width: 768px) {
+  .site-shell {
+    width: calc(100vw - 1rem);
+    margin-top: 0.7rem;
+  }
+
+  .page-hero {
+    padding: 1.1rem;
+  }
 }

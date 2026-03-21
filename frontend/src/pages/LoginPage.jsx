@@ -52,38 +52,51 @@ export const LoginPage = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={logInHandler}>
-        <label htmlFor="firstName">email:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          value={inputs.email}
-          onChange={handleInputChange}
-        />
-        <label htmlFor="firstName">password:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          required
-          value={inputs.password}
-          //why is a function called w/o ()
-          onChange={handleInputChange}
-        />
-        <Link to="/forgot-password">forgot password</Link>
-        {/* temp */}
-        <br />
-        {loading ? (
-          <></>
-        ) : (
-          <>
-            <button type="submit">Login!</button>
-          </>
-        )}
-      </form>
-    </div>
+    <main className="site-shell">
+      <section className="max-w-lg mx-auto glass-panel p-6 md:p-8 float-in">
+        <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+          Welcome back
+        </p>
+        <h1 className="text-3xl font-extrabold mt-1">Log In to Continue</h1>
+        <p className="text-slate-600 mt-2">
+          Pick up your learning streak and resume your courses.
+        </p>
+
+        <form onSubmit={logInHandler} className="flex flex-col gap-3 mt-5">
+          <label htmlFor="email" className="font-medium text-slate-700">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            value={inputs.email}
+            onChange={handleInputChange}
+            placeholder="you@example.com"
+          />
+
+          <label htmlFor="password" className="font-medium text-slate-700">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            value={inputs.password}
+            onChange={handleInputChange}
+            placeholder="Enter your password"
+          />
+
+          <Link to="/forgot-password" className="text-sm text-blue-700">
+            Forgot password?
+          </Link>
+
+          {loading ? <p className="text-slate-600">Signing in...</p> : null}
+          {loading ? null : <button type="submit">Log In</button>}
+        </form>
+      </section>
+    </main>
   );
 };

@@ -47,7 +47,7 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <div>
+    <div className="edtech-app">
       <NavBar />
       <Routes>
         <Route path="/" element={<HomePage />}></Route>

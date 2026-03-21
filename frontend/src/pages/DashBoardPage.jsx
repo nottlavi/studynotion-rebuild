@@ -39,55 +39,74 @@ export const DashBoardPage = () => {
   }, [token]);
 
   return (
-    <div className="flex gap-4">
+    <div className="site-shell grid md:grid-cols-[260px_1fr] gap-4 float-in">
       {/* Sidebar div */}
-      <div className="flex flex-col">
-        <Link to="/dashboard/my-profile">
-          <div className={currentBoy === "my-profile" ? "bg-yellow-100" : ""}>
+      <div className="glass-panel p-3 h-fit">
+        <div className="flex flex-col gap-2">
+          <Link
+            to="/dashboard/my-profile"
+            className={`section-card ${
+              currentBoy === "my-profile" ? "!bg-blue-50 !border-blue-200" : ""
+            }`}
+          >
             My Profile
-          </div>
-        </Link>
-        {profile?.accountType === "Student" ? (
-          <div>
-            <Link to={"/dashboard/enrolled-courses"}>
-              <div
-                className={
-                  currentBoy === "enrolled-courses" ? "bg-yellow-100" : ""
-                }
+          </Link>
+          {profile?.accountType === "Student" ? (
+            <div className="flex flex-col gap-2">
+              <Link
+                to={"/dashboard/enrolled-courses"}
+                className={`section-card ${
+                  currentBoy === "enrolled-courses"
+                    ? "!bg-blue-50 !border-blue-200"
+                    : ""
+                }`}
               >
                 Enrolled Courses
-              </div>
-            </Link>
-            <Link to={"/dashboard/cart"}>
-              <div className={currentBoy === "cart" ? "bg-yellow-100" : ""}>
+              </Link>
+              <Link
+                to={"/dashboard/cart"}
+                className={`section-card ${
+                  currentBoy === "cart" ? "!bg-blue-50 !border-blue-200" : ""
+                }`}
+              >
                 Cart
-              </div>
-            </Link>
-          </div>
-        ) : (
-          <div>
-            <hr />
-            Instructor
-            <Link to="/dashboard/my-courses">
-              <div
-                className={currentBoy === "my-courses" ? "bg-yellow-100" : ""}
+              </Link>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <hr />
+              <p className="text-xs uppercase tracking-[0.14em] text-slate-500 px-1">
+                Instructor
+              </p>
+              <Link
+                to="/dashboard/my-courses"
+                className={`section-card ${
+                  currentBoy === "my-courses"
+                    ? "!bg-blue-50 !border-blue-200"
+                    : ""
+                }`}
               >
                 My Courses
-              </div>
-            </Link>
-          </div>
-        )}
-        <hr />
-        <Link to="/dashboard/settings">
-          <div className={currentBoy === "settings" ? "bg-yellow-100" : ""}>
+              </Link>
+            </div>
+          )}
+          <hr />
+          <Link
+            to="/dashboard/settings"
+            className={`section-card ${
+              currentBoy === "settings" ? "!bg-blue-50 !border-blue-200" : ""
+            }`}
+          >
             Settings
-          </div>
-        </Link>
-        <button className="flex" onClick={logout}>
-          Log Out
-        </button>
+          </Link>
+          <button className="w-full" onClick={logout}>
+            Log Out
+          </button>
+        </div>
       </div>
-      <Outlet />
+      <div className="glass-panel p-4 md:p-5 min-h-[70vh]">
+        <Outlet />
+      </div>
     </div>
   );
 };

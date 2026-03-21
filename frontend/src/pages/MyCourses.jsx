@@ -24,23 +24,35 @@ export const MyCourses = () => {
   }, [profile]);
 
   return (
-    <div className="flex gap-5">
-      <div>
-        My Courses
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-extrabold">My Courses</h1>
+        <Link to="/dashboard/add-course">
+          <button>Add Course</button>
+        </Link>
+      </div>
+      <div className="flex flex-col gap-3">
         {ownedCourses.map((ele, idx) => {
           return (
-            <div className="flex gap-5" key={idx}>
-              <Link to={`/course/${ele._id}`}>
-                <img src={ele?.thumbnail} width={100} height={100} />
+            <div className="section-card flex gap-5 items-start" key={idx}>
+              <Link to={`/course/${ele._id}`} className="flex gap-3">
+                <img
+                  src={ele?.thumbnail}
+                  width={100}
+                  height={100}
+                  className="rounded-xl object-cover"
+                />
                 {/* the info div */}
                 <div>
-                  <div>{ele?.title}</div>
-                  <div>{ele?.description}</div>
-                  <p>{new Date(ele?.createdAt).toLocaleString()}</p>
+                  <div className="font-bold">{ele?.title}</div>
+                  <div className="text-slate-600">{ele?.description}</div>
+                  <p className="text-sm text-slate-500">
+                    {new Date(ele?.createdAt).toLocaleString()}
+                  </p>
                 </div>
               </Link>
               {/* div for durration */}
-              <div>
+              <div className="text-slate-700 text-sm">
                 {ele?.sections
                   ?.reduce((sectionAcc, section) => {
                     const sectionDuration = section?.subsections?.reduce(
@@ -53,7 +65,7 @@ export const MyCourses = () => {
                 s
               </div>
               {/* div for price */}
-              <div>{ele?.price}</div>
+              <div className="font-bold text-blue-700">₹ {ele?.price}</div>
               {/* for for action buttons */}
               <div className="flex gap-1">
                 <GoPencil className="text-gray-400 cursor-pointer" />
@@ -78,13 +90,6 @@ export const MyCourses = () => {
           setOwnedCourses={setOwnedCourses}
         />
       )}
-
-      {/* div for adding a course */}
-      <div>
-        <Link to="/dashboard/add-course">
-          <button>Add Course</button>
-        </Link>
-      </div>
     </div>
   );
 };

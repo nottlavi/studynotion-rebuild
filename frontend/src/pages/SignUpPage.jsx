@@ -46,80 +46,125 @@ const SignUpPage = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSignUp}>
-        {/* div for account type */}
-        <div>
-          <button
-            name="accountType"
-            value={"Student"}
-            onClick={handleInputChange}
-            type="button"
-          >
-            Student
-          </button>
-          <button
-            name="accountType"
-            value={"Instructor"}
-            onClick={handleInputChange}
-            type="button"
-          >
-            Instructor
-          </button>
-        </div>
-        <label htmlFor="firstName">First Name:</label>
-        <input
-          type="text"
-          id="firstName"
-          name="firstName"
-          required
-          value={inputs.firstName}
-          onChange={handleInputChange}
-        />
+    <main className="site-shell">
+      <section className="max-w-2xl mx-auto glass-panel p-6 md:p-8 float-in">
+        <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+          Create account
+        </p>
+        <h1 className="text-3xl font-extrabold mt-1">Join StudyNotion</h1>
+        <p className="text-slate-600 mt-2">
+          Pick your role and start learning with practical guided tracks.
+        </p>
 
-        <label htmlFor="lastName">Last Name:</label>
-        <input
-          type="text"
-          id="lastName"
-          name="lastName"
-          required
-          value={inputs.lastName}
-          onChange={handleInputChange}
-        />
+        <form onSubmit={handleSignUp} className="flex flex-col gap-3 mt-5">
+          <div className="section-card !p-2 flex gap-2 w-fit">
+            <button
+              name="accountType"
+              value="Student"
+              onClick={handleInputChange}
+              type="button"
+              className={
+                inputs.accountType === "Student"
+                  ? ""
+                  : "!bg-white !text-slate-700 !border !border-slate-300"
+              }
+            >
+              Student
+            </button>
+            <button
+              name="accountType"
+              value="Instructor"
+              onClick={handleInputChange}
+              type="button"
+              className={
+                inputs.accountType === "Instructor"
+                  ? ""
+                  : "!bg-white !text-slate-700 !border !border-slate-300"
+              }
+            >
+              Instructor
+            </button>
+          </div>
 
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          value={inputs.email}
-          onChange={handleInputChange}
-        />
+          <div className="grid md:grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="firstName" className="font-medium text-slate-700">
+                First Name
+              </label>
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                required
+                value={inputs.firstName}
+                onChange={handleInputChange}
+              />
+            </div>
 
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          required
-          value={inputs.password}
-          onChange={handleInputChange}
-        />
+            <div className="flex flex-col gap-1">
+              <label htmlFor="lastName" className="font-medium text-slate-700">
+                Last Name
+              </label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                required
+                value={inputs.lastName}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
 
-        <label htmlFor="confirmPassword">Confirm Password:</label>
-        <input
-          type="password"
-          id="confirmPassword"
-          name="confirmPassword"
-          required
-          value={inputs.confirmPassword}
-          onChange={handleInputChange}
-        />
+          <label htmlFor="email" className="font-medium text-slate-700">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            value={inputs.email}
+            onChange={handleInputChange}
+          />
 
-        <button type="submit">Sign Up</button>
-      </form>
-    </div>
+          <div className="grid md:grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="password" className="font-medium text-slate-700">
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                value={inputs.password}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="confirmPassword"
+                className="font-medium text-slate-700"
+              >
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                required
+                value={inputs.confirmPassword}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+
+          <button type="submit">Create Account</button>
+        </form>
+      </section>
+    </main>
   );
 };
 

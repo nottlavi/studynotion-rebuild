@@ -8,19 +8,19 @@ export const ProfilePage = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div>My Profile</div>
+      <div className="text-2xl font-extrabold">My Profile</div>
       {/* name and email div */}
-      <div className="flex">
+      <div className="section-card flex items-center justify-between">
         {/* for image div */}
         <div></div>
         {/* for name and email */}
         <div>
           {/* for name */}
-          <div>
+          <div className="font-bold text-lg">
             {profile.firstName} {profile.lastName}
           </div>
           {/* for email */}
-          <div>{profile.email}</div>
+          <div className="text-slate-600">{profile.email}</div>
         </div>
         {/* for edit button */}
         <div>
@@ -30,10 +30,10 @@ export const ProfilePage = () => {
         </div>
       </div>
       {/* about div */}
-      <div>
+      <div className="section-card">
         {/* collective div for about title and the button */}
         <div className="flex justify-between">
-          <div>About</div>
+          <div className="font-bold">About</div>
           {/* edit button div */}
           <div>
             <Link to="/dashboard/settings">Edit</Link>
@@ -47,10 +47,10 @@ export const ProfilePage = () => {
         </div>
       </div>
       {/* personal details div */}
-      <div className="flex flex-col gap-4">
+      <div className="section-card flex flex-col gap-4">
         {/* collective div for title and button */}
         <div className="flex justify-between">
-          <div>Personal Details</div>
+          <div className="font-bold">Personal Details</div>
           {/* edit button div */}
           <div>
             <Link to="/dashboard/settings">Edit</Link>

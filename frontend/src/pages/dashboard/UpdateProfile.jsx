@@ -121,9 +121,9 @@ export const UpdateProfile = () => {
   return (
     <div className="flex flex-col gap-3">
       {/* div where users can update information */}
-      <div className="flex gap-2 flex-col">
-        <form onSubmit={updateProfile}>
-          <div>Profile Information</div>
+      <div className="section-card flex gap-2 flex-col">
+        <form onSubmit={updateProfile} className="flex flex-col gap-3">
+          <div className="text-xl font-bold">Profile Information</div>
 
           <div className="flex gap-4">
             <div className="flex flex-col">
@@ -229,9 +229,9 @@ export const UpdateProfile = () => {
       </div>
 
       {/* div where users can update their password */}
-      <div className="flex flex-col gap-3">
-        <div>Password</div>
-        <form onSubmit={updatePassword}>
+      <div className="section-card flex flex-col gap-3">
+        <div className="text-xl font-bold">Password</div>
+        <form onSubmit={updatePassword} className="flex flex-col gap-3">
           {/* container for input fields */}
           <div className="flex gap-4">
             <div className="flex flex-col">

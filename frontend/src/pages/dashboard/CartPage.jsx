@@ -108,32 +108,39 @@ export const CartPage = () => {
   return (
     <div>
       {/* the cart div */}
-      <div>Cart</div>
+      <div className="text-2xl font-extrabold">Cart</div>
       {/* no of courses and hr line div */}
-      <div>
+      <div className="text-slate-600 mt-1">
         {cartCourses.length > 1
           ? `${cartCourses.length} courses in the cart`
           : `${cartCourses.length} course in the cart`}
         <hr />
       </div>
       {/* actual courses and checkout div */}
-      <div className="flex gap-3">
+      <div className="grid lg:grid-cols-[1fr_260px] gap-3 mt-3">
         {/* actual courses */}
-        <div>
+        <div className="flex flex-col gap-2">
           {cartCourses.map((ele) => {
             return (
               // the individual course
-              <div key={ele._id} className="border-b-2 flex justify-between">
+              <div key={ele._id} className="section-card flex justify-between">
                 {/* collective div for thumbnail and info */}
                 <div className="flex gap-4">
                   {/* div for image thumbnail */}
                   <div>
-                    <img src={ele.thumbnail} width={150} height={150} />
+                    <img
+                      src={ele.thumbnail}
+                      width={150}
+                      height={150}
+                      className="rounded-xl object-cover"
+                    />
                   </div>
                   {/* for titles and info */}
                   <div className="flex flex-col gap-2">
-                    <p>{ele.title}</p>
-                    <p>{categoryNameMap[ele.category.name]}</p>
+                    <p className="font-bold">{ele.title}</p>
+                    <p className="text-slate-600">
+                      {categoryNameMap[ele.category.name]}
+                    </p>
                     {/* <p>need to add ratings here</p> */}
                     {/* <p>need to add no of ratings here</p> */}
                   </div>
@@ -145,18 +152,18 @@ export const CartPage = () => {
                     Remove
                   </button>
                   {/* for course price */}
-                  <div>{`₹${ele.price}`}</div>
+                  <div className="font-bold text-blue-700">{`₹${ele.price}`}</div>
                 </div>
               </div>
             );
           })}
         </div>
         {/* checkout div */}
-        <div className="flex flex-col justify-between">
+        <div className="section-card flex flex-col justify-between h-fit gap-3">
           {/* total div */}
           <div>
             <p>Total:</p>
-            <p>{`₹ ${cartTotal}`}</p>
+            <p className="text-2xl font-extrabold text-blue-700">{`₹ ${cartTotal}`}</p>
           </div>
           {/* Buy Now button */}
           <button onClick={() => buyHandler(cartCourses)}>Buy Now</button>
