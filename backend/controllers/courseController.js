@@ -349,7 +349,7 @@ exports.updateCourse = async (req, res) => {
       category,
       tags,
       requirements,
-    } = req.body;
+    } = req.body.payload;
 
     const { userId } = req.user;
     console.log(title);
@@ -377,6 +377,8 @@ exports.updateCourse = async (req, res) => {
       });
     }
 
+    const categoryEntry = await categoryModel.findOne({ name: category });
+
     if (title !== undefined) {
       course.title = title;
     }
@@ -390,7 +392,7 @@ exports.updateCourse = async (req, res) => {
       course.tags = tags;
     }
     if (category !== undefined) {
-      course.category = category;
+      course.category = categoryEntry._id;
     }
     if (requirements !== undefined) {
       course.requirements = requirements;

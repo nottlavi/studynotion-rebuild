@@ -58,10 +58,11 @@ export const EditCourse = () => {
         console.log(res);
         setTitle(res?.data?.course?.title);
         setInitialTitle(res?.data?.course?.title);
-        setDescription(res?.data?.course?.description);
-        setInitialDescription(res?.data?.course?.description);
-        setPrice(res?.data?.course?.price);
-        setInitialPrice(res?.data?.course?.price);
+        const desc = (res?.data?.course?.description || "").trim();
+        setDescription(desc);
+        setInitialDescription(desc);
+        setPrice(Number(res?.data?.course?.price));
+        setInitialPrice(Number(res?.data?.course?.price));
         setCategory(res?.data?.course?.category?.name);
         setInitialCategory(res?.data?.course?.category?.name);
         setTags(res?.data?.course?.tags);
@@ -89,8 +90,8 @@ export const EditCourse = () => {
     }
     if (
       title.trim() !== initialTitle ||
-      description.trim() !== initialDescription ||
-      price != initialPrice ||
+      description.trim() !== initialDescription.trim() ||
+      Number(price) !== Number(initialPrice) ||
       category !== initialCategory ||
       JSON.stringify(tags) !== JSON.stringify(initialTags) ||
       JSON.stringify(requirements) !== JSON.stringify(initialRequirements)
@@ -99,7 +100,20 @@ export const EditCourse = () => {
     } else {
       setFirstButton(false);
     }
-  }, [title, description, price, category, tags, requirements]);
+  }, [
+    title,
+    description,
+    price,
+    category,
+    tags,
+    requirements,
+    initialTitle,
+    initialDescription,
+    initialCategory,
+    initialPrice,
+    initialTags,
+    initialRequirements,
+  ]);
 
   ///all the functions here
   const addTag = () => {
@@ -148,7 +162,36 @@ export const EditCourse = () => {
       payload.requirements = requirements;
     }
 
-    console.log(payload);
+    payload.courseId = courseId;
+
+    try {
+      const res = await axios.put(
+        `${BASE_URL}/courses/update`,
+        { payload },
+        {
+          withCredentials: true,
+        },
+      );
+      console.log(res);
+
+      const updated = res?.data?.course;
+
+      setTitle(updated.title);
+      setDescription(updated.description);
+      setPrice(Number(updated.price));
+      setCategory(updated.category.name);
+      setTags(updated.tags);
+      setRequirements(updated.requirements);
+
+      setInitialTitle(updated.title);
+      setInitialDescription(updated.description);
+      setInitialPrice(Number(updated.price));
+      setInitialCategory(updated.category.name);
+      setInitialTags(updated.tags);
+      setInitialRequirements(updated.requirements);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -173,8 +216,8 @@ export const EditCourse = () => {
               <label>Price</label>
               <input
                 type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                value={price ?? ""}
+                onChange={(e) => setPrice(Number(e.target.value))}
               />
             </div>
 
