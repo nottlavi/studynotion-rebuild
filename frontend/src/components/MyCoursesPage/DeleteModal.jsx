@@ -9,8 +9,6 @@ export const DeleteModal = ({
 }) => {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-  console.log(courseDeleted?._id);
-
   const deleteCourse = async () => {
     try {
       const res = await axios.delete(`${BASE_URL}/courses/delete-course`, {
@@ -37,9 +35,7 @@ export const DeleteModal = ({
         <Dialog.Backdrop />
         <Dialog.Positioner>
           <Dialog.Content>
-            <Dialog.CloseTrigger asChild>
-              <button onClick={() => setDeleteModalOpen(false)}>Close</button>
-            </Dialog.CloseTrigger>
+            <Dialog.CloseTrigger asChild></Dialog.CloseTrigger>
             <Dialog.Header>
               <Dialog.Title>Delete Course</Dialog.Title>
             </Dialog.Header>

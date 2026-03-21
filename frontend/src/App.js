@@ -26,6 +26,7 @@ import { LecturePage } from "./pages/LecturePage";
 //importing redux state here
 import { setProfile, setToken } from "./slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { EditCourse } from "./components/MyCoursesPage/EditCourse";
 
 const App = () => {
   //importing imp info from redux here
@@ -105,6 +106,10 @@ const App = () => {
         {/* route for student only / the lecture page / enrolled course viewing page */}
         <Route element={<ProtectedRoute allowedRoles={["Student"]} />}>
           <Route path="/view/course/:courseId" element={<LecturePage />} />
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={["Instructor"]} />}>
+          <Route path="/edit-course/:courseId" element={<EditCourse />} />
         </Route>
 
         {/* route for non existing pages */}

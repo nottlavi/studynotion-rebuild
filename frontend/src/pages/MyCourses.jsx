@@ -1,27 +1,39 @@
+///all the imports here
+//importing dependencies here
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 //importing redux stuff here
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-///importing icons here
+//importing icons here
 import { GoPencil } from "react-icons/go";
 import { RiDeleteBin4Line } from "react-icons/ri";
-///importing components here
+//importing components here
 import { DeleteModal } from "../components/MyCoursesPage/DeleteModal";
 
 export const MyCourses = () => {
-  //managing states here
+  ///all the dependencies here
+  const navigate = useNavigate();
+
+  ///managing states here
   const [ownedCourses, setOwnedCourses] = useState([]);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [courseDeleted, setCourseDeleted] = useState({});
 
-  //redux stuff here
+  ///redux stuff here
   const profile = useSelector((state) => state.user.profile);
 
+  ///all the use effects here
   useEffect(() => {
     if (profile) {
       setOwnedCourses(profile.courses);
     }
   }, [profile]);
+
+  ///all the functions here
+  const editHandler = (courseId) => {
+    navigate(`/edit-course/${courseId}`);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -68,7 +80,12 @@ export const MyCourses = () => {
               <div className="font-bold text-blue-700">₹ {ele?.price}</div>
               {/* for for action buttons */}
               <div className="flex gap-1">
-                <GoPencil className="text-gray-400 cursor-pointer" />
+                <GoPencil
+                  className="text-gray-400 cursor-pointer"
+                  onClick={() => {
+                    editHandler(ele._id);
+                  }}
+                />
                 <RiDeleteBin4Line
                   className="text-gray-500 cursor-pointer"
                   onClick={() => {
