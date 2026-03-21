@@ -338,3 +338,75 @@ exports.deleteCourse = async (req, res) => {
     });
   }
 };
+
+exports.updateCourse = async (req, res) => {
+  try {
+    const {
+      courseId,
+      title,
+      description,
+      price,
+      category,
+      tags,
+      requirements,
+    } = req.body;
+
+    const { userId } = req.user;
+    console.log(title);
+
+    if (!courseId || !userId) {
+      return res.status(400).json({
+        success: false,
+        message: "insufficient data to proceed with",
+      });
+    }
+
+    const course = await courseModel.findById(courseId);
+
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "no such course found",
+      });
+    }
+
+    if (course.instructor.toString() !== userId.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "you are not the creator of the course",
+      });
+    }
+
+    if (title !== undefined) {
+      course.title = title;
+    }
+    if (description !== undefined) {
+      course.description = description;
+    }
+    if (price !== undefined) {
+      course.price = price;
+    }
+    if (tags !== undefined) {
+      course.tags = tags;
+    }
+    if (category !== undefined) {
+      course.category = category;
+    }
+    if (requirements !== undefined) {
+      course.requirements = requirements;
+    }
+
+    await course.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "course updated successfully",
+      course: course,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};

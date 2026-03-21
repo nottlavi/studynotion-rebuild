@@ -125,8 +125,30 @@ export const EditCourse = () => {
   };
 
   //function to save stage 1 in the backend
-  const saveStage1 = async () => {
+  const saveStage1 = async (e) => {
+    e.preventDefault();
+
     const payload = {};
+    if (title.trim() !== initialTitle) {
+      payload.title = title;
+    }
+    if (description.trim() !== initialDescription) {
+      payload.description = description;
+    }
+    if (price != initialPrice) {
+      payload.price = price;
+    }
+    if (category !== initialCategory) {
+      payload.category = category;
+    }
+    if (JSON.stringify(tags) !== JSON.stringify(initialTags)) {
+      payload.tags = tags;
+    }
+    if (JSON.stringify(requirements) !== JSON.stringify(initialRequirements)) {
+      payload.requirements = requirements;
+    }
+
+    console.log(payload);
   };
 
   return (
