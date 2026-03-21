@@ -77,11 +77,31 @@ export const EditCourse = () => {
 
   //useEffect to check whether to unlock the first button
   useEffect(() => {
-    if (title != initialTitle) {
+    if (
+      title.trim() === "" ||
+      description.trim() === "" ||
+      category === "" ||
+      tags.length == 0 ||
+      requirements.length == 0
+    ) {
+      setFirstButton(false);
+      return;
+    }
+    if (
+      title.trim() !== initialTitle ||
+      description.trim() !== initialDescription ||
+      price != initialPrice ||
+      category !== initialCategory ||
+      JSON.stringify(tags) !== JSON.stringify(initialTags) ||
+      JSON.stringify(requirements) !== JSON.stringify(initialRequirements)
+    ) {
+      setFirstButton(true);
+    } else {
+      setFirstButton(false);
     }
   }, [title, description, price, category, tags, requirements]);
 
-  ///all the function here
+  ///all the functions here
   const addTag = () => {
     if (!tag.trim()) return;
     setTags([...tags, tag]);
@@ -104,6 +124,11 @@ export const EditCourse = () => {
     setSections((prev) => prev.filter((_, i) => i !== idx));
   };
 
+  //function to save stage 1 in the backend
+  const saveStage1 = async () => {
+    const payload = {};
+  };
+
   return (
     <div>
       {stage === 0 ? (
@@ -111,10 +136,7 @@ export const EditCourse = () => {
           <div className="flex flex-col gap-3">
             <div>
               <label>Course Title</label>
-              <input
-                value={title || ""}
-                onChange={(e) => setTitle(e.target.value)}
-              />
+              <input value={title} onChange={(e) => setTitle(e.target.value)} />
             </div>
 
             <div>
@@ -172,6 +194,9 @@ export const EditCourse = () => {
 
             <button type="button" onClick={() => setStage(1)}>
               Next
+            </button>
+            <button disabled={!firstButton} onClick={saveStage1}>
+              Save
             </button>
           </div>
         </form>
