@@ -32,6 +32,7 @@ export const EditCourse = () => {
   const [requirement, setRequirement] = useState("");
 
   const [sections, setSections] = useState([]);
+  const [initialSections, setInitialSections] = useState([]);
   const [section, setSection] = useState("");
   const [expandMenu, setExpandMenu] = useState(null);
 
@@ -41,7 +42,10 @@ export const EditCourse = () => {
   const [stage, setStage] = useState(0);
   const [isLectureDialogOpen, setIsLectureDialogOpen] = useState(false);
 
+  const [lectureStorage, setLectureStorage] = useState([{}]);
+
   const [firstButton, setFirstButton] = useState(false);
+  const [secondButton, setSecondButton] = useState(false);
 
   ///all the dependencies here
   const { courseId } = useParams();
@@ -69,6 +73,9 @@ export const EditCourse = () => {
         setInitialTags(res?.data?.course?.tags);
         setRequirements(res?.data?.course?.requirements);
         setInitialRequirements(res?.data?.course?.requirements);
+
+        setSections(res?.data?.course?.sections);
+        setInitialSections(res?.data?.course?.sections);
       } catch (err) {
         console.error(err);
       }
@@ -194,6 +201,16 @@ export const EditCourse = () => {
     }
   };
 
+  // const updateLectureStorage = () => {
+  //   if (sections) {
+  //     sections.subsection.map((ele) => {
+  //       setLectureStorage((prev) => ...prev, {
+  //         lecture: ele,
+  //         sectionIdx:
+  //       })
+  //     })
+  //   }
+  // };
   return (
     <div>
       {stage === 0 ? (
@@ -279,13 +296,13 @@ export const EditCourse = () => {
           </div>
 
           {sections.map((sec, idx) => (
-            <div key={idx}>
+            <div key={sec._id || idx}>
               <div
                 className="flex justify-between cursor-pointer"
                 onClick={() => setExpandMenu(expandMenu === idx ? null : idx)}
               >
                 <div className="flex items-center gap-2">
-                  <IoIosMenu /> {sec}
+                  <IoIosMenu /> {sec.title}
                 </div>
                 <div className="flex items-center gap-2">
                   <button type="button">
@@ -301,6 +318,9 @@ export const EditCourse = () => {
 
               {expandMenu === idx && (
                 <div>
+                  {sec?.subsections?.map((subsection) => (
+                    <div key={subsection?._id}>{subsection?.title}</div>
+                  ))}
                   <Dialog.Root
                     open={isLectureDialogOpen}
                     onOpenChange={(e) => setIsLectureDialogOpen(e.open)}
@@ -346,7 +366,9 @@ export const EditCourse = () => {
             </div>
           ))}
 
-          <button type="button">Save Changes</button>
+          <button type="button" disabled={!secondButton}>
+            Save Changes
+          </button>
         </form>
       )}
     </div>
