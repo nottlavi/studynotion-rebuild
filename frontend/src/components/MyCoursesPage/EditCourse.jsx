@@ -12,6 +12,8 @@ import { PiLineVerticalThin } from "react-icons/pi";
 import { IoMdAdd } from "react-icons/io";
 //importing chakra ui stuff here
 import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react";
+//importing components here
+import { AddSection } from "../../components/EditCourse.jsx/AddSection";
 
 export const EditCourse = () => {
   ///all the states here
@@ -47,6 +49,7 @@ export const EditCourse = () => {
   const [firstButton, setFirstButton] = useState(false);
   const [secondButton, setSecondButton] = useState(false);
 
+  const [addingSection, setAddingSection] = useState(false);
   ///all the dependencies here
   const { courseId } = useParams();
   const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -59,7 +62,6 @@ export const EditCourse = () => {
         const res = await axios.get(
           `${BASE_URL}/courses/get-course-by-id/${courseId}`,
         );
-        console.log(res);
         setTitle(res?.data?.course?.title);
         setInitialTitle(res?.data?.course?.title);
         const desc = (res?.data?.course?.description || "").trim();
@@ -211,6 +213,7 @@ export const EditCourse = () => {
   //     })
   //   }
   // };
+
   return (
     <div>
       {stage === 0 ? (
@@ -284,16 +287,23 @@ export const EditCourse = () => {
         </form>
       ) : (
         <form className="flex flex-col gap-3">
-          <div>
-            <label>Section Name</label>
-            <input
-              value={section}
-              onChange={(e) => setSection(e.target.value)}
-            />
-            <button type="button" onClick={addSection}>
+          <div className="flex items-center">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setAddingSection(true);
+              }}
+            >
               Add Section <IoMdAddCircleOutline />
             </button>
           </div>
+
+          {addingSection && (
+            <AddSection
+              addingSection={addingSection}
+              setAddingSection={setAddingSection}
+            />
+          )}
 
           {sections.map((sec, idx) => (
             <div key={sec._id || idx}>
@@ -366,9 +376,7 @@ export const EditCourse = () => {
             </div>
           ))}
 
-          <button type="button" disabled={!secondButton}>
-            Save Changes
-          </button>
+          <button type="button">Finish</button>
         </form>
       )}
     </div>
