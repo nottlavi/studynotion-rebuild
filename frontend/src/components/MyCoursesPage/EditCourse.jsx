@@ -302,6 +302,7 @@ export const EditCourse = () => {
             <AddSection
               addingSection={addingSection}
               setAddingSection={setAddingSection}
+              setSections={setSections}
             />
           )}
 

@@ -7,7 +7,11 @@ import { useParams } from "react-router-dom";
 //importing icons here
 import { GoPencil } from "react-icons/go";
 
-export const AddSection = ({ addingSection, setAddingSection }) => {
+export const AddSection = ({
+  addingSection,
+  setAddingSection,
+  setSections,
+}) => {
   ///all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const { courseId } = useParams();
@@ -25,8 +29,6 @@ export const AddSection = ({ addingSection, setAddingSection }) => {
   const [block, setBlock] = useState(true);
   //state to block the create lecture button
   const [block1, setBlock1] = useState(true);
-  //state to manage all the subsections
-  const [subSections, setSubsections] = useState([]);
   //states to manage sub section details
   const [lectureTitle, setLectureTitle] = useState("");
   const [lectureDescription, setLectureDesctiption] = useState("");
@@ -59,8 +61,9 @@ export const AddSection = ({ addingSection, setAddingSection }) => {
 
   //function to finally create a section
   const createSection = async (e) => {
-    e.preventDefault();
+    let section = "";
 
+    e.preventDefault();
     try {
       const res = await axios.post(
         `${BASE_URL}/section/create/course-id`,
@@ -73,9 +76,73 @@ export const AddSection = ({ addingSection, setAddingSection }) => {
 
       if (res) {
         console.log(res);
+        section = res?.data?.section?._id;
       }
     } catch (err) {
       console.error(err);
+    }
+
+    //now i will create all the sub sections
+    for (let i = 0; i < lectures.length; i++) {
+      const lecture = lectures[i];
+      let resultSave = {};
+
+      //first of all uploading the lecture video to cloudinary
+      try {
+        const data = new FormData();
+        data.append("file", lecture.lectureVideo);
+        data.append("upload_preset", "hi1wsn1z");
+
+        const res = await fetch(
+          "https://api.cloudinary.com/v1_1/dguufm5le/video/upload",
+          { method: "POST", body: data },
+        );
+
+        if (!res.ok) {
+          console.log(res);
+        }
+
+        const result = await res.json();
+        resultSave = result;
+
+        console.log(result);
+      } catch (err) {
+        console.error(err);
+      }
+
+      //creating the sub section here
+      try {
+        const res = await axios.post(
+          `${BASE_URL}/subsection/create-sub-section`,
+          {
+            title: lecture.lectureTitle,
+            description: lecture.lectureDescription,
+            videoUrl: resultSave.secure_url,
+            section: section,
+            duration: resultSave.duration,
+          },
+        );
+
+        console.log(res);
+      } catch (err) {
+        console.error(err);
+      }
+
+      if (section) {
+        setSections((prev) => [
+          ...prev,
+          {
+            _id: section,
+            title: sectionName,
+            subsections: lectures.map((lec) => ({
+              title: lec.lectureTitle,
+              description: lec.lectureDescription,
+            })),
+          },
+        ]);
+
+        setAddingSection(false);
+      }
     }
   };
 
