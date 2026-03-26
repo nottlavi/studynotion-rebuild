@@ -1,6 +1,7 @@
 const sectionModel = require("../models/sectionModel");
 const userModel = require("../models/userModel");
 const courseModel = require("../models/courseModel");
+const subSectionModel = require("../models/subSectionModel");
 
 exports.createSection = async (req, res) => {
   try {
@@ -80,6 +81,64 @@ exports.createSectionWithCourseId = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: err.message,
+    });
+  }
+};
+
+exports.deleteSection = async (req, res) => {
+  try {
+    const { sectionId } = req.body;
+    const { userId } = req.user;
+
+    const section = await sectionModel.findById(sectionId);
+
+    if (!section) {
+      return res.status(400).json({
+        success: false,
+        message: "no such section exists",
+      });
+    }
+
+    const course = await courseModel.findOne({
+      sections: sectionId,
+    });
+
+    const user = await userModel.findById(userId);
+
+    if (user.accountType !== "Instructor") {
+      return res.status(403).json({
+        success: false,
+        message: "you are not an instructor",
+      });
+    }
+
+    if (!user.courses.includes(course._id)) {
+      return res.status().json({
+        success: false,
+        message: "you do not own the section you wish to delete",
+      });
+    }
+
+    //pulling the section from the course's section array
+    await courseModel.findByIdAndUpdate(course._id, {
+      $pull: { sections: sectionId },
+    });
+
+    //deleting all the sub sections associated with this section
+    await subSectionModel.deleteMany({ section: sectionId });
+
+    //deleting the section now
+    await sectionModel.deleteOne({ _id: sectionId });
+
+    return res.status(200).json({
+      success: true,
+      message: "section and its contents deleted successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "internal server error",
+      error: err,
     });
   }
 };
