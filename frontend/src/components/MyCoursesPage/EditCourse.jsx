@@ -14,6 +14,7 @@ import { IoMdAdd } from "react-icons/io";
 import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react";
 //importing components here
 import { AddSection } from "../../components/EditCourse.jsx/AddSection";
+import { DeleteModal } from "../EditCourse.jsx/DeleteModal";
 
 export const EditCourse = () => {
   ///all the states here
@@ -44,12 +45,17 @@ export const EditCourse = () => {
   const [stage, setStage] = useState(0);
   const [isLectureDialogOpen, setIsLectureDialogOpen] = useState(false);
 
-  const [lectureStorage, setLectureStorage] = useState([{}]);
-
   const [firstButton, setFirstButton] = useState(false);
-  const [secondButton, setSecondButton] = useState(false);
 
   const [addingSection, setAddingSection] = useState(false);
+
+  //states to manage the section which is being deleted
+  const [deleteSection, setDeleteSection] = useState(null);
+  const [deleteSectionModal, setDeleteSectionModal] = useState(false);
+
+  //state to manage the blocking of section delete button
+  const [blockSecDelete, setBlockSecDelete] = useState(false);
+
   ///all the dependencies here
   const { courseId } = useParams();
   const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -124,6 +130,15 @@ export const EditCourse = () => {
     initialRequirements,
   ]);
 
+  //useEffect to enable/disable section delete button if only one section is left
+  useEffect(() => {
+    if (sections?.length === 1) {
+      setBlockSecDelete(true);
+    } else {
+      setBlockSecDelete(false);
+    }
+  }, [sections]);
+
   ///all the functions here
   const addTag = () => {
     if (!tag.trim()) return;
@@ -135,16 +150,6 @@ export const EditCourse = () => {
     if (!requirement.trim()) return;
     setRequirements([...requirements, requirement]);
     setRequirement("");
-  };
-
-  const addSection = () => {
-    if (!section.trim()) return;
-    setSections([...sections, section]);
-    setSection("");
-  };
-
-  const removeSection = (idx) => {
-    setSections((prev) => prev.filter((_, i) => i !== idx));
   };
 
   //function to save stage 1 in the backend
@@ -202,17 +207,6 @@ export const EditCourse = () => {
       console.error(err);
     }
   };
-
-  // const updateLectureStorage = () => {
-  //   if (sections) {
-  //     sections.subsection.map((ele) => {
-  //       setLectureStorage((prev) => ...prev, {
-  //         lecture: ele,
-  //         sectionIdx:
-  //       })
-  //     })
-  //   }
-  // };
 
   return (
     <div>
@@ -316,10 +310,18 @@ export const EditCourse = () => {
                   <IoIosMenu /> {sec.title}
                 </div>
                 <div className="flex items-center gap-2">
-                  <button type="button">
+                  <button type="button" onClick={(e) => e.stopPropagation()}>
                     <FaPen />
                   </button>
-                  <button type="button" onClick={() => removeSection(idx)}>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDeleteSection(sec);
+                      setDeleteSectionModal(true);
+                    }}
+                    disabled={blockSecDelete}
+                  >
                     <RiDeleteBin5Line />
                   </button>
                   <PiLineVerticalThin />
@@ -376,6 +378,16 @@ export const EditCourse = () => {
               )}
             </div>
           ))}
+
+          {deleteSectionModal && (
+            <DeleteModal
+              deleteSection={deleteSection}
+              setDeleteSectionModal={setDeleteSectionModal}
+              deleteSectionModal={deleteSectionModal}
+              setSections={setSections}
+              setDeleteSection={setDeleteSection}
+            />
+          )}
 
           <button type="button">Finish</button>
         </form>
