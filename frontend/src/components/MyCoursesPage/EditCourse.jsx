@@ -12,6 +12,7 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { PiLineVerticalThin } from "react-icons/pi";
 import { IoMdAdd } from "react-icons/io";
 import { FaCheck } from "react-icons/fa";
+import { GoPencil } from "react-icons/go";
 
 //importing chakra ui stuff here
 import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react";
@@ -19,7 +20,7 @@ import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react";
 import { AddSection } from "../../components/EditCourse.jsx/AddSection";
 import { DeleteModal } from "../EditCourse.jsx/DeleteModal";
 import { DeleteSubSectionModal } from "../EditCourse.jsx/DeleteSubSectionModal";
-import { GoPencil } from "react-icons/go";
+import { AddLecture } from "../EditCourse.jsx/AddLecture";
 
 export const EditCourse = () => {
   ///all the states here
@@ -71,6 +72,10 @@ export const EditCourse = () => {
   const [sectionName, setSectionName] = useState("");
   //state to block the section edit tick mark if name hasnt been changes
   const [blockTick, setBlockTick] = useState(true);
+  //state to tell whether a lecture is being added
+  const [addingLecture, setAddingLecture] = useState(false);
+  //state to send to add lecture modal for section id
+  const [lecSecId, setLecSecId] = useState("");
 
   ///all the dependencies here
   const { courseId } = useParams();
@@ -458,46 +463,15 @@ export const EditCourse = () => {
                       </div>
                     </div>
                   ))}
-                  <Dialog.Root
-                    open={isLectureDialogOpen}
-                    onOpenChange={(e) => setIsLectureDialogOpen(e.open)}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setAddingLecture(true);
+                      setLecSecId(sec?._id);
+                    }}
                   >
-                    <Dialog.Trigger asChild>
-                      <Button onClick={() => setIsLectureDialogOpen(true)}>
-                        <IoMdAdd /> Add Lecture
-                      </Button>
-                    </Dialog.Trigger>
-                    <Portal>
-                      <Dialog.Backdrop />
-                      <Dialog.Positioner>
-                        <Dialog.Content>
-                          <Dialog.Header>
-                            <Dialog.Title>Add Lecture</Dialog.Title>
-                          </Dialog.Header>
-                          <Dialog.Body>
-                            <input
-                              placeholder="Lecture Title"
-                              value={lectureTitle}
-                              onChange={(e) => setLectureTitle(e.target.value)}
-                            />
-                            <input
-                              placeholder="Lecture Description"
-                              value={lectureDescription}
-                              onChange={(e) =>
-                                setLectureDescription(e.target.value)
-                              }
-                            />
-                          </Dialog.Body>
-                          <Dialog.Footer>
-                            <Button>Save</Button>
-                          </Dialog.Footer>
-                          <Dialog.CloseTrigger asChild>
-                            <CloseButton />
-                          </Dialog.CloseTrigger>
-                        </Dialog.Content>
-                      </Dialog.Positioner>
-                    </Portal>
-                  </Dialog.Root>
+                    Add Lecture
+                  </button>
                 </div>
               )}
             </div>
@@ -521,6 +495,15 @@ export const EditCourse = () => {
               setDeleteSubSectionModal={setDeleteSubSectionModal}
               deleteParentSectionId={deleteParentSectionId}
               setDeleteParentSectionId={setDeleteParentSectionId}
+              setSections={setSections}
+            />
+          )}
+
+          {addingLecture && (
+            <AddLecture
+              addingLecture={addingLecture}
+              setAddingLecture={setAddingLecture}
+              lecSecId={lecSecId}
               setSections={setSections}
             />
           )}
