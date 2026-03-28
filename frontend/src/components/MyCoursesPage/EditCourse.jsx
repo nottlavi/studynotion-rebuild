@@ -2,6 +2,7 @@
 //importing dependencies here
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 //importing icons here
 import { IoMdAddCircleOutline } from "react-icons/io";
@@ -10,6 +11,8 @@ import { FaPen, FaPlay, FaCaretDown } from "react-icons/fa";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { PiLineVerticalThin } from "react-icons/pi";
 import { IoMdAdd } from "react-icons/io";
+import { FaCheck } from "react-icons/fa";
+
 //importing chakra ui stuff here
 import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react";
 //importing components here
@@ -55,10 +58,18 @@ export const EditCourse = () => {
 
   //state to manage the blocking of section delete button
   const [blockSecDelete, setBlockSecDelete] = useState(false);
+  //state to tell which section is being edited
+  const [editSection, setEditSection] = useState({});
+  // state to store the initial section name of the the section which will be edited
+  const [initialSectionName, setInitialSectionName] = useState("");
+  const [sectionName, setSectionName] = useState("");
+  //state to block the section edit tick mark if name hasnt been changes
+  const [blockTick, setBlockTick] = useState(true);
 
   ///all the dependencies here
   const { courseId } = useParams();
   const BASE_URL = process.env.REACT_APP_BASE_URL;
+  const navigate = useNavigate();
 
   ///all the useEffects here
   //useEffect to fetch course whenever the course id changes
@@ -139,6 +150,15 @@ export const EditCourse = () => {
     }
   }, [sections]);
 
+  //useEffect to enable/disable the tick mark for section edit name
+  useEffect(() => {
+    if (sectionName.trim() !== initialSectionName) {
+      setBlockTick(false);
+    } else {
+      setBlockTick(true);
+    }
+  }, [sectionName, initialSectionName]);
+
   ///all the functions here
   const addTag = () => {
     if (!tag.trim()) return;
@@ -203,6 +223,36 @@ export const EditCourse = () => {
       setInitialCategory(updated.category.name);
       setInitialTags(updated.tags);
       setInitialRequirements(updated.requirements);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSectionEdit = async (e, sectionId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log(sectionId, sectionName);
+    try {
+      const res = await axios.put(
+        `${BASE_URL}/section/edit`,
+        { sectionId, newTitle: sectionName },
+        { withCredentials: true },
+      );
+      if (res) {
+        console.log(res);
+        //need to set the name of section on client side
+        setSections((prev) =>
+          prev.map((section) =>
+            section._id == sectionId
+              ? { ...section, title: res?.data?.section?.title }
+              : section,
+          ),
+        );
+        //need to disable input section name
+        setEditSection("");
+        setInitialSectionName("");
+        setSectionName("");
+      }
     } catch (err) {
       console.error(err);
     }
@@ -306,12 +356,42 @@ export const EditCourse = () => {
                 className="flex justify-between cursor-pointer"
                 onClick={() => setExpandMenu(expandMenu === idx ? null : idx)}
               >
+                {/* div to render either the input field or just plain section title */}
+                {editSection?._id === sec._id ? (
+                  <div className="flex gap-2 items-center">
+                    <input
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                      value={sectionName}
+                      onChange={(e) => setSectionName(e.target.value)}
+                    />
+                    <button
+                      disabled={blockTick}
+                      onClick={(e) => handleSectionEdit(e, sec?._id)}
+                    >
+                      <FaCheck />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <IoIosMenu /> {sec.title}
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
-                  <IoIosMenu /> {sec.title}
-                </div>
-                <div className="flex items-center gap-2">
-                  <button type="button" onClick={(e) => e.stopPropagation()}>
-                    <FaPen />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditSection(sec);
+                    }}
+                  >
+                    <FaPen
+                      onClick={() => {
+                        setSectionName(sec?.title);
+                        setInitialSectionName(sec?.title);
+                      }}
+                    />
                   </button>
                   <button
                     type="button"
@@ -329,6 +409,7 @@ export const EditCourse = () => {
                 </div>
               </div>
 
+              {/* when a certain menu is expanded */}
               {expandMenu === idx && (
                 <div>
                   {sec?.subsections?.map((subsection) => (
@@ -389,7 +470,14 @@ export const EditCourse = () => {
             />
           )}
 
-          <button type="button">Finish</button>
+          <button
+            type="button"
+            onClick={() => {
+              navigate("/dashboard/my-courses");
+            }}
+          >
+            Finish
+          </button>
         </form>
       )}
     </div>

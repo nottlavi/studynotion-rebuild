@@ -85,6 +85,71 @@ exports.createSectionWithCourseId = async (req, res) => {
   }
 };
 
+exports.editSection = async (req, res) => {
+  try {
+    const { sectionId, newTitle } = req.body;
+    const { userId } = req.user;
+
+    console.log(userId, sectionId, newTitle);
+
+    if (!sectionId || !userId || !newTitle) {
+      return res.status(400).json({
+        success: false,
+        message: "all input fields required",
+      });
+    }
+
+    const section = await sectionModel.findById(sectionId);
+
+    if (!section) {
+      return res.status(404).json({
+        success: false,
+        message: "no such section exists",
+      });
+    }
+
+    const course = await courseModel.findOne({ sections: sectionId });
+
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "this section is not linked to any course",
+      });
+    }
+
+    const user = await userModel.findById(userId);
+
+    if (!user.courses.includes(course._id)) {
+      return res.status(403).json({
+        success: false,
+        message: "you do not own this course / section",
+      });
+    }
+
+    if (newTitle === section.title) {
+      return res.status(403).json({
+        success: false,
+        message: "new and old title cant be the same",
+      });
+    }
+
+    section.title = newTitle;
+
+    await section.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "section updated successfully",
+      section: section,
+    });
+  } catch (err) {
+    return res.status().json({
+      success: false,
+      message: "internal server error",
+    });
+  }
+};
+
 exports.deleteSection = async (req, res) => {
   try {
     const { sectionId } = req.body;
