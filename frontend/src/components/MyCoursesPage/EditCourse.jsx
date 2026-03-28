@@ -18,6 +18,8 @@ import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react";
 //importing components here
 import { AddSection } from "../../components/EditCourse.jsx/AddSection";
 import { DeleteModal } from "../EditCourse.jsx/DeleteModal";
+import { DeleteSubSectionModal } from "../EditCourse.jsx/DeleteSubSectionModal";
+import { GoPencil } from "react-icons/go";
 
 export const EditCourse = () => {
   ///all the states here
@@ -55,6 +57,10 @@ export const EditCourse = () => {
   //states to manage the section which is being deleted
   const [deleteSection, setDeleteSection] = useState(null);
   const [deleteSectionModal, setDeleteSectionModal] = useState(false);
+  //states to manage subsection delete flow
+  const [deleteSubSection, setDeleteSubSection] = useState(null);
+  const [deleteParentSectionId, setDeleteParentSectionId] = useState(null);
+  const [deleteSubSectionModal, setDeleteSubSectionModal] = useState(false);
 
   //state to manage the blocking of section delete button
   const [blockSecDelete, setBlockSecDelete] = useState(false);
@@ -258,6 +264,10 @@ export const EditCourse = () => {
     }
   };
 
+  const isSubSectionDeleteBlocked = (subsections = []) => {
+    return subsections.length <= 1;
+  };
+
   return (
     <div>
       {stage === 0 ? (
@@ -365,6 +375,11 @@ export const EditCourse = () => {
                       }}
                       value={sectionName}
                       onChange={(e) => setSectionName(e.target.value)}
+                      onBlur={() => {
+                        setEditSection(null);
+                        setSectionName("");
+                        setInitialSectionName("");
+                      }}
                     />
                     <button
                       disabled={blockTick}
@@ -413,7 +428,35 @@ export const EditCourse = () => {
               {expandMenu === idx && (
                 <div>
                   {sec?.subsections?.map((subsection) => (
-                    <div key={subsection?._id}>{subsection?.title}</div>
+                    <div
+                      key={subsection?._id}
+                      className="flex items-center gap-2"
+                    >
+                      {/* for title rendering */}
+                      <div>{subsection?.title}</div>
+                      {/* for action buttons */}
+                      <div>
+                        <button onClick={(e) => e.preventDefault()}>
+                          <GoPencil />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setDeleteSubSection(subsection);
+                            setDeleteParentSectionId(sec?._id);
+                            setDeleteSubSectionModal(true);
+                          }}
+                          disabled={
+                            isSubSectionDeleteBlocked(sec?.subsections || []) ||
+                            !subsection?._id
+                          }
+                        >
+                          <RiDeleteBin5Line />
+                        </button>
+                      </div>
+                    </div>
                   ))}
                   <Dialog.Root
                     open={isLectureDialogOpen}
@@ -467,6 +510,18 @@ export const EditCourse = () => {
               deleteSectionModal={deleteSectionModal}
               setSections={setSections}
               setDeleteSection={setDeleteSection}
+            />
+          )}
+
+          {deleteSubSectionModal && (
+            <DeleteSubSectionModal
+              deleteSubSection={deleteSubSection}
+              setDeleteSubSection={setDeleteSubSection}
+              deleteSubSectionModal={deleteSubSectionModal}
+              setDeleteSubSectionModal={setDeleteSubSectionModal}
+              deleteParentSectionId={deleteParentSectionId}
+              setDeleteParentSectionId={setDeleteParentSectionId}
+              setSections={setSections}
             />
           )}
 
