@@ -14,13 +14,12 @@ import { IoMdAdd } from "react-icons/io";
 import { FaCheck } from "react-icons/fa";
 import { GoPencil } from "react-icons/go";
 
-//importing chakra ui stuff here
-import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react";
 //importing components here
 import { AddSection } from "../../components/EditCourse.jsx/AddSection";
 import { DeleteModal } from "../EditCourse.jsx/DeleteModal";
 import { DeleteSubSectionModal } from "../EditCourse.jsx/DeleteSubSectionModal";
 import { AddLecture } from "../EditCourse.jsx/AddLecture";
+import { EditLecture } from "../EditCourse.jsx/EditLecture";
 
 export const EditCourse = () => {
   ///all the states here
@@ -42,14 +41,9 @@ export const EditCourse = () => {
 
   const [sections, setSections] = useState([]);
   const [initialSections, setInitialSections] = useState([]);
-  const [section, setSection] = useState("");
   const [expandMenu, setExpandMenu] = useState(null);
 
-  const [lectureTitle, setLectureTitle] = useState("");
-  const [lectureDescription, setLectureDescription] = useState("");
-
   const [stage, setStage] = useState(0);
-  const [isLectureDialogOpen, setIsLectureDialogOpen] = useState(false);
 
   const [firstButton, setFirstButton] = useState(false);
 
@@ -76,6 +70,8 @@ export const EditCourse = () => {
   const [addingLecture, setAddingLecture] = useState(false);
   //state to send to add lecture modal for section id
   const [lecSecId, setLecSecId] = useState("");
+  //state to tell which lecture is being edited
+  const [editLecture, setEditLecture] = useState("");
 
   ///all the dependencies here
   const { courseId } = useParams();
@@ -442,7 +438,11 @@ export const EditCourse = () => {
                       {/* for action buttons */}
                       <div>
                         <button onClick={(e) => e.preventDefault()}>
-                          <GoPencil />
+                          <GoPencil
+                            onClick={() => {
+                              setEditLecture(subsection._id);
+                            }}
+                          />
                         </button>
                         <button
                           type="button"
@@ -461,6 +461,14 @@ export const EditCourse = () => {
                           <RiDeleteBin5Line />
                         </button>
                       </div>
+                      {console.log(editLecture)}
+                      {console.log(subsection._id)}
+                      {editLecture == subsection._id && (
+                        <EditLecture
+                          lectId={editLecture}
+                          onClose={() => setEditLecture(null)}
+                        />
+                      )}
                     </div>
                   ))}
                   <button
