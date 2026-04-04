@@ -52,17 +52,22 @@ export const LoginPage = () => {
   };
 
   return (
-    <main className="site-shell">
-      <section className="max-w-lg mx-auto glass-panel p-6 md:p-8 float-in">
-        <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+    <main className="site-shell auth-page login-page">
+      <section className="max-w-lg mx-auto glass-panel auth-card p-6 md:p-8 float-in">
+        <p className="eyebrow text-xs uppercase tracking-[0.16em] text-slate-500">
           Welcome back
         </p>
-        <h1 className="text-3xl font-extrabold mt-1">Log In to Continue</h1>
-        <p className="text-slate-600 mt-2">
+        <h1 className="text-3xl font-extrabold mt-1 page-title">
+          Log In to Continue
+        </h1>
+        <p className="text-slate-600 mt-2 page-lead">
           Pick up your learning streak and resume your courses.
         </p>
 
-        <form onSubmit={logInHandler} className="flex flex-col gap-3 mt-5">
+        <form
+          onSubmit={logInHandler}
+          className="flex flex-col gap-3 mt-5 auth-form"
+        >
           <label htmlFor="email" className="font-medium text-slate-700">
             Email
           </label>
@@ -89,7 +94,10 @@ export const LoginPage = () => {
             placeholder="Enter your password"
           />
 
-          <Link to="/forgot-password" className="text-sm text-blue-700">
+          <Link
+            to="/forgot-password"
+            className="text-sm text-blue-700 link-accent"
+          >
             Forgot password?
           </Link>
 

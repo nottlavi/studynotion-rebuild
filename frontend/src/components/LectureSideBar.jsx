@@ -64,9 +64,9 @@ export const LectureSideBar = ({
     ) || 0;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col lecture-sidebar">
       {/* the info container */}
-      <div className="border-b border-gray-500">
+      <div className="border-b border-gray-500 lecture-sidebar-head">
         {/* title and completion counter div */}
         <div className="flex gap-2">
           <p>{currentCourse?.title}</p>
@@ -113,11 +113,11 @@ export const LectureSideBar = ({
               {/* the whole ui below will only be rendered if the current section on the map is expanded */}
               {sectionsExpanded.includes(section._id) && (
                 //will render all the subsections of this particular section here
-                <div className="cursor-pointer">
+                <div className="cursor-pointer lecture-subsections">
                   {section?.subsections?.map((subsection) => (
                     // the individual subsection
                     <div
-                      className="flex"
+                      className="flex lecture-subsection-item"
                       onClick={() => {
                         setCurrentLecture(subsection);
                       }}

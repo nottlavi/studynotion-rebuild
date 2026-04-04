@@ -181,14 +181,16 @@ export const UpdateProfile = () => {
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="update-profile-page flex flex-col gap-3">
       {/* div where users can update information */}
-      <div className="section-card flex gap-2 flex-col">
-        <form onSubmit={updateProfile} className="flex gap-4">
-          <div className="flex flex-col gap-3">
-            <div className="text-xl font-bold">Profile Information</div>
+      <div className="section-card profile-update-card flex gap-2 flex-col">
+        <form onSubmit={updateProfile} className="flex gap-4 profile-form-wrap">
+          <div className="flex flex-col gap-3 profile-form">
+            <div className="text-xl font-bold section-title">
+              Profile Information
+            </div>
 
-            <div className="flex gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
               <div className="flex flex-col">
                 <div>First Name</div>
                 <input
@@ -214,7 +216,7 @@ export const UpdateProfile = () => {
             </div>
 
             {/* dob and gender div */}
-            <div className="flex gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
               {/* div for date */}
               <div className="flex flex-col">
                 <div>Date of Birth</div>
@@ -244,7 +246,7 @@ export const UpdateProfile = () => {
             </div>
 
             {/* contact no and about div */}
-            <div className="flex gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
               {/* contact div */}
               <div className="flex flex-col">
                 <div>Contact No</div>
@@ -282,7 +284,7 @@ export const UpdateProfile = () => {
             {/* button container for the above div */}
             <div className="flex gap-4">
               <Link to="/dashboard/my-profile">
-                <button>Cancel</button>
+                <button className="btn-secondary">Cancel</button>
               </Link>
               <button onClick={updateProfile} disabled={blocked} type="submit">
                 Save
@@ -290,7 +292,7 @@ export const UpdateProfile = () => {
             </div>
           </div>
           {/* div for profile picture */}
-          <div>
+          <div className="avatar-uploader section-card">
             {avatar ? (
               <img
                 src={avatarUrl}
@@ -322,18 +324,21 @@ export const UpdateProfile = () => {
             />
 
             <button disabled={blocked1} onClick={handleAvatarChange}>
-              save
+              Save
             </button>
           </div>
         </form>
       </div>
 
       {/* div where users can update their password */}
-      <div className="section-card flex flex-col gap-3">
-        <div className="text-xl font-bold">Password</div>
-        <form onSubmit={updatePassword} className="flex flex-col gap-3">
+      <div className="section-card profile-update-card flex flex-col gap-3">
+        <div className="text-xl font-bold section-title">Password</div>
+        <form
+          onSubmit={updatePassword}
+          className="flex flex-col gap-3 profile-form"
+        >
           {/* container for input fields */}
-          <div className="flex gap-4">
+          <div className="grid md:grid-cols-2 gap-4">
             <div className="flex flex-col">
               <div>Old Password</div>
               <input
@@ -358,7 +363,7 @@ export const UpdateProfile = () => {
           {/* container for button */}
           <div className="flex gap-4">
             <Link to="/dashboard/my-profile">
-              <button>Cancel</button>
+              <button className="btn-secondary">Cancel</button>
             </Link>
             <button type="submit">Update</button>
           </div>

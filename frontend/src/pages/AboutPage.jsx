@@ -2,15 +2,15 @@ import React from "react";
 
 export const AboutPage = () => {
   return (
-    <main className="site-shell flex flex-col gap-4 float-in">
+    <main className="site-shell about-page flex flex-col gap-4 float-in">
       <section className="page-hero">
-        <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+        <p className="eyebrow text-xs uppercase tracking-[0.18em] text-slate-500">
           About StudyNotion
         </p>
-        <h1 className="text-4xl font-extrabold text-slate-900 mt-2">
+        <h1 className="page-title text-4xl font-extrabold text-slate-900 mt-2">
           We teach outcomes, not just lessons.
         </h1>
-        <p className="text-slate-700 mt-3 max-w-3xl">
+        <p className="page-lead text-slate-700 mt-3 max-w-3xl">
           StudyNotion is designed for learners who want guided execution,
           real-world portfolio projects, and momentum from a tight learning
           community.

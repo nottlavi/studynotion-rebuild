@@ -408,12 +408,12 @@ export const AddCourse = () => {
   };
 
   return (
-    <div>
+    <div className="add-course-page">
       {
         //  stage 1 title and info ground
         stage === 0 ? (
-          <form onSubmit={stageHandler}>
-            <div className="flex flex-col gap-3">
+          <form onSubmit={stageHandler} className="course-builder-form">
+            <div className="flex flex-col gap-3 builder-stack">
               {/* section for the title */}
               <div className="flex flex-col gap-1">
                 <label htmlFor="title">
@@ -549,7 +549,7 @@ export const AddCourse = () => {
           </form>
         ) : // 2nd stage lecture / section ground
         stage === 1 ? (
-          <form className="flex flex-col gap-3">
+          <form className="flex flex-col gap-3 course-builder-form">
             Course Builder
             {/* div for section name */}
             <div className="flex flex-col gap-1">
@@ -944,7 +944,10 @@ export const AddCourse = () => {
           </form>
         ) : (
           // stage 3 / final stage
-          <form onClick={createCourse}>
+          <form
+            onClick={createCourse}
+            className="course-builder-form publish-stage"
+          >
             <button type="submit">Publish?</button>
           </form>
         )

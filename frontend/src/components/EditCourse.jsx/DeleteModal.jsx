@@ -41,12 +41,12 @@ export const DeleteModal = ({
     >
       <Dialog.Backdrop />
       <Dialog.Positioner>
-        <Dialog.Content>
+        <Dialog.Content className="modal-surface">
           <Dialog.CloseTrigger>Close</Dialog.CloseTrigger>
           <Dialog.Header>
             <Dialog.Title>Delete Section?</Dialog.Title>
           </Dialog.Header>
-          <Dialog.Body>
+          <Dialog.Body className="modal-body-stack">
             <p>
               Are you Sure, You want to delete section titled{" "}
               {deleteSection?.title}?
@@ -57,7 +57,7 @@ export const DeleteModal = ({
             </p>
             <p>total no of lectures {deleteSection?.subsections?.length}</p>
           </Dialog.Body>
-          <Dialog.Footer>
+          <Dialog.Footer className="modal-footer">
             <button onClick={deleteHandler}>Delete</button>
           </Dialog.Footer>
         </Dialog.Content>

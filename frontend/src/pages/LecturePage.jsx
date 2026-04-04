@@ -44,9 +44,9 @@ export const LecturePage = () => {
   }, [courseId]);
 
   return (
-    <main className="site-shell float-in">
-      <div className="grid lg:grid-cols-[320px_1fr] gap-4 items-start">
-        <div className="glass-panel p-3">
+    <main className="site-shell lecture-page float-in">
+      <div className="grid lg:grid-cols-[320px_1fr] gap-4 items-start lecture-layout">
+        <div className="glass-panel p-3 lecture-sidebar-shell">
           <LectureSideBar
             setCurrentLecture={setCurrentLecture}
             currentCourse={currentCourse}
@@ -54,7 +54,7 @@ export const LecturePage = () => {
             setRatingModal={setRatingModal}
           />
         </div>
-        <div className="glass-panel p-3 md:p-4 flex flex-col gap-3">
+        <div className="glass-panel lecture-main-shell p-3 md:p-4 flex flex-col gap-3">
           <video
             src={currentLecture?.videoUrl}
             controls

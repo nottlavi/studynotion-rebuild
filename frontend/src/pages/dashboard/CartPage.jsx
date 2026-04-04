@@ -106,9 +106,9 @@ export const CartPage = () => {
   }, [profile]);
 
   return (
-    <div>
+    <div className="cart-page">
       {/* the cart div */}
-      <div className="text-2xl font-extrabold">Cart</div>
+      <div className="text-2xl font-extrabold page-title">Cart</div>
       {/* no of courses and hr line div */}
       <div className="text-slate-600 mt-1">
         {cartCourses.length > 1
@@ -123,7 +123,10 @@ export const CartPage = () => {
           {cartCourses.map((ele) => {
             return (
               // the individual course
-              <div key={ele._id} className="section-card flex justify-between">
+              <div
+                key={ele._id}
+                className="section-card list-row flex justify-between"
+              >
                 {/* collective div for thumbnail and info */}
                 <div className="flex gap-4">
                   {/* div for image thumbnail */}
@@ -132,7 +135,7 @@ export const CartPage = () => {
                       src={ele.thumbnail}
                       width={150}
                       height={150}
-                      className="rounded-xl object-cover"
+                      className="rounded-xl object-cover list-row-media"
                     />
                   </div>
                   {/* for titles and info */}
@@ -146,9 +149,12 @@ export const CartPage = () => {
                   </div>
                 </div>
                 {/* for remove from cart and price */}
-                <div>
+                <div className="flex flex-col items-end gap-2">
                   {/* for remove icon/button */}
-                  <button onClick={() => handleRemove(ele._id, ele.price)}>
+                  <button
+                    className="btn-secondary"
+                    onClick={() => handleRemove(ele._id, ele.price)}
+                  >
                     Remove
                   </button>
                   {/* for course price */}
@@ -159,7 +165,7 @@ export const CartPage = () => {
           })}
         </div>
         {/* checkout div */}
-        <div className="section-card flex flex-col justify-between h-fit gap-3">
+        <div className="section-card checkout-card flex flex-col justify-between h-fit gap-3">
           {/* total div */}
           <div>
             <p>Total:</p>

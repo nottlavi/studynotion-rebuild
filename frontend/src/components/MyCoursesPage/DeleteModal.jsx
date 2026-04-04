@@ -34,18 +34,23 @@ export const DeleteModal = ({
       >
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content>
+          <Dialog.Content className="modal-surface">
             <Dialog.CloseTrigger asChild></Dialog.CloseTrigger>
             <Dialog.Header>
               <Dialog.Title>Delete Course</Dialog.Title>
             </Dialog.Header>
-            <Dialog.Body>
+            <Dialog.Body className="modal-body-stack">
               <div>
                 <p>delete course tilted "{courseDeleted?.title}"?</p>
               </div>
             </Dialog.Body>
-            <Dialog.Footer>
-              <button onClick={() => setDeleteModalOpen(false)}>Cancel</button>
+            <Dialog.Footer className="modal-footer">
+              <button
+                className="btn-secondary"
+                onClick={() => setDeleteModalOpen(false)}
+              >
+                Cancel
+              </button>
               <button onClick={deleteCourse}>Delete</button>
             </Dialog.Footer>
           </Dialog.Content>

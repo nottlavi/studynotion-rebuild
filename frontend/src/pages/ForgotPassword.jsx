@@ -60,13 +60,15 @@ export const ForgotPassword = () => {
   useEffect(() => {}, [stage]);
 
   return (
-    <main className="site-shell">
-      <section className="max-w-lg mx-auto glass-panel p-6 md:p-8 float-in">
-        <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+    <main className="site-shell auth-page forgot-page">
+      <section className="max-w-lg mx-auto glass-panel auth-card p-6 md:p-8 float-in">
+        <p className="eyebrow text-xs uppercase tracking-[0.16em] text-slate-500">
           Account Recovery
         </p>
-        <h1 className="text-3xl font-extrabold mt-1">Forgot Password</h1>
-        <p className="text-slate-600 mt-2">
+        <h1 className="text-3xl font-extrabold mt-1 page-title">
+          Forgot Password
+        </h1>
+        <p className="text-slate-600 mt-2 page-lead">
           {stage === 1
             ? "We will send an OTP to your registered email."
             : stage === 2
@@ -76,7 +78,10 @@ export const ForgotPassword = () => {
 
         {stage === 1 ? (
           <div className="mt-5">
-            <form onSubmit={sendOTPHandler} className="flex flex-col gap-3">
+            <form
+              onSubmit={sendOTPHandler}
+              className="flex flex-col gap-3 auth-form"
+            >
               <label htmlFor="email" className="font-medium text-slate-700">
                 Email Address
               </label>
@@ -94,7 +99,10 @@ export const ForgotPassword = () => {
           </div>
         ) : stage === 2 ? (
           <div className="mt-5">
-            <form onSubmit={checkOTPHandler} className="flex flex-col gap-3">
+            <form
+              onSubmit={checkOTPHandler}
+              className="flex flex-col gap-3 auth-form"
+            >
               <label htmlFor="otp" className="font-medium text-slate-700">
                 OTP
               </label>
@@ -113,7 +121,7 @@ export const ForgotPassword = () => {
           <div className="mt-5">
             <form
               onSubmit={changePasswordHandler}
-              className="flex flex-col gap-3"
+              className="flex flex-col gap-3 auth-form"
             >
               <label htmlFor="password" className="font-medium text-slate-700">
                 New Password

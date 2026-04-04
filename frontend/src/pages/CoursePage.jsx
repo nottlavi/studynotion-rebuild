@@ -106,17 +106,21 @@ export const CoursePage = () => {
   const seconds = Math.round((totalLectureSeconds - minutes) * 60);
 
   return (
-    <main className="site-shell float-in">
-      <div className="grid lg:grid-cols-[1fr_320px] gap-4 relative">
-        <div className="page-hero flex flex-col gap-2">
+    <main className="site-shell course-page float-in">
+      <div className="grid lg:grid-cols-[1fr_320px] gap-4 relative course-hero-grid">
+        <div className="page-hero flex flex-col gap-2 course-hero-card">
           <div className="text-sm text-slate-500">
             Home / Learning /{" "}
             {currentCourse?.category?.name === "web-development"
               ? "Web Development"
               : ""}
           </div>
-          <div className="text-3xl font-extrabold">{currentCourse?.title}</div>
-          <div className="text-slate-700">{currentCourse?.description}</div>
+          <div className="text-3xl font-extrabold page-title">
+            {currentCourse?.title}
+          </div>
+          <div className="text-slate-700 page-lead">
+            {currentCourse?.description}
+          </div>
           <div className="flex gap-1 items-center flex-wrap">
             <p>{currentCourse?.rating?.average}</p>
             <div className="flex gap-1">
@@ -179,14 +183,14 @@ export const CoursePage = () => {
         {profile?.accountType === "Instructor" ? (
           <div></div>
         ) : (
-          <aside className="glass-panel p-3 h-fit lg:sticky lg:top-24 flex flex-col gap-2">
+          <aside className="glass-panel course-buy-card p-3 h-fit lg:sticky lg:top-24 flex flex-col gap-2">
             <img
               src={currentCourse?.thumbnail}
               height={300}
               width={300}
               className="rounded-xl w-full object-cover"
             />
-            <div className="text-3xl font-extrabold text-blue-700">
+            <div className="text-3xl font-extrabold text-blue-700 price-tag">
               ₹ {currentCourse?.price}
             </div>
             <button>Buy Now</button>
@@ -208,12 +212,12 @@ export const CoursePage = () => {
       </div>
 
       <div className="mt-4 flex flex-col gap-4">
-        <div className="section-card">
+        <div className="section-card course-section">
           <p className="text-2xl font-bold">What You Will Learn?</p>
           <div className="mt-2 text-slate-700">{currentCourse?.benifits}</div>
         </div>
 
-        <div className="section-card">
+        <div className="section-card course-section">
           <p className="text-2xl font-bold">Course Content</p>
           <div className="flex items-center justify-between flex-wrap gap-2 mt-2">
             <div className="flex gap-5 items-center text-sm text-slate-600 flex-wrap">
@@ -251,7 +255,7 @@ export const CoursePage = () => {
               expandMenu || ele._id === expandOneSection ? (
                 <div
                   key={ele._id}
-                  className="cursor-pointer mt-2 section-card !bg-slate-50 flex justify-between flex-col"
+                  className="cursor-pointer mt-2 section-card course-content-item !bg-slate-50 flex justify-between flex-col"
                   onClick={() => {
                     setExpandOneSection(null);
                   }}
@@ -263,7 +267,7 @@ export const CoursePage = () => {
                     </div>
                     <div>{ele?.subsections.length} lecture(s)</div>
                   </div>
-                  <div className="bg-white rounded-lg p-2 mt-2 flex gap-2 items-center flex-wrap">
+                  <div className="bg-white rounded-lg p-2 mt-2 flex gap-2 items-center flex-wrap lecture-chip-wrap">
                     {ele.subsections.length > 0 ? (
                       <div>
                         <IoVideocam />
@@ -279,7 +283,7 @@ export const CoursePage = () => {
               ) : (
                 <div
                   key={ele._id}
-                  className="cursor-pointer mt-2 section-card !bg-slate-50 flex justify-between"
+                  className="cursor-pointer mt-2 section-card course-content-item !bg-slate-50 flex justify-between"
                   onClick={() => {
                     setExpandOneSection(ele._id);
                   }}
@@ -295,7 +299,7 @@ export const CoursePage = () => {
           </div>
         </div>
 
-        <div className="section-card flex gap-2 flex-col">
+        <div className="section-card course-section flex gap-2 flex-col">
           <p className="text-xl font-bold">Author</p>
           <p className="text-slate-700">
             {`${currentCourse?.instructor?.firstName}`}{" "}
@@ -303,23 +307,27 @@ export const CoursePage = () => {
           </p>
         </div>
 
-        <div className="section-card flex flex-col gap-5">
+        <div className="section-card course-section flex flex-col gap-5">
           <p> Review from other Learners</p>
           {/* div to srender all the reviews */}
-          <div className="flex gap-3">
+          <div className="flex gap-3 review-grid">
             {reviews.map((review) => (
               // a single review
-              <div className="section-card" key={review._id}>
+              <div className="section-card review-card" key={review._id}>
                 {/* for profile pic, name and email */}
                 <div className="flex gap-3">
                   {/* profile pic div */}
                   <div>
-                    <img
-                      src={review?.user?.avatar}
-                      height={50}
-                      width={50}
-                      className="rounded-full"
-                    />
+                    {review?.user?.avatar ? (
+                      <img
+                        src={review?.user?.avatar}
+                        height={50}
+                        width={50}
+                        className="rounded-full"
+                      />
+                    ) : (
+                      <div></div>
+                    )}
                   </div>
                   {/* name and email div */}
                   <div className="flex flex-col gap-3">

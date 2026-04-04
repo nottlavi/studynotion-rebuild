@@ -98,7 +98,7 @@ export const AddLecture = ({
     >
       <Dialog.Backdrop />
       <Dialog.Positioner>
-        <Dialog.Content>
+        <Dialog.Content className="modal-surface">
           <Dialog.CloseTrigger
             onClick={() => {
               setAddingLecture(false);
@@ -109,7 +109,7 @@ export const AddLecture = ({
           <Dialog.Header>
             <Dialog.Title>Add Lecture</Dialog.Title>
           </Dialog.Header>
-          <Dialog.Body>
+          <Dialog.Body className="modal-body-stack">
             <div
               style={{ display: "flex", flexDirection: "column", gap: "12px" }}
             >
@@ -146,7 +146,7 @@ export const AddLecture = ({
               </div>
             </div>
           </Dialog.Body>
-          <Dialog.Footer>
+          <Dialog.Footer className="modal-footer">
             <button disabled={disableMain} onClick={addLecture}>
               Add Lecture?
             </button>

@@ -270,10 +270,10 @@ export const EditCourse = () => {
   };
 
   return (
-    <div>
+    <div className="edit-course-page">
       {stage === 0 ? (
-        <form>
-          <div className="flex flex-col gap-3">
+        <form className="course-builder-form">
+          <div className="flex flex-col gap-3 builder-stack">
             <div>
               <label>Course Title</label>
               <input value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -341,7 +341,7 @@ export const EditCourse = () => {
           </div>
         </form>
       ) : (
-        <form className="flex flex-col gap-3">
+        <form className="flex flex-col gap-3 course-builder-form">
           <div className="flex items-center">
             <button
               onClick={(e) => {

@@ -32,13 +32,15 @@ export const CourseCategory = () => {
   }, [categoryCourses]);
 
   return (
-    <main className="site-shell float-in">
+    <main className="site-shell category-page float-in">
       <section className="page-hero mb-4">
-        <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+        <p className="eyebrow text-xs uppercase tracking-[0.16em] text-slate-500">
           Catalog
         </p>
-        <h1 className="text-4xl font-extrabold mt-2">Explore Courses</h1>
-        <p className="text-slate-700 mt-2">
+        <h1 className="page-title text-4xl font-extrabold mt-2">
+          Explore Courses
+        </h1>
+        <p className="page-lead text-slate-700 mt-2">
           Handpicked programs focused on applied skills and portfolio growth.
         </p>
       </section>
@@ -50,7 +52,7 @@ export const CourseCategory = () => {
             <Link
               to={`/course/${ele._id}`}
               key={ele._id}
-              className="section-card flex flex-col gap-2 hover:-translate-y-1 transition"
+              className="section-card course-card flex flex-col gap-2 hover:-translate-y-1 transition"
             >
               <img
                 src={ele?.thumbnail}
@@ -101,7 +103,7 @@ export const CourseCategory = () => {
                 {/* review count */}
                 <p>({ele?.rating?.count} ratings)</p>
               </div>
-              <div className="text-xl font-extrabold text-blue-700">
+              <div className="text-xl font-extrabold text-blue-700 price-tag">
                 ₹ {ele?.price}
               </div>
             </Link>

@@ -166,7 +166,7 @@ export const AddSection = ({
   }, [lectureTitle, lectureDescription, lectureVideo]);
 
   return (
-    <div>
+    <div className="edit-course-modal">
       <Dialog.Root
         open={addingSection}
         onOpenChange={(e) => setAddingSection(e.open)}
@@ -174,11 +174,11 @@ export const AddSection = ({
         <Dialog.Trigger />
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content>
+          <Dialog.Content className="modal-surface">
             <Dialog.Header>
               <Dialog.Title>Add Section</Dialog.Title>
             </Dialog.Header>
-            <Dialog.Body>
+            <Dialog.Body className="modal-body-stack">
               <div className="flex  gap-2 items-center">
                 <label htmlFor="sectionName">Section Name</label>
                 {finalSectionName}
@@ -295,8 +295,13 @@ export const AddSection = ({
                 </div>
               )}
             </Dialog.Body>
-            <Dialog.Footer>
-              <button onClick={() => setAddingSection(false)}>Cancel</button>
+            <Dialog.Footer className="modal-footer">
+              <button
+                className="btn-secondary"
+                onClick={() => setAddingSection(false)}
+              >
+                Cancel
+              </button>
               <button onClick={createSection} disabled={block}>
                 Create Section
               </button>

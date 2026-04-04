@@ -31,10 +31,10 @@ export const NavBar = () => {
   ///all the functions here
 
   return (
-    <header className="site-shell glass-panel sticky top-3 z-50 px-4 py-3 float-in">
+    <header className="site-shell glass-panel navbar-shell sticky top-3 z-50 px-4 py-3 float-in">
       <div className="flex items-center justify-between gap-3">
         <Link to="/" className="flex items-center gap-2">
-          <div className="h-9 w-9 rounded-full bg-gradient-to-br from-blue-600 to-emerald-500 text-white grid place-items-center font-extrabold">
+          <div className="h-9 w-9 rounded-full bg-gradient-to-br from-blue-600 to-emerald-500 text-white grid place-items-center font-extrabold shadow-lg shadow-blue-500/30">
             SN
           </div>
           <div>
@@ -46,18 +46,21 @@ export const NavBar = () => {
         </Link>
 
         <nav className="hidden md:flex gap-4 items-center text-slate-700 font-semibold">
-          <Link to="/" className={path === "/" ? "text-blue-700" : ""}>
+          <Link
+            to="/"
+            className={`nav-link ${path === "/" ? "nav-link-active" : ""}`}
+          >
             Home
           </Link>
           <HoverCard.Root size="sm">
             <HoverCard.Trigger asChild>
-              <div className="cursor-pointer flex items-center gap-1">
+              <div className="cursor-pointer flex items-center gap-1 nav-link">
                 Catalog <FaAngleDown />
               </div>
             </HoverCard.Trigger>
             <Portal>
               <HoverCard.Positioner>
-                <HoverCard.Content className="rounded-xl border border-slate-200 bg-white shadow-xl">
+                <HoverCard.Content className="rounded-xl border border-slate-200 bg-white shadow-xl menu-panel">
                   <HoverCard.Arrow />
                   <Stack gap="3">
                     <Link to={`/course-category/6978c3293f8f362f1f92317c`}>
@@ -82,13 +85,13 @@ export const NavBar = () => {
           </HoverCard.Root>
           <Link
             to="/about"
-            className={path === "/about" ? "text-blue-700" : ""}
+            className={`nav-link ${path === "/about" ? "nav-link-active" : ""}`}
           >
             About
           </Link>
           <Link
             to="/contact"
-            className={path === "/contact" ? "text-blue-700" : ""}
+            className={`nav-link ${path === "/contact" ? "nav-link-active" : ""}`}
           >
             Contact
           </Link>
@@ -98,10 +101,7 @@ export const NavBar = () => {
           {token === "" ? (
             <div className="flex gap-2">
               <Link to="/login">
-                <button
-                  type="button"
-                  className="!bg-white !text-slate-800 !border !border-slate-300"
-                >
+                <button type="button" className="btn-secondary">
                   Log In
                 </button>
               </Link>
@@ -113,16 +113,13 @@ export const NavBar = () => {
             <div className="flex items-center gap-2">
               <Link
                 to="/dashboard/cart"
-                className="section-card !py-1.5 !px-2.5 flex items-center gap-1"
+                className="section-card cart-chip !py-1.5 !px-2.5 flex items-center gap-1"
               >
                 <IoCartOutline />
                 <div className="text-sm font-semibold">{count}</div>
               </Link>
               <Link to="/dashboard/my-profile">
-                <button
-                  type="button"
-                  className="!bg-white !text-slate-800 !border !border-slate-300"
-                >
+                <button type="button" className="btn-secondary">
                   Dashboard
                 </button>
               </Link>

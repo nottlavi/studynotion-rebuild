@@ -91,11 +91,11 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
 
   return (
     <div
-      className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+      className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm rating-modal-overlay"
       onClick={() => setRatingModal(false)}
     >
       <div
-        className="w-[444px] rounded shadow-lg flex flex-col bg-gray-700"
+        className="w-[444px] rounded shadow-lg flex flex-col bg-gray-700 rating-modal"
         onClick={(e) => e.stopPropagation()}
       >
         {/* heading */}
@@ -188,8 +188,13 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
         </div>
 
         {/* cancel and save button */}
-        <div className="flex justify-end gap-3">
-          <button onClick={() => setRatingModal(false)}>Cancel</button>
+        <div className="flex justify-end gap-3 rating-modal-actions">
+          <button
+            className="btn-secondary"
+            onClick={() => setRatingModal(false)}
+          >
+            Cancel
+          </button>
           <button disabled={!unblockButton} onClick={saveRating}>
             Save
           </button>

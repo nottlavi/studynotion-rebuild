@@ -7,17 +7,22 @@ export const ProfilePage = () => {
   const profile = useSelector((state) => state.user.profile);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="profile-page flex flex-col gap-4">
       <div className="text-2xl font-extrabold">My Profile</div>
       {/* name and email div */}
-      <div className="section-card flex items-center justify-between">
+      <div className="section-card profile-identity-card flex items-center justify-between">
         {/* for image div */}
-        <img
-          src={profile?.profile?.avatar || ""}
-          width={100}
-          height={100}
-          className="rounded-full"
-        />
+        {profile?.profile?.avatar ? (
+          <img
+            src={profile?.profile?.avatar || ""}
+            width={100}
+            height={100}
+            className="rounded-full"
+          />
+        ) : (
+          <div></div>
+        )}
+
         {/* for name and email */}
         <div>
           {/* for name */}
@@ -35,13 +40,15 @@ export const ProfilePage = () => {
         </div>
       </div>
       {/* about div */}
-      <div className="section-card">
+      <div className="section-card profile-section">
         {/* collective div for about title and the button */}
         <div className="flex justify-between">
-          <div className="font-bold">About</div>
+          <div className="font-bold section-title">About</div>
           {/* edit button div */}
           <div>
-            <Link to="/dashboard/settings">Edit</Link>
+            <Link to="/dashboard/settings" className="link-accent">
+              Edit
+            </Link>
           </div>
         </div>
         {/* div for the user's actual about content */}
@@ -52,13 +59,15 @@ export const ProfilePage = () => {
         </div>
       </div>
       {/* personal details div */}
-      <div className="section-card flex flex-col gap-4">
+      <div className="section-card profile-section flex flex-col gap-4">
         {/* collective div for title and button */}
         <div className="flex justify-between">
-          <div className="font-bold">Personal Details</div>
+          <div className="font-bold section-title">Personal Details</div>
           {/* edit button div */}
           <div>
-            <Link to="/dashboard/settings">Edit</Link>
+            <Link to="/dashboard/settings" className="link-accent">
+              Edit
+            </Link>
           </div>
         </div>
         {/* the name display div */}

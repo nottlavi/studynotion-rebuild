@@ -99,12 +99,12 @@ export const EditLecture = ({ lectId, onClose }) => {
     >
       <Dialog.Backdrop />
       <Dialog.Positioner>
-        <Dialog.Content>
+        <Dialog.Content className="modal-surface">
           <Dialog.CloseTrigger onClick={() => {}}>X</Dialog.CloseTrigger>
           <Dialog.Header>
             <Dialog.Title>Edit Lecture</Dialog.Title>
           </Dialog.Header>
-          <Dialog.Body>
+          <Dialog.Body className="modal-body-stack">
             <div
               style={{ display: "flex", flexDirection: "column", gap: "12px" }}
             >
@@ -131,7 +131,7 @@ export const EditLecture = ({ lectId, onClose }) => {
               </div>
             </div>
           </Dialog.Body>
-          <Dialog.Footer>
+          <Dialog.Footer className="modal-footer">
             <button disabled={blocked} onClick={handleSave}>
               Save?
             </button>

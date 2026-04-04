@@ -64,18 +64,18 @@ export const DeleteSubSectionModal = ({
     >
       <Dialog.Backdrop />
       <Dialog.Positioner>
-        <Dialog.Content>
+        <Dialog.Content className="modal-surface">
           <Dialog.CloseTrigger>Close</Dialog.CloseTrigger>
           <Dialog.Header>
             <Dialog.Title>Delete Lecture?</Dialog.Title>
           </Dialog.Header>
-          <Dialog.Body>
+          <Dialog.Body className="modal-body-stack">
             <p>
               Are you sure, you want to delete lecture titled{" "}
               {deleteSubSection?.title}?
             </p>
           </Dialog.Body>
-          <Dialog.Footer>
+          <Dialog.Footer className="modal-footer">
             <button onClick={deleteHandler}>Delete</button>
           </Dialog.Footer>
         </Dialog.Content>

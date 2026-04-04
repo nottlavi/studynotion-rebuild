@@ -49,37 +49,30 @@ export const EnrolledCourses = () => {
   };
 
   return (
-    <div>
+    <div className="enrolled-page">
       {/* location and enrolled coursesheading */}
       <div className="flex flex-col gap-3">
         <div className="text-sm text-slate-500">
           Home / Dashboard / Enrolled Courses
         </div>
-        <div className="text-2xl font-extrabold">Enrolled Courses</div>
+        <div className="text-2xl font-extrabold page-title">
+          Enrolled Courses
+        </div>
       </div>
       {/* filter buttons div */}
       <div className="flex gap-3 mt-3">
-        <button
-          type="button"
-          className="!bg-white !text-slate-700 !border !border-slate-300"
-        >
+        <button type="button" className="btn-secondary">
           All
         </button>
-        <button
-          type="button"
-          className="!bg-white !text-slate-700 !border !border-slate-300"
-        >
+        <button type="button" className="btn-secondary">
           Pending
         </button>
-        <button
-          type="button"
-          className="!bg-white !text-slate-700 !border !border-slate-300"
-        >
+        <button type="button" className="btn-secondary">
           Completed
         </button>
       </div>
       {/* table header div */}
-      <div className="section-card flex justify-between mt-3 bg-slate-50">
+      <div className="section-card table-head flex justify-between mt-3 bg-slate-50">
         <p>Course Name</p>
         {/* duration and progress div */}
         <div className="flex gap-3">
@@ -99,14 +92,17 @@ export const EnrolledCourses = () => {
           );
         }, 0);
         return (
-          <div key={ele._id} className="section-card flex justify-between mt-2">
+          <div
+            key={ele._id}
+            className="section-card enroll-row flex justify-between mt-2"
+          >
             {/* title and thumbnail div */}
             <div className="flex gap-2 items-start">
               <img
                 src={ele?.thumbnail}
                 width={40}
                 height={60}
-                className="rounded-md"
+                className="rounded-md list-row-media"
               />
               <div className="flex flex-col">
                 <Link to={`/view/course/${ele._id}`}>
@@ -125,13 +121,13 @@ export const EnrolledCourses = () => {
               <MenuButton>
                 <CiMenuKebab />
               </MenuButton>
-              <MenuItems className="flex flex-col gap-1 section-card !p-2">
+              <MenuItems className="flex flex-col gap-1 section-card menu-panel !p-2">
                 <MenuItem as="button" className="text-left">
                   Mark as completed
                 </MenuItem>
                 <MenuItem
                   as="button"
-                  className="text-left !bg-white !text-red-600 !border !border-red-200"
+                  className="text-left btn-secondary danger-text"
                   onClick={() => {
                     handleRemove(ele._id);
                   }}

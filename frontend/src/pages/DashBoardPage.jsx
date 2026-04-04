@@ -39,14 +39,14 @@ export const DashBoardPage = () => {
   }, [token]);
 
   return (
-    <div className="site-shell grid md:grid-cols-[260px_1fr] gap-4 float-in">
+    <div className="site-shell dashboard-page grid md:grid-cols-[260px_1fr] gap-4 float-in">
       {/* Sidebar div */}
-      <div className="glass-panel p-3 h-fit">
-        <div className="flex flex-col gap-2">
+      <div className="glass-panel dashboard-sidebar p-3 h-fit">
+        <div className="flex flex-col gap-2 dashboard-nav">
           <Link
             to="/dashboard/my-profile"
-            className={`section-card ${
-              currentBoy === "my-profile" ? "!bg-blue-50 !border-blue-200" : ""
+            className={`section-card dashboard-nav-link ${
+              currentBoy === "my-profile" ? "dashboard-nav-link-active" : ""
             }`}
           >
             My Profile
@@ -55,9 +55,9 @@ export const DashBoardPage = () => {
             <div className="flex flex-col gap-2">
               <Link
                 to={"/dashboard/enrolled-courses"}
-                className={`section-card ${
+                className={`section-card dashboard-nav-link ${
                   currentBoy === "enrolled-courses"
-                    ? "!bg-blue-50 !border-blue-200"
+                    ? "dashboard-nav-link-active"
                     : ""
                 }`}
               >
@@ -65,8 +65,8 @@ export const DashBoardPage = () => {
               </Link>
               <Link
                 to={"/dashboard/cart"}
-                className={`section-card ${
-                  currentBoy === "cart" ? "!bg-blue-50 !border-blue-200" : ""
+                className={`section-card dashboard-nav-link ${
+                  currentBoy === "cart" ? "dashboard-nav-link-active" : ""
                 }`}
               >
                 Cart
@@ -80,10 +80,8 @@ export const DashBoardPage = () => {
               </p>
               <Link
                 to="/dashboard/my-courses"
-                className={`section-card ${
-                  currentBoy === "my-courses"
-                    ? "!bg-blue-50 !border-blue-200"
-                    : ""
+                className={`section-card dashboard-nav-link ${
+                  currentBoy === "my-courses" ? "dashboard-nav-link-active" : ""
                 }`}
               >
                 My Courses
@@ -93,8 +91,8 @@ export const DashBoardPage = () => {
           <hr />
           <Link
             to="/dashboard/settings"
-            className={`section-card ${
-              currentBoy === "settings" ? "!bg-blue-50 !border-blue-200" : ""
+            className={`section-card dashboard-nav-link ${
+              currentBoy === "settings" ? "dashboard-nav-link-active" : ""
             }`}
           >
             Settings
@@ -104,7 +102,7 @@ export const DashBoardPage = () => {
           </button>
         </div>
       </div>
-      <div className="glass-panel p-4 md:p-5 min-h-[70vh]">
+      <div className="glass-panel dashboard-main p-4 md:p-5 min-h-[70vh]">
         <Outlet />
       </div>
     </div>

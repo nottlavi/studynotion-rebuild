@@ -36,9 +36,9 @@ export const MyCourses = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="my-courses-page flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-extrabold">My Courses</h1>
+        <h1 className="text-2xl font-extrabold page-title">My Courses</h1>
         <Link to="/dashboard/add-course">
           <button>Add Course</button>
         </Link>
@@ -46,13 +46,19 @@ export const MyCourses = () => {
       <div className="flex flex-col gap-3">
         {ownedCourses.map((ele, idx) => {
           return (
-            <div className="section-card flex gap-5 items-start" key={idx}>
-              <Link to={`/course/${ele._id}`} className="flex gap-3">
+            <div
+              className="section-card list-row flex gap-5 items-start"
+              key={idx}
+            >
+              <Link
+                to={`/course/${ele._id}`}
+                className="flex gap-3 flex-1 min-w-0"
+              >
                 <img
                   src={ele?.thumbnail}
                   width={100}
                   height={100}
-                  className="rounded-xl object-cover"
+                  className="rounded-xl object-cover list-row-media"
                 />
                 {/* the info div */}
                 <div>

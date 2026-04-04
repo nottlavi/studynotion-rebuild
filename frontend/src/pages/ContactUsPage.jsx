@@ -2,15 +2,15 @@ import React from "react";
 
 export const ContactUsPage = () => {
   return (
-    <main className="site-shell float-in">
+    <main className="site-shell contact-page float-in">
       <section className="page-hero">
-        <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+        <p className="eyebrow text-xs uppercase tracking-[0.18em] text-slate-500">
           Contact
         </p>
-        <h1 className="text-4xl font-extrabold text-slate-900 mt-2">
+        <h1 className="page-title text-4xl font-extrabold text-slate-900 mt-2">
           Reach out to the StudyNotion team
         </h1>
-        <p className="text-slate-700 mt-3 max-w-2xl">
+        <p className="page-lead text-slate-700 mt-3 max-w-2xl">
           For support, partnerships, or instructor applications, we usually
           reply within one business day.
         </p>
