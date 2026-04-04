@@ -20,6 +20,9 @@ const profileSchema = new mongoose.Schema({
     minLength: [10, "Contact number must be at least 10 digits"],
     default: null,
   },
+  avatar: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("Profile", profileSchema);

@@ -504,3 +504,43 @@ exports.updatePassword = async (req, res) => {
     });
   }
 };
+
+exports.updateAvatar = async (req, res) => {
+  try {
+    const { secure_url } = req.body;
+    const { userId } = req.user;
+
+    if (!secure_url || !userId) {
+      return res.status(400).json({
+        success: false,
+        message: "all inputs required",
+      });
+    }
+
+    const user = await userModel.findById(userId);
+
+    const profile = await profileModel.findById(user.profile);
+
+    if (!profile) {
+      return res.status(404).json({
+        success: false,
+        message: "no such profile found",
+      });
+    }
+
+    profile.avatar = secure_url;
+
+    await profile.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "avatar updated successfully",
+      profile: profile,
+    });
+  } catch (err) {
+    return res.status().json({
+      success: false,
+      message: err.message,
+    });
+  }
+};

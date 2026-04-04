@@ -19,6 +19,12 @@ export const UpdateProfile = () => {
   const [gender, setGender] = useState();
   const [contactNumber, setContactNumber] = useState("");
   const [about, setAbout] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const [initialAvatar, setInitialAvatar] = useState("");
+
+  //state to store the url of the avatar
+  const [avatarUrl, setAvatarUrl] = useState("");
+
   // state to manage profile so that initial profile can be compared to changed
   const [initialProfile, setInitialProfile] = useState({});
   //this state is to block the user to use the button when its invalid for them to send a backend req
@@ -26,6 +32,7 @@ export const UpdateProfile = () => {
   //all the input states for change password
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [blocked1, setBlocked1] = useState(true);
 
   //managing all the dependencies here
   const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -40,6 +47,9 @@ export const UpdateProfile = () => {
       setGender(profile.profile?.gender || "");
       setContactNumber(profile.profile?.contactNumber || "");
       setAbout(profile.profile?.about || "");
+      setAvatar(profile?.profile?.avatar || "");
+      setAvatarUrl(profile?.profile.avatar || "");
+      setInitialAvatar(profile.profile?.avatar || "");
       setInitialProfile(profile);
     }
   }, [profile]);
@@ -71,6 +81,15 @@ export const UpdateProfile = () => {
       }
     }
   }, [firstName, lastName, dob, gender, contactNumber, about]);
+
+  //useEffect to check if blocked1 should be unblocked
+  useEffect(() => {
+    if (!avatar || avatar == initialAvatar) {
+      setBlocked1(true);
+    } else {
+      setBlocked1(false);
+    }
+  }, [avatar, initialAvatar]);
 
   //the function to call the backend for profile updation
   const updateProfile = async (e) => {
@@ -118,111 +137,192 @@ export const UpdateProfile = () => {
     }
   };
 
+  //function to upload avatar
+  const handleAvatarChange = async (e) => {
+    e.preventDefault();
+    try {
+      const data = new FormData();
+      data.append("file", avatar);
+      data.append("upload_preset", "hi1wsn1z");
+
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/dguufm5le/image/upload",
+        {
+          method: "POST",
+          body: data,
+        },
+      );
+
+      if (!res.ok) console.log(await res.text);
+
+      const result = await res.json();
+
+      try {
+        const res = await axios.put(
+          `${BASE_URL}/users/update-avatar`,
+          {
+            secure_url: result?.secure_url,
+          },
+          { withCredentials: true },
+        );
+
+        console.log(res);
+        if (res) {
+          setAvatarUrl(res?.data?.profile?.avatar);
+          setAvatar(res?.data?.profile?.avatar);
+          setInitialAvatar(res?.data?.profile?.avatar);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-3">
       {/* div where users can update information */}
       <div className="section-card flex gap-2 flex-col">
-        <form onSubmit={updateProfile} className="flex flex-col gap-3">
-          <div className="text-xl font-bold">Profile Information</div>
+        <form onSubmit={updateProfile} className="flex gap-4">
+          <div className="flex flex-col gap-3">
+            <div className="text-xl font-bold">Profile Information</div>
 
-          <div className="flex gap-4">
-            <div className="flex flex-col">
-              <div>First Name</div>
-              <input
-                type="text"
-                value={firstName}
-                onChange={(e) => {
-                  setFirstName(e.target.value);
-                }}
-                placeholder={profile.firstName}
-              />
+            <div className="flex gap-4">
+              <div className="flex flex-col">
+                <div>First Name</div>
+                <input
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => {
+                    setFirstName(e.target.value);
+                  }}
+                  placeholder={profile.firstName}
+                />
+              </div>
+              <div className="flex flex-col">
+                <div>Last Name</div>
+                <input
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => {
+                    setLastName(e.target.value);
+                  }}
+                  placeholder={profile.lastName}
+                />
+              </div>
             </div>
-            <div className="flex flex-col">
-              <div>Last Name</div>
-              <input
-                type="text"
-                value={lastName}
-                onChange={(e) => {
-                  setLastName(e.target.value);
-                }}
-                placeholder={profile.lastName}
-              />
-            </div>
-          </div>
 
-          {/* dob and gender div */}
-          <div className="flex gap-4">
-            {/* div for date */}
-            <div className="flex flex-col">
-              <div>Date of Birth</div>
-              <input
-                type="date"
-                value={dob}
-                max={today}
-                onChange={(e) => {
-                  setDOB(e.target.value);
-                }}
-              />
+            {/* dob and gender div */}
+            <div className="flex gap-4">
+              {/* div for date */}
+              <div className="flex flex-col">
+                <div>Date of Birth</div>
+                <input
+                  type="date"
+                  value={dob}
+                  max={today}
+                  onChange={(e) => {
+                    setDOB(e.target.value);
+                  }}
+                />
+              </div>
+              {/* div for gender */}
+              <div className="flex flex-col">
+                <div>Gender</div>
+                <select
+                  value={gender}
+                  onChange={(e) => {
+                    setGender(e.target.value);
+                  }}
+                >
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Others">Others</option>
+                </select>
+              </div>
             </div>
-            {/* div for gender */}
-            <div className="flex flex-col">
-              <div>Gender</div>
-              <select
-                value={gender}
-                onChange={(e) => {
-                  setGender(e.target.value);
-                }}
-              >
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Others">Others</option>
-              </select>
-            </div>
-          </div>
 
-          {/* contact no and about div */}
-          <div className="flex gap-4">
-            {/* contact div */}
-            <div className="flex flex-col">
-              <div>Contact No</div>
-              <input
-                type="text"
-                value={contactNumber}
-                onChange={(e) => {
-                  const value = e.target.value;
+            {/* contact no and about div */}
+            <div className="flex gap-4">
+              {/* contact div */}
+              <div className="flex flex-col">
+                <div>Contact No</div>
+                <input
+                  type="text"
+                  value={contactNumber}
+                  onChange={(e) => {
+                    const value = e.target.value;
 
-                  // allow only digits
-                  if (/^\d*$/.test(value)) {
-                    setContactNumber(value);
+                    // allow only digits
+                    if (/^\d*$/.test(value)) {
+                      setContactNumber(value);
+                    }
+                  }}
+                  placeholder={
+                    profile?.profile?.contactNumber
+                      ? profile.profile.contactNumber
+                      : "Enter contact number"
                   }
-                }}
-                placeholder={
-                  profile?.profile?.contactNumber
-                    ? profile.profile.contactNumber
-                    : "Enter contact number"
-                }
-              />
+                />
+              </div>
+              {/* about div */}
+              <div className="flex flex-col">
+                <div>About</div>
+                <input
+                  placeholder={profile?.profile?.about}
+                  type="text"
+                  value={about}
+                  onChange={(e) => {
+                    setAbout(e.target.value);
+                  }}
+                />
+              </div>
             </div>
-            {/* about div */}
-            <div className="flex flex-col">
-              <div>About</div>
-              <input
-                placeholder={profile?.profile?.about}
-                type="text"
-                value={about}
-                onChange={(e) => {
-                  setAbout(e.target.value);
-                }}
-              />
+            {/* button container for the above div */}
+            <div className="flex gap-4">
+              <Link to="/dashboard/my-profile">
+                <button>Cancel</button>
+              </Link>
+              <button onClick={updateProfile} disabled={blocked} type="submit">
+                Save
+              </button>
             </div>
           </div>
-          {/* button container for the above div */}
-          <div className="flex gap-4">
-            <Link to="/dashboard/my-profile">
-              <button>Cancel</button>
-            </Link>
-            <button onClick={updateProfile} disabled={blocked} type="submit">
-              Save
+          {/* div for profile picture */}
+          <div>
+            {avatar ? (
+              <img
+                src={avatarUrl}
+                width={100}
+                height={100}
+                className="rounded-full cursor-pointer"
+                onClick={() => document.getElementById("avatarInput").click()}
+              />
+            ) : (
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={() => document.getElementById("avatarInput").click()}
+                >
+                  upload avatar
+                </button>
+              </div>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              id="avatarInput"
+              hidden
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                setAvatar(file);
+                setAvatarUrl(URL.createObjectURL(file));
+              }}
+            />
+
+            <button disabled={blocked1} onClick={handleAvatarChange}>
+              save
             </button>
           </div>
         </form>

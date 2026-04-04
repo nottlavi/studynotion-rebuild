@@ -13,6 +13,7 @@ const {
   getProfileByToken,
   updateProfile,
   updatePassword,
+  updateAvatar,
 } = require("../controllers/userController");
 
 //importing the middlewares here
@@ -32,4 +33,6 @@ router.get("/get-profile", verifyJWT, getProfileByToken);
 
 router.put("/update-profile", verifyJWT, updateProfile);
 router.put("/update-password", verifyJWT, updatePassword);
+
+router.put("/update-avatar", verifyJWT, updateAvatar);
 module.exports = router;
