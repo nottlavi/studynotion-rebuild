@@ -31,6 +31,7 @@ export const CoursePage = () => {
   const [expandMenu, setExpandMenu] = useState(false);
   //state to expand one particular section this will be through element id
   const [expandOneSection, setExpandOneSection] = useState();
+  const [reviews, setReviews] = useState([]);
 
   ///all the functions here
   //function to call backend to add a course to cart
@@ -67,6 +68,22 @@ export const CoursePage = () => {
     };
     fetchCourseDetails();
   }, [courseId, currentCourse]);
+
+  //useEffect to fetch all the rating n reviews whenever courseId changes
+  useEffect(() => {
+    const fetchAllReviews = async () => {
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/rating-review/get-all/${courseId}`,
+        );
+        setReviews(res?.data?.reviews);
+        console.log(res?.data?.reviews);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchAllReviews();
+  }, [courseId]);
 
   const totalSubsections =
     currentCourse?.sections?.reduce(
@@ -286,7 +303,72 @@ export const CoursePage = () => {
           </p>
         </div>
 
-        <div className="section-card">Review from other Learners</div>
+        <div className="section-card flex flex-col gap-5">
+          <p> Review from other Learners</p>
+          {/* div to srender all the reviews */}
+          <div className="flex gap-3">
+            {reviews.map((review) => (
+              // a single review
+              <div className="section-card" key={review._id}>
+                {/* for profile pic, name and email */}
+                <div className="flex gap-3">
+                  {/* profile pic div */}
+                  <div>
+                    <img
+                      src={review?.user?.avatar}
+                      height={50}
+                      width={50}
+                      className="rounded-full"
+                    />
+                  </div>
+                  {/* name and email div */}
+                  <div className="flex flex-col gap-3">
+                    {/* name div */}
+                    <div className="flex gap-1">
+                      <p>{review?.user?.firstName}</p>
+                      <p>{review?.user?.lastName}</p>
+                    </div>
+                  </div>
+                </div>
+                {/* for actual review content */}
+                <div>{review?.review}</div>
+                {/* rating star div */}
+                <div className="flex gap-2 items-center">
+                  <p>{review?.rating}</p>
+                  {/* div for stars */}
+                  <div className="flex items-center">
+                    <FaStar
+                      className={
+                        review?.rating >= 1 ? "text-yellow-500" : "text-white"
+                      }
+                    ></FaStar>
+                    <FaStar
+                      className={
+                        review?.rating >= 2 ? "text-yellow-500" : "text-white"
+                      }
+                    ></FaStar>
+                    <FaStar
+                      className={
+                        review?.rating >= 3 ? "text-yellow-500" : "text-white"
+                      }
+                    ></FaStar>
+                    <FaStar
+                      className={
+                        review?.rating >= 4 ? "text-yellow-500" : "text-white"
+                      }
+                    ></FaStar>
+
+                    <FaStar
+                      className={
+                        review?.rating >= 5 ? "text-yellow-500" : "text-white"
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </main>
   );
