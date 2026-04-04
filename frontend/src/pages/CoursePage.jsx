@@ -286,9 +286,7 @@ export const CoursePage = () => {
           </p>
         </div>
 
-        <div className="section-card">
-          <ReviewComponent />
-        </div>
+        <div className="section-card">Review from other Learners</div>
       </div>
     </main>
   );

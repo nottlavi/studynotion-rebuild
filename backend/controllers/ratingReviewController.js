@@ -129,3 +129,53 @@ exports.getRatingReview = async (req, res) => {
     });
   }
 };
+
+exports.getAllRatingReview = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    if (!courseId) {
+      return res.status(400).json({
+        success: false,
+        message: "courseId is required",
+      });
+    }
+
+    const users = await userModel
+      .find({
+        "ratedCourses.courseId": courseId,
+      })
+      .select("firstName lastName ratedCourses profile")
+      .populate("profile");
+
+    const reviews = [];
+
+    users.forEach((user) => {
+      user.ratedCourses.forEach((rc) => {
+        if (rc.courseId.toString() === courseId) {
+          reviews.push({
+            user: {
+              firstName: user.firstName,
+              lastName: user.lastName,
+              avatar: user.profile?.avatar || null,
+            },
+            rating: rc.rating,
+            review: rc.review,
+          });
+        }
+      });
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "All course reviews fetched successfully",
+      reviews,
+    });
+  } catch (err) {
+    return res.status().json({
+      success: false,
+      message: "error in rating review controller",
+      error: err,
+    });
+  }
+};

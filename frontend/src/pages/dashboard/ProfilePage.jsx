@@ -12,7 +12,12 @@ export const ProfilePage = () => {
       {/* name and email div */}
       <div className="section-card flex items-center justify-between">
         {/* for image div */}
-        <div></div>
+        <img
+          src={profile?.profile?.avatar || ""}
+          width={100}
+          height={100}
+          className="rounded-full"
+        />
         {/* for name and email */}
         <div>
           {/* for name */}
