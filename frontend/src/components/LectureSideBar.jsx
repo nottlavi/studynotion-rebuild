@@ -70,7 +70,6 @@ export const LectureSideBar = ({
         {/* title and completion counter div */}
         <div className="flex gap-2">
           <p>{currentCourse?.title}</p>
-          <p>x / {totalSubsections}</p>
         </div>
         {/* add review div */}
         <button
