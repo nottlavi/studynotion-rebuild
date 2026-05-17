@@ -24,7 +24,12 @@ database.connect();
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://your-frontend.vercel.app"],
+    credentials: true,
+  }),
+);
 
 //routes
 app.use("/api/users", userRoutes);
