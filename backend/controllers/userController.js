@@ -70,6 +70,11 @@ exports.signup = async (req, res) => {
       "",
     );
 
+    if (!isMailSent) {
+      console.log("here it is");
+      console.log(isMailSent);
+    }
+
     if (isMailSent) {
       //deleting a otp model with this email, so that only one otp exists in the db for one email
       await OTPModel.findOneAndDelete({ email: email });
