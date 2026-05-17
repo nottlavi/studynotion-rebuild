@@ -22,7 +22,7 @@ exports.sendMail = async (email, subject, text, html) => {
 
     return true;
   } catch (err) {
-    console.log(err.message);
-    return false;
+    console.log("MAIL ERROR");
+    console.log(err);
   }
 };
