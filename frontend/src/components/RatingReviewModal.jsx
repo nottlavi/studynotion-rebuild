@@ -48,11 +48,11 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
     };
 
     fetchRatingDetails();
-  }, [profile, courseId]);
+  }, [profile, courseId, BASE_URL]);
 
   //useEffect to toggle the changed state to unblock the save button only if rating of review is changed
   useEffect(() => {
-    if (currentRating != initialRating || currentReview != initialReview) {
+    if (currentRating !== initialRating || currentReview !== initialReview) {
       setUnblockButton(true);
     } else {
       setUnblockButton(false);
@@ -64,11 +64,11 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
   const saveRating = async () => {
     const payload = { courseId };
 
-    if (currentRating != initialRating) {
+    if (currentRating !== initialRating) {
       payload.rating = currentRating;
     }
 
-    if (currentReview != initialReview) {
+    if (currentReview !== initialReview) {
       payload.review = currentReview;
     }
 

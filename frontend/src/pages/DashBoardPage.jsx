@@ -36,7 +36,7 @@ export const DashBoardPage = () => {
       }
     };
     getProfileByToken();
-  }, [token]);
+  }, [token, BASE_URL, dispatch]);
 
   return (
     <div className="site-shell dashboard-page grid md:grid-cols-[260px_1fr] gap-4 float-in">

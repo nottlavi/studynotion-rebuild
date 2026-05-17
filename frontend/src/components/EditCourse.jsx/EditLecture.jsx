@@ -36,7 +36,7 @@ export const EditLecture = ({ lectId, onClose }) => {
       }
     };
     fetchLecture();
-  }, [lectId]);
+  }, [lectId, BASE_URL]);
 
   //useEffect to toggle the blocking of save button
   useEffect(() => {
@@ -48,9 +48,10 @@ export const EditLecture = ({ lectId, onClose }) => {
     );
 
     if (
-      (lectureDescription.trim() != initiaLectureDescription &&
-        lectureDescription.trim() != "") ||
-      (lectureTitle.trim() != initialLectureTitle && lectureTitle.trim() != "")
+      (lectureDescription.trim() !== initiaLectureDescription &&
+        lectureDescription.trim() !== "") ||
+      (lectureTitle.trim() !== initialLectureTitle &&
+        lectureTitle.trim() !== "")
     ) {
       setBlocked(false);
     } else {

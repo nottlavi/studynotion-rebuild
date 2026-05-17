@@ -31,7 +31,7 @@ import { EditCourse } from "./components/MyCoursesPage/EditCourse";
 const App = () => {
   //importing imp info from redux here
   const token = useSelector((state) => state.user.token);
-  const profile = useSelector((state) => state.user.profile);
+  // const profile = useSelector((state) => state.user.profile);
 
   // defining all the dependencies here
   const dispatch = useDispatch();

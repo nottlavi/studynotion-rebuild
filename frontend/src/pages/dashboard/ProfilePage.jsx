@@ -18,6 +18,7 @@ export const ProfilePage = () => {
             width={100}
             height={100}
             className="rounded-full"
+            alt="avatar"
           />
         ) : (
           <div></div>
@@ -53,7 +54,7 @@ export const ProfilePage = () => {
         </div>
         {/* div for the user's actual about content */}
         <div>
-          {profile?.profile?.about == null
+          {profile?.profile?.about === null
             ? "Write Something About Yourself"
             : profile.profile.about}
         </div>

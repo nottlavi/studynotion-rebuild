@@ -10,7 +10,7 @@ import { IoIosMenu } from "react-icons/io";
 import { FaPen, FaPlay, FaCaretDown } from "react-icons/fa";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { PiLineVerticalThin } from "react-icons/pi";
-import { IoMdAdd } from "react-icons/io";
+// import { IoMdAdd } from "react-icons/io";
 import { FaCheck } from "react-icons/fa";
 import { GoPencil } from "react-icons/go";
 
@@ -40,7 +40,6 @@ export const EditCourse = () => {
   const [requirement, setRequirement] = useState("");
 
   const [sections, setSections] = useState([]);
-  const [initialSections, setInitialSections] = useState([]);
   const [expandMenu, setExpandMenu] = useState(null);
 
   const [stage, setStage] = useState(0);
@@ -101,13 +100,13 @@ export const EditCourse = () => {
         setInitialRequirements(res?.data?.course?.requirements);
 
         setSections(res?.data?.course?.sections);
-        setInitialSections(res?.data?.course?.sections);
+        // setInitialSections(res?.data?.course?.sections);
       } catch (err) {
         console.error(err);
       }
     };
     fetchCourseDetails();
-  }, [courseId]);
+  }, [courseId, BASE_URL]);
 
   //useEffect to check whether to unlock the first button
   useEffect(() => {
@@ -115,8 +114,8 @@ export const EditCourse = () => {
       title.trim() === "" ||
       description.trim() === "" ||
       category === "" ||
-      tags.length == 0 ||
-      requirements.length == 0
+      tags.length === 0 ||
+      requirements.length === 0
     ) {
       setFirstButton(false);
       return;
@@ -190,7 +189,7 @@ export const EditCourse = () => {
     if (description.trim() !== initialDescription) {
       payload.description = description;
     }
-    if (price != initialPrice) {
+    if (price !== initialPrice) {
       payload.price = price;
     }
     if (category !== initialCategory) {
@@ -250,7 +249,7 @@ export const EditCourse = () => {
         //need to set the name of section on client side
         setSections((prev) =>
           prev.map((section) =>
-            section._id == sectionId
+            section._id === sectionId
               ? { ...section, title: res?.data?.section?.title }
               : section,
           ),
@@ -463,7 +462,7 @@ export const EditCourse = () => {
                       </div>
                       {console.log(editLecture)}
                       {console.log(subsection._id)}
-                      {editLecture == subsection._id && (
+                      {editLecture === subsection._id && (
                         <EditLecture
                           lectId={editLecture}
                           onClose={() => setEditLecture(null)}

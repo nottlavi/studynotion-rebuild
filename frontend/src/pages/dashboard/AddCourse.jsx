@@ -284,13 +284,13 @@ export const AddCourse = () => {
 
     localStorage.setItem("tempIds", JSON.stringify(newTempIds));
 
-    const backendResult = await axios.post(
-      `${BASE_URL}/courses/auto-delete-media`,
-      {
-        array: newTempIds,
-        keepPublicId: 1,
-      },
-    );
+    // const backendResult = await axios.post(
+    //   `${BASE_URL}/courses/auto-delete-media`,
+    //   {
+    //     array: newTempIds,
+    //     keepPublicId: 1,
+    //   },
+    // );
 
     const cleaned = newTempIds.slice(-1);
     localStorage.setItem("tempIds", JSON.stringify(cleaned));
@@ -302,6 +302,7 @@ export const AddCourse = () => {
         publicId: public_id,
       });
       setThumbnail(null);
+      console.log(res);
     } catch (err) {
       console.log(err);
     }
@@ -492,7 +493,12 @@ export const AddCourse = () => {
                 <label>Course Thumbnail</label>
                 {thumbnail ? (
                   <div>
-                    <img src={thumbnail.url} height={200} width={200} />
+                    <img
+                      src={thumbnail.url}
+                      height={200}
+                      width={200}
+                      alt="thumbnail"
+                    />
                     <button
                       type="button"
                       onClick={() => {

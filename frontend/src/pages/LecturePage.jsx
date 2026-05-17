@@ -41,7 +41,7 @@ export const LecturePage = () => {
       }
     };
     getCourseDetails();
-  }, [courseId]);
+  }, [courseId, BASE_URL]);
 
   return (
     <main className="site-shell lecture-page float-in">

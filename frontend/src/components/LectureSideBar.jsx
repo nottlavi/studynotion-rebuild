@@ -18,8 +18,6 @@ export const LectureSideBar = ({
   ///all the states here
   const [currentCourse, setCurrentCourse] = useState({});
   const [sectionsExpanded, setSectionsExpanded] = useState([]);
-  const [rating, setRating] = useState(0);
-  const [review, setReview] = useState("");
 
   ///all the useEffects here
   //useEffect to fetch the course details whenever the course id changes
@@ -36,7 +34,7 @@ export const LectureSideBar = ({
     };
 
     getCourseDetails();
-  }, [courseId]);
+  }, [courseId, BASE_URL]);
 
   ///all the functions here
   // function to add the clicked section to the array of expanded sections
@@ -49,19 +47,19 @@ export const LectureSideBar = ({
   };
 
   //function to add / edit review
-  const reviewHandler = async () => {
-    const res = await axios.post(
-      `${BASE_URL}/rating-review/add`,
-      { courseId: courseId },
-      { withCredentials: true },
-    );
-  };
+  // const reviewHandler = async () => {
+  //   const res = await axios.post(
+  //     `${BASE_URL}/rating-review/add`,
+  //     { courseId: courseId },
+  //     { withCredentials: true },
+  //   );
+  // };
 
-  const totalSubsections =
-    currentCourse?.sections?.reduce(
-      (acc, section) => acc + (section.subsections?.length || 0),
-      0,
-    ) || 0;
+  // const totalSubsections =
+  //   currentCourse?.sections?.reduce(
+  //     (acc, section) => acc + (section.subsections?.length || 0),
+  //     0,
+  //   ) || 0;
 
   return (
     <div className="flex flex-col lecture-sidebar">

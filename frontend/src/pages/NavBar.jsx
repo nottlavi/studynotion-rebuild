@@ -1,10 +1,10 @@
-import axios from "axios";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+// import axios from "axios";
+import { Link, useLocation } from "react-router-dom";
 import { useLogout } from "../hooks/useLogout";
 
 //importing redux stuff here
-import { useDispatch, useSelector } from "react-redux";
-import { clearProfile, clearToken } from "../slices/userSlice";
+import { useSelector } from "react-redux";
+// import { clearProfile, clearToken } from "../slices/userSlice";
 
 //importing chakra ui stuff here
 import { HoverCard, Portal, Stack, Text } from "@chakra-ui/react";
@@ -21,9 +21,9 @@ export const NavBar = () => {
   const count = useSelector((state) => state.cart.count);
 
   //all dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const BASE_URL = process.env.REACT_APP_BASE_URL;
+  // const navigate = useNavigate();
+  // const dispatch = useDispatch();
   const location = useLocation();
   const path = location.pathname;
   const logout = useLogout();

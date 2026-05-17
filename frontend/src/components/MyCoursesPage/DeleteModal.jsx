@@ -17,7 +17,7 @@ export const DeleteModal = ({
       });
       if (res) {
         setOwnedCourses((prev) =>
-          prev.filter((course) => course._id != courseDeleted?._id),
+          prev.filter((course) => course._id !== courseDeleted?._id),
         );
         setDeleteModalOpen(false);
       }

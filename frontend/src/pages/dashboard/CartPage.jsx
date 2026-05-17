@@ -103,7 +103,7 @@ export const CartPage = () => {
       }
     };
     fetchCartDetails();
-  }, [profile]);
+  }, [profile, BASE_URL]);
 
   return (
     <div className="cart-page">
@@ -136,6 +136,7 @@ export const CartPage = () => {
                       width={150}
                       height={150}
                       className="rounded-xl object-cover list-row-media"
+                      alt="thumbnail"
                     />
                   </div>
                   {/* for titles and info */}

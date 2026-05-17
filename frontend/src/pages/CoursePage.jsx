@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 
 //importing pages here
-import { ReviewComponent } from "../components/semi/ReviewComponent";
+// import { ReviewComponent } from "../components/semi/ReviewComponent";
 
 //importing react icons here
 import { GoDotFill } from "react-icons/go";
@@ -67,7 +67,7 @@ export const CoursePage = () => {
       }
     };
     fetchCourseDetails();
-  }, [courseId, currentCourse]);
+  }, [courseId, currentCourse, BASE_URL]);
 
   //useEffect to fetch all the rating n reviews whenever courseId changes
   useEffect(() => {
@@ -83,7 +83,7 @@ export const CoursePage = () => {
       }
     };
     fetchAllReviews();
-  }, [courseId]);
+  }, [courseId, BASE_URL]);
 
   const totalSubsections =
     currentCourse?.sections?.reduce(
@@ -189,6 +189,7 @@ export const CoursePage = () => {
               height={300}
               width={300}
               className="rounded-xl w-full object-cover"
+              alt="thumbnail"
             />
             <div className="text-3xl font-extrabold text-blue-700 price-tag">
               ₹ {currentCourse?.price}
@@ -324,6 +325,7 @@ export const CoursePage = () => {
                         height={50}
                         width={50}
                         className="rounded-full"
+                        alt="avatar"
                       />
                     ) : (
                       <div></div>

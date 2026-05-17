@@ -40,7 +40,7 @@ export const EnrolledCourses = () => {
 
       if (res) {
         setEnrolledCourses((prevCourses) =>
-          prevCourses.filter((course) => course._id != courseId),
+          prevCourses.filter((course) => course._id !== courseId),
         );
       }
     } catch (err) {
@@ -103,6 +103,7 @@ export const EnrolledCourses = () => {
                 width={40}
                 height={60}
                 className="rounded-md list-row-media"
+                alt="thumbnail"
               />
               <div className="flex flex-col">
                 <Link to={`/view/course/${ele._id}`}>

@@ -26,7 +26,7 @@ export const UpdateProfile = () => {
   const [avatarUrl, setAvatarUrl] = useState("");
 
   // state to manage profile so that initial profile can be compared to changed
-  const [initialProfile, setInitialProfile] = useState({});
+  const [, setInitialProfile] = useState({});
   //this state is to block the user to use the button when its invalid for them to send a backend req
   const [blocked, setBlocked] = useState(true);
   //all the input states for change password
@@ -80,11 +80,11 @@ export const UpdateProfile = () => {
         setBlocked(true);
       }
     }
-  }, [firstName, lastName, dob, gender, contactNumber, about]);
+  }, [firstName, lastName, dob, gender, contactNumber, about, profile]);
 
   //useEffect to check if blocked1 should be unblocked
   useEffect(() => {
-    if (!avatar || avatar == initialAvatar) {
+    if (!avatar || avatar === initialAvatar) {
       setBlocked1(true);
     } else {
       setBlocked1(false);
@@ -300,6 +300,7 @@ export const UpdateProfile = () => {
                 height={100}
                 className="rounded-full cursor-pointer"
                 onClick={() => document.getElementById("avatarInput").click()}
+                alt="avatar"
               />
             ) : (
               <div className="flex flex-col gap-2">

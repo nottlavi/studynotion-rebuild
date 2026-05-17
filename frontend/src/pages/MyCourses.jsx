@@ -59,6 +59,7 @@ export const MyCourses = () => {
                   width={100}
                   height={100}
                   className="rounded-xl object-cover list-row-media"
+                  alt="thumbnail"
                 />
                 {/* the info div */}
                 <div>

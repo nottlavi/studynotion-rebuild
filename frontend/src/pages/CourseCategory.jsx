@@ -25,7 +25,7 @@ export const CourseCategory = () => {
       }
     };
     fetchCategoryDetailsById();
-  }, [categoryId]);
+  }, [categoryId, BASE_URL]);
 
   useEffect(() => {
     console.log(categoryCourses);
@@ -57,6 +57,7 @@ export const CourseCategory = () => {
               <img
                 src={ele?.thumbnail}
                 className="rounded-xl h-44 w-full object-cover"
+                alt="thumbnail"
               />
               <div className="text-lg font-bold">{ele?.title}</div>
               {/* div for count and average rating */}
