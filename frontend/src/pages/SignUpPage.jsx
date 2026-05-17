@@ -29,19 +29,28 @@ const SignUpPage = () => {
   //function to handle sign up
   const handleSignUp = async (e) => {
     e.preventDefault();
+
     try {
+      console.log("Submitting signup...");
+
       const res = await axios.post(`${BASE_URL}/users/signup`, inputs, {
         withCredentials: true,
       });
-      if (res.error) {
-        console.log(res.error);
-      }
-      console.log(res);
-      //setting the email here in the redux, so that it can be used in verify email page
+
+      console.log("SUCCESS");
+      console.log(res.data);
+
       dispatch(setEmail(inputs.email));
+
       navigate("/verify-email");
     } catch (err) {
-      console.log(err.response.data);
+      console.log("SIGNUP ERROR");
+
+      console.log(err);
+
+      if (err.response) {
+        console.log(err.response.data);
+      }
     }
   };
 
