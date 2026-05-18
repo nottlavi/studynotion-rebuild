@@ -28,10 +28,10 @@ export const ProfilePage = () => {
         <div>
           {/* for name */}
           <div className="font-bold text-lg">
-            {profile.firstName} {profile.lastName}
+            {profile?.firstName} {profile?.lastName}
           </div>
           {/* for email */}
-          <div className="text-slate-600">{profile.email}</div>
+          <div className="text-slate-600">{profile?.email}</div>
         </div>
         {/* for edit button */}
         <div>
@@ -56,7 +56,7 @@ export const ProfilePage = () => {
         <div>
           {profile?.profile?.about === null
             ? "Write Something About Yourself"
-            : profile.profile.about}
+            : profile?.profile?.about}
         </div>
       </div>
       {/* personal details div */}
@@ -76,12 +76,12 @@ export const ProfilePage = () => {
           {/* first name */}
           <div className="flex flex-col gap-2">
             <p>First Name</p>
-            <p>{profile.firstName}</p>
+            <p>{profile?.firstName}</p>
           </div>
           {/* last name */}
           <div className="flex flex-col gap-2">
             <p>Last Name</p>
-            <p>{profile.lastName}</p>
+            <p>{profile?.lastName}</p>
           </div>
         </div>
         {/* email and phone no display */}
@@ -89,7 +89,7 @@ export const ProfilePage = () => {
           {/* email */}
           <div className="flex flex-col gap-2">
             <p>Email</p>
-            <p>{profile.email}</p>
+            <p>{profile?.email}</p>
           </div>
           {/* phone number */}
           <div className="flex flex-col gap-2">
