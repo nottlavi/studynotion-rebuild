@@ -35,7 +35,6 @@ export const UpdateProfile = () => {
   const [blocked1, setBlocked1] = useState(true);
 
   //managing all the dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const today = new Date().toISOString().split("T")[0];
 
   //initializing input states with the backend data in this effect

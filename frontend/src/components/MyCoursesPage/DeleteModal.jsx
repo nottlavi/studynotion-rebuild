@@ -7,8 +7,6 @@ export const DeleteModal = ({
   courseDeleted,
   setOwnedCourses,
 }) => {
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
-
   const deleteCourse = async () => {
     try {
       const res = await api.delete(`/courses/delete-course`, {
