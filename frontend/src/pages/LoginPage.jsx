@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import api from "../utils/api";
 
 //importing redux stuff here
 import { useDispatch } from "react-redux";
@@ -34,10 +35,7 @@ export const LoginPage = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const res = await axios.post(`${BASE_URL}/users/login`, inputs, {
-        withCredentials: true,
-      });
-      console.log(res);
+      const res = await api.post("/users/login", inputs);
       dispatch(setToken(res.data.token));
       localStorage.setItem("token", res.data.token);
       const resCart = await dispatch(FetchUserCartDetails());

@@ -4,7 +4,12 @@ const otpGenerator = require("otp-generator");
 const userModel = require("../models/userModel");
 
 exports.verifyJWT = async (req, res, next) => {
-  const token = req.cookies.jwt;
+  const token =
+    req.cookies.jwt ||
+    (req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer ")
+      ? req.headers.authorization.split(" ")[1]
+      : null);
 
   console.log(token || req.cookies);
 
@@ -17,7 +22,7 @@ exports.verifyJWT = async (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      res.status(401).json({
+      return res.status(401).json({
         success: false,
         message: "invalid token",
       });
