@@ -9,12 +9,11 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 
 //importing dependencies here
 import { useSelector } from "react-redux";
-import axios from "axios";
+import api from "../../utils/api";
 import { Link } from "react-router-dom";
 
 export const EnrolledCourses = () => {
   //all the dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   ///all the redux stuff here
   const profile = useSelector((state) => state.user.profile);
@@ -32,11 +31,7 @@ export const EnrolledCourses = () => {
   ///all the functions here
   const handleRemove = async (courseId) => {
     try {
-      const res = await axios.put(
-        `${BASE_URL}/courses/unenroll-course`,
-        { courseId },
-        { withCredentials: true },
-      );
+      const res = await api.put(`/courses/unenroll-course`, { courseId });
 
       if (res) {
         setEnrolledCourses((prevCourses) =>

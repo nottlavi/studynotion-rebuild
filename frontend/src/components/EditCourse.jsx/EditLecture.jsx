@@ -1,11 +1,10 @@
 //importing dependencies here
 import { Dialog } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 
 export const EditLecture = ({ lectId, onClose }) => {
   ///all the dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   ///all the states here
   //states for input fields
@@ -22,7 +21,7 @@ export const EditLecture = ({ lectId, onClose }) => {
   useEffect(() => {
     const fetchLecture = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/subsection/get/${lectId}`);
+        const res = await api.get(`/subsection/get/${lectId}`);
 
         if (res) {
           console.log(res);
@@ -36,7 +35,7 @@ export const EditLecture = ({ lectId, onClose }) => {
       }
     };
     fetchLecture();
-  }, [lectId, BASE_URL]);
+  }, [lectId]);
 
   //useEffect to toggle the blocking of save button
   useEffect(() => {
@@ -68,15 +67,11 @@ export const EditLecture = ({ lectId, onClose }) => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(
-        `${BASE_URL}/subsection/edit`,
-        {
-          newName: lectureTitle,
-          newDescription: lectureDescription,
-          subSectionId: lectId,
-        },
-        { withCredentials: true },
-      );
+      const res = await api.put(`/subsection/edit`, {
+        newName: lectureTitle,
+        newDescription: lectureDescription,
+        subSectionId: lectId,
+      });
 
       if (res) {
         console.log(res);

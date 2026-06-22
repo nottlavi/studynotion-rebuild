@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from "axios";
+import api from "../utils/api";
 import { FaStar } from "react-icons/fa";
 
 export const CourseCategory = () => {
   //managing dependencies here
   const { categoryId } = useParams();
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   //managing states here
   const [categoryCourses, setCategoryCourses] = useState([]);
@@ -14,9 +13,7 @@ export const CourseCategory = () => {
   useEffect(() => {
     const fetchCategoryDetailsById = async (e) => {
       try {
-        const res = await axios.get(
-          `${BASE_URL}/category/get-category-by-id/${categoryId}`,
-        );
+        const res = await api.get(`/category/get-category-by-id/${categoryId}`);
         if (res) {
           setCategoryCourses(res.data.category.courses);
         }
@@ -25,7 +22,7 @@ export const CourseCategory = () => {
       }
     };
     fetchCategoryDetailsById();
-  }, [categoryId, BASE_URL]);
+  }, [categoryId]);
 
   useEffect(() => {
     console.log(categoryCourses);

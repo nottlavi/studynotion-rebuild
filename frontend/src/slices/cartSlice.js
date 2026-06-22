@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../utils/api";
 
 const initialState = { count: 0, total: 0 };
 
@@ -7,11 +7,7 @@ export const FetchUserCartDetails = createAsyncThunk(
   "/cart/fetchCartDetails",
   async (_, { rejectWithValue }) => {
     try {
-      const BASE_URL = process.env.REACT_APP_BASE_URL;
-
-      const res = await axios.get(`${BASE_URL}/cart/get-cart-by-user-id`, {
-        withCredentials: true,
-      });
+      const res = await api.get("/cart/get-cart-by-user-id");
 
       return res.data;
     } catch (err) {

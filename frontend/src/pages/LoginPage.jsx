@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import api from "../utils/api";
 
 //importing redux stuff here
@@ -18,7 +17,6 @@ export const LoginPage = () => {
   const [loading, setLoading] = useState(false);
 
   ///managing all the dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   //redux stuff here

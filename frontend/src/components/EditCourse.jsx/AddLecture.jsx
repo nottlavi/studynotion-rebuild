@@ -1,6 +1,6 @@
 //importing dependencies here
 import { Dialog } from "@chakra-ui/react";
-import axios from "axios";
+import api from "../../utils/api";
 import { useEffect, useState } from "react";
 
 export const AddLecture = ({
@@ -10,7 +10,6 @@ export const AddLecture = ({
   setSections,
 }) => {
   ///all the dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   ///all the states here
   //states to manage input form data
@@ -60,16 +59,13 @@ export const AddLecture = ({
 
     //now creating the section
     try {
-      const res = await axios.post(
-        `${BASE_URL}/subsection/create-sub-section`,
-        {
-          title: lectureTitle,
-          description: lectureDescription,
-          videoUrl: videoResult?.secure_url,
-          section: lecSecId,
-          duration: videoResult?.duration,
-        },
-      );
+      const res = await api.post(`/subsection/create-sub-section`, {
+        title: lectureTitle,
+        description: lectureDescription,
+        videoUrl: videoResult?.secure_url,
+        section: lecSecId,
+        duration: videoResult?.duration,
+      });
       console.log(res);
 
       setSections((prev) =>

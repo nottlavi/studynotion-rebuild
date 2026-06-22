@@ -1,7 +1,7 @@
 import { Outlet, useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useLogout } from "../hooks/useLogout";
-import axios from "axios";
+import api from "../utils/api";
 //importing redux stuff here
 import { useSelector, useDispatch } from "react-redux";
 import { setProfile } from "../slices/userSlice";
@@ -23,9 +23,7 @@ export const DashBoardPage = () => {
   useEffect(() => {
     const getProfileByToken = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/users/get-profile`, {
-          withCredentials: true,
-        });
+        const res = await api.get(`/users/get-profile`);
 
         if (res) {
           dispatch(setProfile(res.data.user));

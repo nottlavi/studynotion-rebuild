@@ -5,11 +5,10 @@ import { FaStar } from "react-icons/fa";
 
 //importing dependencies here
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
   ///all the dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   ///all the states here
   //state to manage the rating which will be sent to the backend
@@ -26,11 +25,7 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
   useEffect(() => {
     const fetchRatingDetails = async () => {
       try {
-        const res = await axios.post(
-          `${BASE_URL}/rating-review/get`,
-          { courseId },
-          { withCredentials: true },
-        );
+        const res = await api.post(`/rating-review/get`, { courseId });
 
         if (res) {
           console.log(res);
@@ -48,7 +43,7 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
     };
 
     fetchRatingDetails();
-  }, [profile, courseId, BASE_URL]);
+  }, [profile, courseId]);
 
   //useEffect to toggle the changed state to unblock the save button only if rating of review is changed
   useEffect(() => {
@@ -75,9 +70,7 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
     console.log(payload);
 
     try {
-      const res = await axios.post(`${BASE_URL}/rating-review/add`, payload, {
-        withCredentials: true,
-      });
+      const res = await api.post(`/rating-review/add`, payload);
 
       if (res) {
         setRatingModal(false);

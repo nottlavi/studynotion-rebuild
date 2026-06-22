@@ -1,7 +1,7 @@
 ///all the imports here
 //importing dependencies here
 import { Dialog } from "@chakra-ui/react";
-import axios from "axios";
+import api from "../../utils/api";
 
 export const DeleteModal = ({
   deleteSection,
@@ -11,14 +11,12 @@ export const DeleteModal = ({
   setSections,
 }) => {
   ///managing all the dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   const deleteHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.delete(`${BASE_URL}/section/delete`, {
+      const res = await api.delete(`/section/delete`, {
         data: { sectionId: deleteSection?._id },
-        withCredentials: true,
       });
 
       if (res) {

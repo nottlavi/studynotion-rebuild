@@ -1,5 +1,5 @@
 import { Dialog } from "@chakra-ui/react";
-import axios from "axios";
+import api from "../../utils/api";
 
 export const DeleteModal = ({
   deleteModalOpen,
@@ -11,9 +11,8 @@ export const DeleteModal = ({
 
   const deleteCourse = async () => {
     try {
-      const res = await axios.delete(`${BASE_URL}/courses/delete-course`, {
+      const res = await api.delete(`/courses/delete-course`, {
         data: { courseId: courseDeleted?._id },
-        withCredentials: true,
       });
       if (res) {
         setOwnedCourses((prev) =>

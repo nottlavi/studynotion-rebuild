@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setEmail } from "../slices/userSlice";
@@ -18,7 +18,6 @@ const SignUpPage = () => {
   //managing all the dependencies here
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   //for input change(a common function)
   const handleInputChange = (e) => {
@@ -33,9 +32,7 @@ const SignUpPage = () => {
     try {
       console.log("Submitting signup...");
 
-      const res = await axios.post(`${BASE_URL}/users/signup`, inputs, {
-        withCredentials: true,
-      });
+      const res = await api.post(`/users/signup`, inputs);
 
       console.log("SUCCESS");
       console.log(res.data);

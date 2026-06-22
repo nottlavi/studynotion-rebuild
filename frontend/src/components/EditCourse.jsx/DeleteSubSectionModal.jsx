@@ -1,6 +1,6 @@
 //importing dependencies here
 import { Dialog } from "@chakra-ui/react";
-import axios from "axios";
+import api from "../../utils/api";
 
 export const DeleteSubSectionModal = ({
   deleteSubSection,
@@ -12,7 +12,6 @@ export const DeleteSubSectionModal = ({
   setSections,
 }) => {
   ///all dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   const closeModal = () => {
     setDeleteSubSectionModal(false);
@@ -26,9 +25,8 @@ export const DeleteSubSectionModal = ({
     if (!deleteSubSection?._id || !deleteParentSectionId) return;
 
     try {
-      const res = await axios.delete(`${BASE_URL}/subsection/delete`, {
+      const res = await api.delete(`/subsection/delete`, {
         data: { subSectionId: deleteSubSection._id },
-        withCredentials: true,
       });
 
       if (res) {

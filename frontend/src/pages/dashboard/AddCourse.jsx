@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 //react icons
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { IoIosMenu } from "react-icons/io";
@@ -79,7 +79,6 @@ export const AddCourse = () => {
     useState(false);
 
   ///all the dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   ///all the functions starts here
   //function to update the tags array
@@ -213,11 +212,9 @@ export const AddCourse = () => {
       const createdSectionIds = [];
 
       for (let i = 0; i < sections.length; i++) {
-        const res = await axios.post(
-          `${BASE_URL}/section/create-section`,
-          { title: sections[i] },
-          { withCredentials: true },
-        );
+        const res = await api.post(`/section/create-section`, {
+          title: sections[i],
+        });
 
         createdSectionIds.push(res.data.new_section._id);
       }
@@ -229,19 +226,15 @@ export const AddCourse = () => {
 
         console.log(megaLectureStorage[i].duration);
 
-        const res = await axios.post(
-          `${BASE_URL}/subsection/create-sub-section`,
-          {
-            title: megaLectureStorage[i].lectureTitle,
-            description: megaLectureStorage[i].lectureDescription,
-            videoUrl:
-              megaLectureStorage[i]?.lectureVideo.url ||
-              megaLectureStorage[i]?.lectureVideo,
-            section: sectionId,
-            duration: megaLectureStorage[i].duration,
-          },
-          { withCredentials: true },
-        );
+        const res = await api.post(`/subsection/create-sub-section`, {
+          title: megaLectureStorage[i].lectureTitle,
+          description: megaLectureStorage[i].lectureDescription,
+          videoUrl:
+            megaLectureStorage[i]?.lectureVideo.url ||
+            megaLectureStorage[i]?.lectureVideo,
+          section: sectionId,
+          duration: megaLectureStorage[i].duration,
+        });
         console.log(res);
       }
 
@@ -298,7 +291,7 @@ export const AddCourse = () => {
 
   const removeThumbnail = async (public_id) => {
     try {
-      const res = await axios.post(`${BASE_URL}/courses/delete-thumbnail`, {
+      const res = await api.post(`/courses/delete-thumbnail`, {
         publicId: public_id,
       });
       setThumbnail(null);
@@ -340,21 +333,17 @@ export const AddCourse = () => {
   const createCourse = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${BASE_URL}/courses/create-course`,
-        {
-          title,
-          tags,
-          category,
-          description,
-          price,
-          thumbnail: thumbnail.url,
-          benifits,
-          requirements,
-          sections: sectionIdCreated,
-        },
-        { withCredentials: true },
-      );
+      const res = await api.post(`/courses/create-course`, {
+        title,
+        tags,
+        category,
+        description,
+        price,
+        thumbnail: thumbnail.url,
+        benifits,
+        requirements,
+        sections: sectionIdCreated,
+      });
       if (res) {
         console.log(res);
 
@@ -364,13 +353,10 @@ export const AddCourse = () => {
 
         const array = localStorage.getItem("tempIds");
 
-        const backendResult = await axios.post(
-          `${BASE_URL}/courses/auto-delete-media`,
-          {
-            array: array,
-            keepPublicId: goodId,
-          },
-        );
+        const backendResult = await api.post(`/courses/auto-delete-media`, {
+          array: array,
+          keepPublicId: goodId,
+        });
         console.log(backendResult);
       }
     } catch (err) {

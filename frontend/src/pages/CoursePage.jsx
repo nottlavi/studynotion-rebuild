@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import api from "../utils/api";
 
 //importing pages here
 // import { ReviewComponent } from "../components/semi/ReviewComponent";
@@ -21,7 +21,6 @@ export const CoursePage = () => {
   const profile = useSelector((state) => state.user.profile);
 
   ///all dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
   //this is being fetched from the url, the user is currently on
   const { courseId } = useParams();
 
@@ -37,11 +36,9 @@ export const CoursePage = () => {
   //function to call backend to add a course to cart
   const addToCartHandler = async (e) => {
     try {
-      const res = await axios.post(
-        `${BASE_URL}/cart/add-to-cart`,
-        { courseId: currentCourse._id },
-        { withCredentials: true },
-      );
+      const res = await api.post(`/cart/add-to-cart`, {
+        courseId: currentCourse._id,
+      });
       if (res) {
         dispatch(addToCart());
         dispatch(increaseTotal(currentCourse.price));
@@ -56,9 +53,7 @@ export const CoursePage = () => {
   useEffect(() => {
     const fetchCourseDetails = async () => {
       try {
-        const res = await axios.get(
-          `${BASE_URL}/courses/get-course-by-id/${courseId}`,
-        );
+        const res = await api.get(`/courses/get-course-by-id/${courseId}`);
         if (res) {
           setCurrentCourse(res.data.course);
         }
@@ -67,15 +62,13 @@ export const CoursePage = () => {
       }
     };
     fetchCourseDetails();
-  }, [courseId, currentCourse, BASE_URL]);
+  }, [courseId]);
 
   //useEffect to fetch all the rating n reviews whenever courseId changes
   useEffect(() => {
     const fetchAllReviews = async () => {
       try {
-        const res = await axios.get(
-          `${BASE_URL}/rating-review/get-all/${courseId}`,
-        );
+        const res = await api.get(`rating-review/get-all/${courseId}`);
         setReviews(res?.data?.reviews);
         console.log(res?.data?.reviews);
       } catch (err) {
@@ -83,7 +76,7 @@ export const CoursePage = () => {
       }
     };
     fetchAllReviews();
-  }, [courseId, BASE_URL]);
+  }, [courseId]);
 
   const totalSubsections =
     currentCourse?.sections?.reduce(

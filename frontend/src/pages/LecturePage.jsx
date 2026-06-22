@@ -2,7 +2,7 @@
 //importing dependencies here
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 //importing components here
 import { LectureSideBar } from "../components/LectureSideBar";
@@ -16,7 +16,6 @@ import { useSelector } from "react-redux";
 export const LecturePage = () => {
   ///all the dependencies here
   const { courseId } = useParams();
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   ///all the redux stuff here
   const profile = useSelector((state) => state.user.profile);
@@ -31,9 +30,7 @@ export const LecturePage = () => {
   useEffect(() => {
     const getCourseDetails = async () => {
       try {
-        const res = await axios.get(
-          `${BASE_URL}/courses/get-course-by-id/${courseId}`,
-        );
+        const res = await api.get(`/courses/get-course-by-id/${courseId}`);
         setCurrentCourse(res?.data?.course);
         setCurrentLecture(res?.data?.course?.sections?.[0]?.subsections?.[0]);
       } catch (err) {
@@ -41,7 +38,7 @@ export const LecturePage = () => {
       }
     };
     getCourseDetails();
-  }, [courseId, BASE_URL]);
+  }, [courseId]);
 
   return (
     <main className="site-shell lecture-page float-in">

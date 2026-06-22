@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -105,9 +105,7 @@ export const UpdateProfile = () => {
     };
 
     try {
-      const res = await axios.put(`${BASE_URL}/users/update-profile`, sendObj, {
-        withCredentials: true,
-      });
+      const res = await api.put(`/users/update-profile`, sendObj);
       if (res) {
         console.log(res);
         dispatch(setProfile(res?.data?.user));
@@ -122,11 +120,10 @@ export const UpdateProfile = () => {
   const updatePassword = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(
-        `${BASE_URL}/users/update-password`,
-        { currentPassword, newPassword },
-        { withCredentials: true },
-      );
+      const res = await api.put(`/users/update-password`, {
+        currentPassword,
+        newPassword,
+      });
       if (res) {
         console.log(res);
         setCurrentPassword("");
@@ -158,13 +155,9 @@ export const UpdateProfile = () => {
       const result = await res.json();
 
       try {
-        const res = await axios.put(
-          `${BASE_URL}/users/update-avatar`,
-          {
-            secure_url: result?.secure_url,
-          },
-          { withCredentials: true },
-        );
+        const res = await api.put(`/users/update-avatar`, {
+          secure_url: result?.secure_url,
+        });
 
         console.log(res);
         if (res) {

@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../utils/api";
 
 //importing redux stuff here
 import { useDispatch } from "react-redux";
@@ -12,11 +12,7 @@ export const useLogout = () => {
 
   const logout = async () => {
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/users/logout`,
-        {},
-        { withCredentials: true },
-      );
+      const res = await api.post(`/users/logout`, {});
 
       if (res) {
         localStorage.removeItem("token");

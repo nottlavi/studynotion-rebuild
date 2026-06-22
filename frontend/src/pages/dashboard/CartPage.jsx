@@ -6,7 +6,7 @@ import { removeFromCart, decreaseTotal } from "../../slices/cartSlice";
 import { fetchUserProfile } from "../../slices/userSlice";
 
 //importing dependencies here
-import axios from "axios";
+import api from "../../utils/api";
 
 const categoryNameMap = {
   "web-development": "Web Development",
@@ -19,7 +19,6 @@ export const CartPage = () => {
   const dispatch = useDispatch();
 
   ///all the dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   ///all the states here
   const [cartCourses, setCartCourses] = useState([]);
@@ -29,11 +28,9 @@ export const CartPage = () => {
   //function to remove course from the cart
   const handleRemove = async (courseId, price) => {
     try {
-      const res = await axios.put(
-        `${BASE_URL}/cart/remove-from-cart`,
-        { courseId: courseId },
-        { withCredentials: true },
-      );
+      const res = await api.put(`/cart/remove-from-cart`, {
+        courseId: courseId,
+      });
 
       if (res) {
         //updating the ui here after backend deleted the course from the cart
@@ -51,22 +48,16 @@ export const CartPage = () => {
 
   const buyHandler = async (cartCourses) => {
     try {
-      const res = await axios.post(
-        `${BASE_URL}/courses/enroll-course`,
-        { courseIds: courseToBeEnrolled },
-        { withCredentials: true },
-      );
+      const res = await api.post(`/courses/enroll-course`, {
+        courseIds: courseToBeEnrolled,
+      });
       if (res) {
         console.log(res);
         for (let i = 0; i < courseToBeEnrolled.length; i++) {
           try {
-            const res = await axios.put(
-              `${BASE_URL}/cart/remove-from-cart`,
-              {
-                courseId: courseToBeEnrolled[i],
-              },
-              { withCredentials: true },
-            );
+            const res = await api.put(`/cart/remove-from-cart`, {
+              courseId: courseToBeEnrolled[i],
+            });
             if (res) {
               console.log(res);
               setCartCourses((prev) =>
@@ -92,9 +83,7 @@ export const CartPage = () => {
   useEffect(() => {
     const fetchCartDetails = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/cart/get-cart-by-user-id`, {
-          withCredentials: true,
-        });
+        const res = await api.get(`/cart/get-cart-by-user-id`);
         const courses = res.data.cart.courses;
         setCartCourses(courses);
         setCourseToBeEnrolled(courses.map((c) => c._id));
@@ -103,7 +92,7 @@ export const CartPage = () => {
       }
     };
     fetchCartDetails();
-  }, [profile, BASE_URL]);
+  }, [profile]);
 
   return (
     <div className="cart-page">

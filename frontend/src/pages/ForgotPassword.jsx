@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 export const ForgotPassword = () => {
   //managing states here
@@ -10,13 +10,12 @@ export const ForgotPassword = () => {
   const [password, setPassword] = useState("");
 
   //managing the dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   //all the functions which makes a call to the backend
   const sendOTPHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BASE_URL}/users/send-otp`, { email });
+      const res = await api.post(`/users/send-otp`, { email });
 
       console.log("printing the res", res);
       if (res.data.success) {
@@ -30,7 +29,7 @@ export const ForgotPassword = () => {
   const checkOTPHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BASE_URL}/users/check-otp`, {
+      const res = await api.post(`/users/check-otp`, {
         email,
         otp,
       });
@@ -46,7 +45,7 @@ export const ForgotPassword = () => {
   const changePasswordHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BASE_URL}/users/change-password`, {
+      const res = await api.post(`/users/change-password`, {
         email,
         password,
       });

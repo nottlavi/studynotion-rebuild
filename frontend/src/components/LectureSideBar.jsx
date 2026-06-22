@@ -1,6 +1,6 @@
 ///all the imports here
 //importing dependencies here
-import axios from "axios";
+import api from "../utils/api";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 //importing icons here
@@ -12,7 +12,6 @@ export const LectureSideBar = ({
   setRatingModal,
 }) => {
   ///all the dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const { courseId } = useParams();
 
   ///all the states here
@@ -24,9 +23,7 @@ export const LectureSideBar = ({
   useEffect(() => {
     const getCourseDetails = async () => {
       try {
-        const res = await axios.get(
-          `${BASE_URL}/courses/get-course-by-id/${courseId}`,
-        );
+        const res = await api.get(`/courses/get-course-by-id/${courseId}`);
         setCurrentCourse(res?.data?.course);
       } catch (err) {
         console.log(err.message);
@@ -34,7 +31,7 @@ export const LectureSideBar = ({
     };
 
     getCourseDetails();
-  }, [courseId, BASE_URL]);
+  }, [courseId]);
 
   ///all the functions here
   // function to add the clicked section to the array of expanded sections

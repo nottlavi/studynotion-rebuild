@@ -1,7 +1,7 @@
 ///all the imports here
 //importing dependencies here
 import { Dialog } from "@chakra-ui/react";
-import axios from "axios";
+import api from "../../utils/api";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 //importing icons here
@@ -13,7 +13,6 @@ export const AddSection = ({
   setSections,
 }) => {
   ///all the dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const { courseId } = useParams();
 
   ///all the states here
@@ -65,14 +64,10 @@ export const AddSection = ({
 
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${BASE_URL}/section/create/course-id`,
-        {
-          courseId,
-          title: sectionName,
-        },
-        { withCredentials: true },
-      );
+      const res = await api.post(`/section/create/course-id`, {
+        courseId,
+        title: sectionName,
+      });
 
       if (res) {
         console.log(res);
@@ -112,16 +107,13 @@ export const AddSection = ({
 
       //creating the sub section here
       try {
-        const res = await axios.post(
-          `${BASE_URL}/subsection/create-sub-section`,
-          {
-            title: lecture.lectureTitle,
-            description: lecture.lectureDescription,
-            videoUrl: resultSave.secure_url,
-            section: section,
-            duration: resultSave.duration,
-          },
-        );
+        const res = await api.post(`/subsection/create-sub-section`, {
+          title: lecture.lectureTitle,
+          description: lecture.lectureDescription,
+          videoUrl: resultSave.secure_url,
+          section: section,
+          duration: resultSave.duration,
+        });
 
         console.log(res);
       } catch (err) {

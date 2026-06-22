@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../utils/api";
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,6 @@ export const VerifyEmailPage = () => {
   const email = useSelector((state) => state.user.email);
 
   //managing all the dependencies here
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -18,11 +17,7 @@ export const VerifyEmailPage = () => {
   const verifyEmail = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${BASE_URL}/users/verify-email`,
-        { otp: OTP, email },
-        { withCredentials: true },
-      );
+      const res = await api.post(`/users/verify-email`, { otp: OTP, email });
       if (res.error) {
         console.log(res.error);
       }

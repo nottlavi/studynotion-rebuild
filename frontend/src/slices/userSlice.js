@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../utils/api";
 
 //defining the initial state
 const initialState = {
@@ -12,11 +12,7 @@ export const fetchUserProfile = createAsyncThunk(
   "user/fetchUserProfile",
   async (_, { rejectWithValue }) => {
     try {
-      const BASE_URL = process.env.REACT_APP_BASE_URL;
-
-      const res = await axios.get(`${BASE_URL}/users/get-profile`, {
-        withCredentials: true,
-      });
+      const res = await api.get("/users/get-profile");
 
       return res.data.user;
     } catch (err) {

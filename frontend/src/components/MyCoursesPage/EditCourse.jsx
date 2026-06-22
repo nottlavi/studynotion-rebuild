@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 //importing icons here
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { IoIosMenu } from "react-icons/io";
@@ -82,9 +82,7 @@ export const EditCourse = () => {
   useEffect(() => {
     const fetchCourseDetails = async () => {
       try {
-        const res = await axios.get(
-          `${BASE_URL}/courses/get-course-by-id/${courseId}`,
-        );
+        const res = await api.get(`/courses/get-course-by-id/${courseId}`);
         setTitle(res?.data?.course?.title);
         setInitialTitle(res?.data?.course?.title);
         const desc = (res?.data?.course?.description || "").trim();
@@ -205,13 +203,7 @@ export const EditCourse = () => {
     payload.courseId = courseId;
 
     try {
-      const res = await axios.put(
-        `${BASE_URL}/courses/update`,
-        { payload },
-        {
-          withCredentials: true,
-        },
-      );
+      const res = await api.put(`/courses/update`, { payload });
       console.log(res);
 
       const updated = res?.data?.course;
@@ -239,11 +231,10 @@ export const EditCourse = () => {
     e.stopPropagation();
     console.log(sectionId, sectionName);
     try {
-      const res = await axios.put(
-        `${BASE_URL}/section/edit`,
-        { sectionId, newTitle: sectionName },
-        { withCredentials: true },
-      );
+      const res = await api.put(`/section/edit`, {
+        sectionId,
+        newTitle: sectionName,
+      });
       if (res) {
         console.log(res);
         //need to set the name of section on client side
