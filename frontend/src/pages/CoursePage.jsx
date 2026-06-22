@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../utils/api";
+import { useNavigate } from "react-router-dom";
 
 //importing pages here
 // import { ReviewComponent } from "../components/semi/ReviewComponent";
@@ -23,6 +24,7 @@ export const CoursePage = () => {
   ///all dependencies here
   //this is being fetched from the url, the user is currently on
   const { courseId } = useParams();
+  const navigate = useNavigate();
 
   ///all the states here
   const [currentCourse, setCurrentCourse] = useState({});
@@ -97,6 +99,10 @@ export const CoursePage = () => {
 
   const minutes = Math.floor(totalLectureSeconds);
   const seconds = Math.round((totalLectureSeconds - minutes) * 60);
+
+  useEffect(() => {
+    console.log(profile, currentCourse._id);
+  }, [profile, currentCourse]);
 
   return (
     <main className="site-shell course-page float-in">
@@ -187,8 +193,22 @@ export const CoursePage = () => {
             <div className="text-3xl font-extrabold text-blue-700 price-tag">
               ₹ {currentCourse?.price}
             </div>
-            <button>Buy Now</button>
-            <button onClick={addToCartHandler}>Add to Cart</button>
+            {profile?.enrolledCourses?.some(
+              (course) => course._id === currentCourse._id,
+            ) ? (
+              <button
+                onClick={() => {
+                  navigate(`/view/course/${currentCourse._id}`);
+                }}
+              >
+                view course
+              </button>
+            ) : (
+              <div>
+                <button>Buy Now</button>
+                <button onClick={addToCartHandler}>Add to Cart</button>
+              </div>
+            )}
             <div className="text-sm text-slate-500">
               30-Day Money-Back Guarantee
             </div>
