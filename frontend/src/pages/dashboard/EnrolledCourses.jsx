@@ -1,5 +1,6 @@
 //importing redux stuff here
-import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setProfile } from "../../slices/userSlice";
 
 //importing react icons here
 import { CiMenuKebab } from "react-icons/ci";
@@ -8,12 +9,14 @@ import { CiMenuKebab } from "react-icons/ci";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 
 //importing dependencies here
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import api from "../../utils/api";
 import { Link } from "react-router-dom";
 
 export const EnrolledCourses = () => {
   //all the dependencies here
+  const dispatch = useDispatch();
 
   ///all the redux stuff here
   const profile = useSelector((state) => state.user.profile);
@@ -37,6 +40,7 @@ export const EnrolledCourses = () => {
         setEnrolledCourses((prevCourses) =>
           prevCourses.filter((course) => course._id !== courseId),
         );
+        dispatch(setProfile(res?.data?.updatedUser));
       }
     } catch (err) {
       console.log(err);

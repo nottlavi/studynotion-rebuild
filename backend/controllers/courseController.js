@@ -213,7 +213,18 @@ exports.unEnrollCourse = async (req, res) => {
     }
 
     const course = await courseModel.findById(courseId);
-    const user = await userModel.findById(userId);
+    const user = await userModel
+      .findById(userId)
+      .select("-password")
+      .populate({
+        path: "courses",
+        populate: { path: "sections", populate: { path: "subsections" } },
+      })
+      .populate("profile")
+      .populate({
+        path: "enrolledCourses",
+        populate: { path: "sections", populate: { path: "subsections" } },
+      });
 
     if (!course) {
       return res.status(404).json({
@@ -246,15 +257,37 @@ exports.unEnrollCourse = async (req, res) => {
     });
 
     // removing the course id from user's model
-    await userModel.findByIdAndUpdate(userId, {
-      $pull: {
-        enrolledCourses: courseId,
-      },
-    });
+    const updatedUser = await userModel
+      .findByIdAndUpdate(
+        userId,
+        {
+          $pull: {
+            enrolledCourses: courseId,
+          },
+        },
+        { new: true },
+      )
+      .select("-password")
+      .populate("profile")
+      .populate({
+        path: "courses",
+        populate: {
+          path: "sections",
+          populate: { path: "subsections" },
+        },
+      })
+      .populate({
+        path: "enrolledCourses",
+        populate: {
+          path: "sections",
+          populate: { path: "subsections" },
+        },
+      });
 
     return res.status(200).json({
       success: true,
       message: "un enrolled from the course successfully",
+      updatedUser: updatedUser,
     });
   } catch (err) {
     return res.status(500).json({
