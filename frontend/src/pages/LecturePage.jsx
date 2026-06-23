@@ -40,6 +40,12 @@ export const LecturePage = () => {
     getCourseDetails();
   }, [courseId]);
 
+  console.log(currentCourse, profile);
+
+  if (!currentCourse?.enrolledUser?.includes(profile?._id)) {
+    return <div>You are not enrolled in this course.</div>;
+  }
+
   return (
     <main className="site-shell lecture-page float-in">
       <div className="grid lg:grid-cols-[320px_1fr] gap-4 items-start lecture-layout">
@@ -51,6 +57,7 @@ export const LecturePage = () => {
             setRatingModal={setRatingModal}
           />
         </div>
+
         <div className="glass-panel lecture-main-shell p-3 md:p-4 flex flex-col gap-3">
           <video
             src={currentLecture?.videoUrl}
