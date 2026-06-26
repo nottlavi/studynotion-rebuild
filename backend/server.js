@@ -15,6 +15,7 @@ const sectionRoutes = require("./routes/sectionRoutes");
 const subSectionRoutes = require("./routes/subSectionRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const ratingReviewRoutes = require("./routes/ratingReviewRoutes");
+const razorPayRoutes = require("./routes/razorPayRoutes");
 
 const PORT = process.env.PORT || 4000;
 
@@ -39,6 +40,7 @@ app.use("/api/section", sectionRoutes);
 app.use("/api/subsection", subSectionRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/rating-review", ratingReviewRoutes);
+app.use("/api/razorpay", razorPayRoutes);
 
 //check if server is running
 app.get("/", (req, res) => {

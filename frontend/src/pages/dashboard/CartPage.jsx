@@ -46,40 +46,113 @@ export const CartPage = () => {
     }
   };
 
-  const buyHandler = async (cartCourses) => {
-    try {
-      const res = await api.post(`/courses/enroll-course`, {
-        courseIds: courseToBeEnrolled,
-      });
-      if (res) {
-        console.log(res);
-        for (let i = 0; i < courseToBeEnrolled.length; i++) {
-          try {
-            const res = await api.put(`/cart/remove-from-cart`, {
-              courseId: courseToBeEnrolled[i],
-            });
-            if (res) {
-              console.log(res);
-              setCartCourses((prev) =>
-                prev.filter((course) => course._id !== courseToBeEnrolled[i]),
-              );
-              //updating the redux states here
-              dispatch(removeFromCart());
-              dispatch(decreaseTotal(cartCourses[i].price));
-            }
-          } catch (err) {
-            console.log(err);
-          }
+  console.log(process.env);
+  console.log(process.env.REACT_APP_RAZORPAY_KEY_ID);
+
+  const buyHandler = async () => {
+    const loadRazorpayScript = () => {
+      return new Promise((resolve) => {
+        if (window.Razorpay) {
+          resolve(true);
+          return;
         }
-        await dispatch(fetchUserProfile());
+
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+      });
+    };
+
+    try {
+      const isScriptLoaded = await loadRazorpayScript();
+
+      if (!isScriptLoaded) {
+        alert("Razorpay SDK failed to load. Are you offline?");
+        return;
       }
-    } catch (err) {
-      console.log(err);
+
+      const res = await api.post("/razorpay/create-order", {
+        amount: cartTotal,
+      });
+
+      const options = {
+        key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+        currency: res?.data?.currency,
+        name: "StudyNotion Rebuild",
+        description: "Test Transactions",
+        order_id: res?.data?.id,
+        handler: async function (response) {
+          try {
+            const verifyPayload = {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            };
+
+            const { data } = await api.post(
+              "/razorpay/verify-payment",
+              verifyPayload,
+            );
+            alert(data.message);
+          } catch (err) {
+            alert("Payment verification failed!");
+          }
+        },
+        prefill: {
+          name: "John Doe",
+          email: "johndoe@example.com",
+          contact: "9999999999",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+
+      const rzp1 = new window.Razorpay(options);
+      rzp1.open();
+    } catch (error) {
+      console.error("Payment initialization failed", error);
     }
   };
 
+  // commenting this for now
+  // const buyHandler = async (cartCourses) => {
+  //   try {
+  //     const res = await api.post(`/courses/enroll-course`, {
+  //       courseIds: courseToBeEnrolled,
+  //     });
+  //     if (res) {
+  //       console.log(res);
+  //       for (let i = 0; i < courseToBeEnrolled.length; i++) {
+  //         try {
+  //           const res = await api.put(`/cart/remove-from-cart`, {
+  //             courseId: courseToBeEnrolled[i],
+  //           });
+  //           if (res) {
+  //             console.log(res);
+  //             setCartCourses((prev) =>
+  //               prev.filter((course) => course._id !== courseToBeEnrolled[i]),
+  //             );
+  //             //updating the redux states here
+  //             dispatch(removeFromCart());
+  //             dispatch(decreaseTotal(cartCourses[i].price));
+  //           }
+  //         } catch (err) {
+  //           console.log(err);
+  //         }
+  //       }
+  //       await dispatch(fetchUserProfile());
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
   ///all useEffects here
   //to fetch cart details on profile change
+
   useEffect(() => {
     const fetchCartDetails = async () => {
       try {

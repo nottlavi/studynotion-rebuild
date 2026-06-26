@@ -11,8 +11,6 @@ exports.verifyJWT = async (req, res, next) => {
       ? req.headers.authorization.split(" ")[1]
       : null);
 
-  console.log(token || req.cookies);
-
   if (!token) {
     return res.status(401).json({
       success: false,
