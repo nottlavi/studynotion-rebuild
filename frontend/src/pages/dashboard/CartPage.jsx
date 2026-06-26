@@ -46,9 +46,6 @@ export const CartPage = () => {
     }
   };
 
-  console.log(process.env);
-  console.log(process.env.REACT_APP_RAZORPAY_KEY_ID);
-
   const buyHandler = async () => {
     const loadRazorpayScript = () => {
       return new Promise((resolve) => {
