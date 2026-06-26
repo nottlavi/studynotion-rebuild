@@ -42,7 +42,9 @@ export const LecturePage = () => {
 
   console.log(currentCourse, profile);
 
-  if (!currentCourse?.enrolledUser?.includes(profile?._id)) {
+  if (
+    !profile?.enrolledCourses.some((course) => course._id === currentCourse._id)
+  ) {
     return <div>You are not enrolled in this course.</div>;
   }
 

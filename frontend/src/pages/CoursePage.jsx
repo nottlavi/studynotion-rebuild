@@ -205,7 +205,6 @@ export const CoursePage = () => {
               </button>
             ) : (
               <div>
-                <button>Buy Now</button>
                 <button onClick={addToCartHandler}>Add to Cart</button>
               </div>
             )}
