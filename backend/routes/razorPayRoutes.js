@@ -21,9 +21,12 @@ router.post("/create-order", async (req, res) => {
     const order = await razorpay.orders.create(options);
     res.status(200).json(order);
   } catch (err) {
+    console.log(err, err.message);
+
     return res.status(500).json({
       success: false,
       message: "server error",
+      error: err.message,
     });
   }
 });

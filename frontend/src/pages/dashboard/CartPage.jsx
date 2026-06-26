@@ -93,6 +93,10 @@ export const CartPage = () => {
               verifyPayload,
             );
             alert(data.message);
+
+            if (data.success) {
+              await verifyAdd(cartCourses);
+            }
           } catch (err) {
             alert("Payment verification failed!");
           }
@@ -115,40 +119,41 @@ export const CartPage = () => {
   };
 
   // commenting this for now
-  // const buyHandler = async (cartCourses) => {
-  //   try {
-  //     const res = await api.post(`/courses/enroll-course`, {
-  //       courseIds: courseToBeEnrolled,
-  //     });
-  //     if (res) {
-  //       console.log(res);
-  //       for (let i = 0; i < courseToBeEnrolled.length; i++) {
-  //         try {
-  //           const res = await api.put(`/cart/remove-from-cart`, {
-  //             courseId: courseToBeEnrolled[i],
-  //           });
-  //           if (res) {
-  //             console.log(res);
-  //             setCartCourses((prev) =>
-  //               prev.filter((course) => course._id !== courseToBeEnrolled[i]),
-  //             );
-  //             //updating the redux states here
-  //             dispatch(removeFromCart());
-  //             dispatch(decreaseTotal(cartCourses[i].price));
-  //           }
-  //         } catch (err) {
-  //           console.log(err);
-  //         }
-  //       }
-  //       await dispatch(fetchUserProfile());
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
+  const verifyAdd = async (cartCourses) => {
+    console.log("hey im being called");
+    try {
+      const res = await api.post(`/courses/enroll-course`, {
+        courseIds: courseToBeEnrolled,
+      });
+      if (res) {
+        console.log(res);
+        for (let i = 0; i < courseToBeEnrolled.length; i++) {
+          try {
+            const res = await api.put(`/cart/remove-from-cart`, {
+              courseId: courseToBeEnrolled[i],
+            });
+            if (res) {
+              console.log(res);
+              setCartCourses((prev) =>
+                prev.filter((course) => course._id !== courseToBeEnrolled[i]),
+              );
+              //updating the redux states here
+              dispatch(removeFromCart());
+              dispatch(decreaseTotal(cartCourses[i].price));
+            }
+          } catch (err) {
+            console.log(err);
+          }
+        }
+        await dispatch(fetchUserProfile());
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-  ///all useEffects here
-  //to fetch cart details on profile change
+  /// all useEffects here
+  // to fetch cart details on profile change
 
   useEffect(() => {
     const fetchCartDetails = async () => {
