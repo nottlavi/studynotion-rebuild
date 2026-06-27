@@ -6,6 +6,8 @@ const initialState = {
   email: "",
   token: "",
   profile: {},
+  isLoading: false,
+  error: null,
 };
 
 export const fetchUserProfile = createAsyncThunk(
@@ -47,9 +49,19 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchUserProfile.fulfilled, (state, action) => {
-      state.profile = action.payload;
-    });
+    builder
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.profile = action.payload;
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Failed to fetch profile";
+      });
   },
 });
 

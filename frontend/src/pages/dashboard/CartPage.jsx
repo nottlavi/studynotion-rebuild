@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { removeFromCart, decreaseTotal } from "../../slices/cartSlice";
 import { fetchUserProfile } from "../../slices/userSlice";
+import { toaster } from "../../components/ui/toaster";
 
 //importing dependencies here
 import api from "../../utils/api";
@@ -23,26 +24,39 @@ export const CartPage = () => {
   ///all the states here
   const [cartCourses, setCartCourses] = useState([]);
   const [courseToBeEnrolled, setCourseToBeEnrolled] = useState([]);
+  const [loadingRemoveId, setLoadingRemoveId] = useState(null);
+  const [loadingBuy, setLoadingBuy] = useState(false);
+  const [, setLoadingFetch] = useState(false);
 
   ///all the functions here
   //function to remove course from the cart
   const handleRemove = async (courseId, price) => {
     try {
-      const res = await api.put(`/cart/remove-from-cart`, {
-        courseId: courseId,
-      });
+      setLoadingRemoveId(courseId);
+      const res = await api.put(`/cart/remove-from-cart`, { courseId });
 
       if (res) {
-        //updating the ui here after backend deleted the course from the cart
         setCartCourses((prev) =>
           prev.filter((course) => course._id !== courseId),
         );
-        //updating redux here
         dispatch(removeFromCart());
         dispatch(decreaseTotal(price));
+        toaster.add({
+          title: "Removed",
+          description: "Course removed from cart.",
+          type: "success",
+          closable: true,
+        });
       }
     } catch (err) {
-      console.error(err);
+      toaster.add({
+        title: "Remove failed",
+        description: err?.message || "Could not remove course",
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setLoadingRemoveId(null);
     }
   };
 
@@ -63,10 +77,17 @@ export const CartPage = () => {
     };
 
     try {
+      setLoadingBuy(true);
       const isScriptLoaded = await loadRazorpayScript();
 
       if (!isScriptLoaded) {
-        alert("Razorpay SDK failed to load. Are you offline?");
+        toaster.add({
+          title: "Payment failed",
+          description: "Razorpay SDK failed to load.",
+          type: "error",
+          closable: true,
+        });
+        setLoadingBuy(false);
         return;
       }
 
@@ -92,13 +113,23 @@ export const CartPage = () => {
               "/razorpay/verify-payment",
               verifyPayload,
             );
-            alert(data.message);
+            toaster.add({
+              title: "Payment",
+              description: data.message,
+              type: "success",
+              closable: true,
+            });
 
             if (data.message === "Payment verified successfully") {
               await verifyAdd(cartCourses);
             }
           } catch (err) {
-            alert("Payment verification failed!");
+            toaster.add({
+              title: "Payment verification failed",
+              description: err?.message || "Verification error",
+              type: "error",
+              closable: true,
+            });
           }
         },
         prefill: {
@@ -114,41 +145,55 @@ export const CartPage = () => {
       const rzp1 = new window.Razorpay(options);
       rzp1.open();
     } catch (error) {
-      console.error("Payment initialization failed", error);
+      toaster.add({
+        title: "Payment failed",
+        description: error?.message || "Initialization failed",
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setLoadingBuy(false);
     }
   };
 
   // commenting this for now
   const verifyAdd = async (cartCourses) => {
-    console.log("hey im being called");
     try {
       const res = await api.post(`/courses/enroll-course`, {
         courseIds: courseToBeEnrolled,
       });
       if (res) {
-        console.log(res);
         for (let i = 0; i < courseToBeEnrolled.length; i++) {
           try {
-            const res = await api.put(`/cart/remove-from-cart`, {
+            const rem = await api.put(`/cart/remove-from-cart`, {
               courseId: courseToBeEnrolled[i],
             });
-            if (res) {
-              console.log(res);
+            if (rem) {
               setCartCourses((prev) =>
                 prev.filter((course) => course._id !== courseToBeEnrolled[i]),
               );
-              //updating the redux states here
               dispatch(removeFromCart());
               dispatch(decreaseTotal(cartCourses[i].price));
             }
           } catch (err) {
-            console.log(err);
+            // ignore per-item failures
           }
         }
         await dispatch(fetchUserProfile());
+        toaster.add({
+          title: "Enrolled",
+          description: "Courses enrolled successfully.",
+          type: "success",
+          closable: true,
+        });
       }
     } catch (err) {
-      console.log(err);
+      toaster.add({
+        title: "Enroll failed",
+        description: err?.message || "Enrollment error",
+        type: "error",
+        closable: true,
+      });
     }
   };
 
@@ -158,12 +203,20 @@ export const CartPage = () => {
   useEffect(() => {
     const fetchCartDetails = async () => {
       try {
+        setLoadingFetch(true);
         const res = await api.get(`/cart/get-cart-by-user-id`);
-        const courses = res.data.cart.courses;
+        const courses = res.data.cart.courses || [];
         setCartCourses(courses);
         setCourseToBeEnrolled(courses.map((c) => c._id));
       } catch (err) {
-        console.log(err);
+        toaster.add({
+          title: "Cart load failed",
+          description: err?.message || "Could not load cart",
+          type: "error",
+          closable: true,
+        });
+      } finally {
+        setLoadingFetch(false);
       }
     };
     fetchCartDetails();
@@ -219,8 +272,9 @@ export const CartPage = () => {
                   <button
                     className="btn-secondary"
                     onClick={() => handleRemove(ele._id, ele.price)}
+                    disabled={loadingRemoveId === ele._id}
                   >
-                    Remove
+                    {loadingRemoveId === ele._id ? "Removing..." : "Remove"}
                   </button>
                   {/* for course price */}
                   <div className="font-bold text-blue-700">{`₹${ele.price}`}</div>
@@ -237,7 +291,9 @@ export const CartPage = () => {
             <p className="text-2xl font-extrabold text-blue-700">{`₹ ${cartTotal}`}</p>
           </div>
           {/* Buy Now button */}
-          <button onClick={() => buyHandler(cartCourses)}>Buy Now</button>
+          <button onClick={() => buyHandler(cartCourses)} disabled={loadingBuy}>
+            {loadingBuy ? "Processing..." : "Buy Now"}
+          </button>
         </div>
       </div>
     </div>

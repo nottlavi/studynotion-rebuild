@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../utils/api";
+import { toaster } from "../components/ui/toaster";
 
 export const ForgotPassword = () => {
   //managing states here
@@ -12,46 +13,92 @@ export const ForgotPassword = () => {
   //managing the dependencies here
 
   //all the functions which makes a call to the backend
+  const [loadingSend, setLoadingSend] = useState(false);
+  const [loadingCheck, setLoadingCheck] = useState(false);
+  const [loadingChange, setLoadingChange] = useState(false);
+
   const sendOTPHandler = async (e) => {
     e.preventDefault();
     try {
+      setLoadingSend(true);
       const res = await api.post(`/users/send-otp`, { email });
-
-      console.log("printing the res", res);
       if (res.data.success) {
+        toaster.add({
+          title: "OTP sent",
+          description: "Check your email.",
+          type: "success",
+          closable: true,
+        });
         changeStage(2);
       }
     } catch (err) {
-      console.log(err.message);
+      const message =
+        err?.response?.data?.message || err.message || "Failed to send OTP";
+      toaster.add({
+        title: "Send OTP failed",
+        description: message,
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setLoadingSend(false);
     }
   };
 
   const checkOTPHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post(`/users/check-otp`, {
-        email,
-        otp,
-      });
-      console.log(res);
+      setLoadingCheck(true);
+      const res = await api.post(`/users/check-otp`, { email, otp });
       if (res.data.success) {
+        toaster.add({
+          title: "OTP verified",
+          description: "You may now reset your password.",
+          type: "success",
+          closable: true,
+        });
         changeStage(3);
       }
     } catch (err) {
-      console.log(err.message);
+      const message =
+        err?.response?.data?.message ||
+        err.message ||
+        "OTP verification failed";
+      toaster.add({
+        title: "OTP verification failed",
+        description: message,
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setLoadingCheck(false);
     }
   };
 
   const changePasswordHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post(`/users/change-password`, {
-        email,
-        password,
+      setLoadingChange(true);
+      await api.post(`/users/change-password`, { email, password });
+      toaster.add({
+        title: "Password changed",
+        description: "Your password was updated.",
+        type: "success",
+        closable: true,
       });
-      console.log(res);
     } catch (err) {
-      console.log(err.message);
+      const message =
+        err?.response?.data?.message ||
+        err.message ||
+        "Failed to change password";
+      toaster.add({
+        title: "Change password failed",
+        description: message,
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setLoadingChange(false);
     }
   };
 
@@ -93,7 +140,9 @@ export const ForgotPassword = () => {
                   setEmail(e.target.value);
                 }}
               ></input>
-              <button type="submit">Send OTP</button>
+              <button type="submit" disabled={loadingSend}>
+                {loadingSend ? "Sending..." : "Send OTP"}
+              </button>
             </form>
           </div>
         ) : stage === 2 ? (
@@ -113,7 +162,9 @@ export const ForgotPassword = () => {
                   setOTP(e.target.value);
                 }}
               ></input>
-              <button type="submit">Verify OTP</button>
+              <button type="submit" disabled={loadingCheck}>
+                {loadingCheck ? "Verifying..." : "Verify OTP"}
+              </button>
             </form>
           </div>
         ) : (
@@ -133,7 +184,9 @@ export const ForgotPassword = () => {
                   setPassword(e.target.value);
                 }}
               />
-              <button type="submit">Change Password</button>
+              <button type="submit" disabled={loadingChange}>
+                {loadingChange ? "Changing..." : "Change Password"}
+              </button>
             </form>
           </div>
         )}

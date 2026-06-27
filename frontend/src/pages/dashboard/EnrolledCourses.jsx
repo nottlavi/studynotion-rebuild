@@ -12,6 +12,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import api from "../../utils/api";
+import { toaster } from "../../components/ui/toaster";
 import { Link } from "react-router-dom";
 
 export const EnrolledCourses = () => {
@@ -23,6 +24,7 @@ export const EnrolledCourses = () => {
 
   ///all the states here
   const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [loadingRemoveId, setLoadingRemoveId] = useState(null);
 
   ///all the useEffects here
   useEffect(() => {
@@ -33,17 +35,31 @@ export const EnrolledCourses = () => {
 
   ///all the functions here
   const handleRemove = async (courseId) => {
+    if (loadingRemoveId) return;
     try {
+      setLoadingRemoveId(courseId);
       const res = await api.put(`/courses/unenroll-course`, { courseId });
-
       if (res) {
         setEnrolledCourses((prevCourses) =>
           prevCourses.filter((course) => course._id !== courseId),
         );
         dispatch(setProfile(res?.data?.updatedUser));
+        toaster.add({
+          title: "Removed",
+          description: "You have been unenrolled.",
+          type: "success",
+          closable: true,
+        });
       }
     } catch (err) {
-      console.log(err);
+      toaster.add({
+        title: "Action failed",
+        description: err?.message || "Could not unenroll",
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setLoadingRemoveId(null);
     }
   };
 

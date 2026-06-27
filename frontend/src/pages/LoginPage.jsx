@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import api from "../utils/api";
+import { toaster } from "../components/ui/toaster";
 
 //importing redux stuff here
 import { useDispatch } from "react-redux";
@@ -36,12 +37,23 @@ export const LoginPage = () => {
       const res = await api.post("/users/login", inputs);
       dispatch(setToken(res.data.token));
       localStorage.setItem("token", res.data.token);
-      const resCart = await dispatch(FetchUserCartDetails());
-      console.log(resCart);
-      console.log("login successful, navigating now...");
+      await dispatch(FetchUserCartDetails());
+      toaster.add({
+        title: "Signed in",
+        description: "Welcome back",
+        type: "success",
+        closable: true,
+      });
       navigate("/dashboard/my-profile");
     } catch (err) {
-      console.log(err);
+      const message =
+        err?.response?.data?.message || err.message || "Login failed";
+      toaster.add({
+        title: "Sign in failed",
+        description: message,
+        type: "error",
+        closable: true,
+      });
     } finally {
       setLoading(false);
     }
@@ -97,8 +109,9 @@ export const LoginPage = () => {
             Forgot password?
           </Link>
 
-          {loading ? <p className="text-slate-600">Signing in...</p> : null}
-          {loading ? null : <button type="submit">Log In</button>}
+          <button type="submit" disabled={loading}>
+            {loading ? "Signing In..." : "Log In"}
+          </button>
         </form>
       </section>
     </main>

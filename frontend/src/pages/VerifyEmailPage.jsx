@@ -3,11 +3,13 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { clearEmail } from "../slices/userSlice";
+import { toaster } from "../components/ui/toaster";
 
 export const VerifyEmailPage = () => {
   //managing all the states here
   const [OTP, setOTP] = useState(0);
   const email = useSelector((state) => state.user.email);
+  const [loading, setLoading] = useState(false);
 
   //managing all the dependencies here
   const navigate = useNavigate();
@@ -17,15 +19,28 @@ export const VerifyEmailPage = () => {
   const verifyEmail = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post(`/users/verify-email`, { otp: OTP, email });
-      if (res.error) {
-        console.log(res.error);
-      }
-      console.log(res);
+      setLoading(true);
+
+      await api.post(`/users/verify-email`, { otp: OTP, email });
+      toaster.add({
+        title: "Verified",
+        description: "Email verified successfully.",
+        type: "success",
+        closable: true,
+      });
       dispatch(clearEmail());
       navigate("/");
     } catch (err) {
-      console.log(err.response.data);
+      const message =
+        err?.response?.data?.message || err.message || "Verification failed";
+      toaster.add({
+        title: "Verification failed",
+        description: message,
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,7 +73,9 @@ export const VerifyEmailPage = () => {
             }}
             placeholder="Enter OTP"
           />
-          <button type="submit">Verify Email</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Checking OTP..." : "Verify Email"}
+          </button>
         </form>
       </section>
     </main>

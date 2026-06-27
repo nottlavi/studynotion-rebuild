@@ -1,4 +1,5 @@
 import api from "../../utils/api";
+import { toaster } from "../../components/ui/toaster";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -33,6 +34,8 @@ export const UpdateProfile = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [blocked1, setBlocked1] = useState(true);
+
+  const [loading, setLoading] = useState(false);
 
   //managing all the dependencies here
   const today = new Date().toISOString().split("T")[0];
@@ -104,14 +107,30 @@ export const UpdateProfile = () => {
     };
 
     try {
+      setLoading(true);
+
       const res = await api.put(`/users/update-profile`, sendObj);
       if (res) {
-        console.log(res);
         dispatch(setProfile(res?.data?.user));
-        console.log(res?.data?.user);
+        toaster.add({
+          title: "Profile updated",
+          description: "Your profile was saved.",
+          type: "success",
+          closable: true,
+        });
       }
     } catch (err) {
-      console.log(err.response.data);
+      toaster.add({
+        title: "Save failed",
+        description:
+          err?.response?.data?.message ||
+          err?.message ||
+          "Could not save profile",
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,12 +143,22 @@ export const UpdateProfile = () => {
         newPassword,
       });
       if (res) {
-        console.log(res);
+        toaster.add({
+          title: "Password updated",
+          description: "Your password was changed.",
+          type: "success",
+          closable: true,
+        });
         setCurrentPassword("");
         setNewPassword("");
       }
     } catch (err) {
-      console.log(err);
+      toaster.add({
+        title: "Update failed",
+        description: err?.message || "Could not update password",
+        type: "error",
+        closable: true,
+      });
     }
   };
 
@@ -149,7 +178,13 @@ export const UpdateProfile = () => {
         },
       );
 
-      if (!res.ok) console.log(await res.text);
+      if (!res.ok)
+        toaster.add({
+          title: "Upload failed",
+          description: "Avatar upload failed.",
+          type: "error",
+          closable: true,
+        });
 
       const result = await res.json();
 
@@ -157,18 +192,32 @@ export const UpdateProfile = () => {
         const res = await api.put(`/users/update-avatar`, {
           secure_url: result?.secure_url,
         });
-
-        console.log(res);
         if (res) {
           setAvatarUrl(res?.data?.profile?.avatar);
           setAvatar(res?.data?.profile?.avatar);
           setInitialAvatar(res?.data?.profile?.avatar);
+          toaster.add({
+            title: "Avatar updated",
+            description: "Profile avatar saved.",
+            type: "success",
+            closable: true,
+          });
         }
       } catch (err) {
-        console.error(err);
+        toaster.add({
+          title: "Avatar update failed",
+          description: err?.message || "Could not update avatar",
+          type: "error",
+          closable: true,
+        });
       }
     } catch (err) {
-      console.error(err);
+      toaster.add({
+        title: "Upload error",
+        description: err?.message || "Could not upload avatar",
+        type: "error",
+        closable: true,
+      });
     }
   };
 
@@ -241,7 +290,9 @@ export const UpdateProfile = () => {
             <div className="grid md:grid-cols-2 gap-4">
               {/* contact div */}
               <div className="flex flex-col">
-                <div>Contact No</div>
+                <div>
+                  Contact No <sup className="text-red-500">*</sup>
+                </div>
                 <input
                   type="text"
                   value={contactNumber}
@@ -278,8 +329,12 @@ export const UpdateProfile = () => {
               <Link to="/dashboard/my-profile">
                 <button className="btn-secondary">Cancel</button>
               </Link>
-              <button onClick={updateProfile} disabled={blocked} type="submit">
-                Save
+              <button
+                onClick={updateProfile}
+                disabled={blocked || loading}
+                type="submit"
+              >
+                {loading ? "Saving..." : "Save"}
               </button>
             </div>
           </div>

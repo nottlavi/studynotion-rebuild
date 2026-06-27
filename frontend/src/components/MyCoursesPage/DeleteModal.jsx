@@ -1,5 +1,7 @@
 import { Dialog } from "@chakra-ui/react";
 import api from "../../utils/api";
+import { toaster } from "../ui/toaster";
+import { useState } from "react";
 
 export const DeleteModal = ({
   deleteModalOpen,
@@ -7,8 +9,11 @@ export const DeleteModal = ({
   courseDeleted,
   setOwnedCourses,
 }) => {
+  const [deleting, setDeleting] = useState(false);
   const deleteCourse = async () => {
+    if (deleting) return;
     try {
+      setDeleting(true);
       const res = await api.delete(`/courses/delete-course`, {
         data: { courseId: courseDeleted?._id },
       });
@@ -17,9 +22,25 @@ export const DeleteModal = ({
           prev.filter((course) => course._id !== courseDeleted?._id),
         );
         setDeleteModalOpen(false);
+        toaster.add({
+          title: "Deleted",
+          description: "Course deleted.",
+          type: "success",
+          closable: true,
+        });
       }
     } catch (err) {
-      console.log(err.response);
+      toaster.add({
+        title: "Delete failed",
+        description:
+          err?.response?.data?.message ||
+          err?.message ||
+          "Could not delete course",
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -48,7 +69,9 @@ export const DeleteModal = ({
               >
                 Cancel
               </button>
-              <button onClick={deleteCourse}>Delete</button>
+              <button onClick={deleteCourse} disabled={deleting}>
+                {deleting ? "Deleting..." : "Delete"}
+              </button>
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog.Positioner>

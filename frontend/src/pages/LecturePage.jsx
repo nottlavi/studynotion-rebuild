@@ -3,6 +3,7 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import api from "../utils/api";
+import { toaster } from "../components/ui/toaster";
 
 //importing components here
 import { LectureSideBar } from "../components/LectureSideBar";
@@ -24,23 +25,34 @@ export const LecturePage = () => {
   const [currentCourse, setCurrentCourse] = useState({});
   const [currentLecture, setCurrentLecture] = useState({});
   const [ratingModal, setRatingModal] = useState(false);
+  const [loadingCourse, setLoadingCourse] = useState(false);
 
   ///all the useEffects here
   //useEffect to fetch the course details whenever the course id changes
   useEffect(() => {
     const getCourseDetails = async () => {
       try {
+        setLoadingCourse(true);
         const res = await api.get(`/courses/get-course-by-id/${courseId}`);
         setCurrentCourse(res?.data?.course);
         setCurrentLecture(res?.data?.course?.sections?.[0]?.subsections?.[0]);
       } catch (err) {
-        console.log(err.message);
+        toaster.add({
+          title: "Course load failed",
+          description: err?.message || "Could not load course",
+          type: "error",
+          closable: true,
+        });
+      } finally {
+        setLoadingCourse(false);
       }
     };
     getCourseDetails();
   }, [courseId]);
 
-  console.log(currentCourse, profile);
+  if (loadingCourse) return <div>Loading course...</div>;
+
+  if (!currentCourse || !currentCourse._id) return <div>Course not found.</div>;
 
   if (
     !profile?.enrolledCourses.some((course) => course._id === currentCourse._id)

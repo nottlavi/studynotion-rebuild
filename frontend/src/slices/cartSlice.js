@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../utils/api";
 
-const initialState = { count: 0, total: 0 };
+const initialState = { count: 0, total: 0, isLoading: false, error: null };
 
 export const FetchUserCartDetails = createAsyncThunk(
   "/cart/fetchCartDetails",
@@ -35,16 +35,26 @@ const cartSlice = createSlice({
     clearCart: () => initialState,
   },
   extraReducers: (builder) => {
-    builder.addCase(FetchUserCartDetails.fulfilled, (state, action) => {
-      const cart = action.payload?.cart;
-      const courses = cart?.courses || [];
+    builder
+      .addCase(FetchUserCartDetails.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(FetchUserCartDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const cart = action.payload?.cart;
+        const courses = cart?.courses || [];
 
-      state.count = courses.length;
-      state.total = courses.reduce(
-        (acc, course) => acc + (course.price || 0),
-        0,
-      );
-    });
+        state.count = courses.length;
+        state.total = courses.reduce(
+          (acc, course) => acc + (course.price || 0),
+          0,
+        );
+      })
+      .addCase(FetchUserCartDetails.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Failed to fetch cart";
+      });
   },
 });
 

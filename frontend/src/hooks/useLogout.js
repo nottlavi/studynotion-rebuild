@@ -1,4 +1,5 @@
 import api from "../utils/api";
+import { toaster } from "../components/ui/toaster";
 
 //importing redux stuff here
 import { useDispatch } from "react-redux";
@@ -23,7 +24,12 @@ export const useLogout = () => {
         navigate("/");
       }
     } catch (err) {
-      console.error(err);
+      toaster.add({
+        title: "Logout failed",
+        description: err?.message || "Could not logout",
+        type: "error",
+        closable: true,
+      });
     }
   };
 

@@ -2,6 +2,8 @@
 //importing dependencies here
 import { Dialog } from "@chakra-ui/react";
 import api from "../../utils/api";
+import { toaster } from "../ui/toaster";
+import { useState } from "react";
 
 export const DeleteModal = ({
   deleteSection,
@@ -12,25 +14,40 @@ export const DeleteModal = ({
 }) => {
   ///managing all the dependencies here
 
+  const [deleting, setDeleting] = useState(false);
+
   const deleteHandler = async (e) => {
     e.preventDefault();
     try {
+      setDeleting(true);
       const res = await api.delete(`/section/delete`, {
         data: { sectionId: deleteSection?._id },
       });
-
       if (res) {
-        console.log(res);
         setSections((prev) =>
           prev.filter((section) => section._id !== deleteSection._id),
         );
         setDeleteSection(null);
         setDeleteSectionModal(false);
+        toaster.add({
+          title: "Deleted",
+          description: "Section deleted.",
+          type: "success",
+          closable: true,
+        });
       }
     } catch (err) {
-      console.error(err);
+      toaster.add({
+        title: "Delete failed",
+        description: err?.message || "Could not delete section",
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setDeleting(false);
     }
   };
+  // Removed extra closing brace
 
   return (
     <Dialog.Root
@@ -56,7 +73,9 @@ export const DeleteModal = ({
             <p>total no of lectures {deleteSection?.subsections?.length}</p>
           </Dialog.Body>
           <Dialog.Footer className="modal-footer">
-            <button onClick={deleteHandler}>Delete</button>
+            <button onClick={deleteHandler} disabled={deleting}>
+              {deleting ? "Deleting..." : "Delete"}
+            </button>
           </Dialog.Footer>
         </Dialog.Content>
       </Dialog.Positioner>

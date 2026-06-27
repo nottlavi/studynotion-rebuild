@@ -1,15 +1,18 @@
 import { Outlet, useLocation, Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLogout } from "../hooks/useLogout";
 import api from "../utils/api";
+import { toaster } from "../components/ui/toaster";
 //importing redux stuff here
 import { useSelector, useDispatch } from "react-redux";
 import { setProfile } from "../slices/userSlice";
+import { LoadingPage } from "../pages/LoadingPage";
 
 export const DashBoardPage = () => {
   //getting the url's endpoint to know which part is currently clicked on
   const location = useLocation();
   const currentBoy = location.pathname.split("/")[2];
+  const [loading, setLoading] = useState(false);
 
   //managing the redux stuff here
   const dispatch = useDispatch();
@@ -23,6 +26,8 @@ export const DashBoardPage = () => {
   useEffect(() => {
     const getProfileByToken = async () => {
       try {
+        setLoading(true);
+
         const res = await api.get(`/users/get-profile`);
 
         if (res) {
@@ -30,11 +35,22 @@ export const DashBoardPage = () => {
           localStorage.setItem("profile", JSON.stringify(res.data.user));
         }
       } catch (err) {
-        console.log(err.message);
+        toaster.add({
+          title: "Profile load failed",
+          description: err?.message || "Could not load profile",
+          type: "error",
+          closable: true,
+        });
+      } finally {
+        setLoading(false);
       }
     };
     getProfileByToken();
   }, [token, BASE_URL, dispatch]);
+
+  if (loading) {
+    return <LoadingPage />;
+  }
 
   return (
     <div className="site-shell dashboard-page grid md:grid-cols-[260px_1fr] gap-4 float-in">

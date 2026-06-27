@@ -2,6 +2,7 @@
 import { Dialog } from "@chakra-ui/react";
 import api from "../../utils/api";
 import { useEffect, useState } from "react";
+import { toaster } from "../ui/toaster";
 
 export const AddLecture = ({
   addingLecture,
@@ -19,6 +20,8 @@ export const AddLecture = ({
 
   //state to disable/enable the submit button
   const [disableMain, setDisableMain] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   ///all the use Effects here
   //useEffects to disable enable the main button
@@ -35,6 +38,7 @@ export const AddLecture = ({
     let videoResult = {};
     // trying to upload the video first
     try {
+      setUploading(true);
       const data = new FormData();
       data.append("file", lectureVideo);
       data.append("upload_preset", "hi1wsn1z");
@@ -45,20 +49,32 @@ export const AddLecture = ({
       );
 
       if (!res.ok) {
-        console.log(res);
+        toaster.add({
+          title: "Upload failed",
+          description: "Video upload failed.",
+          type: "error",
+          closable: true,
+        });
+        setUploading(false);
+        return;
       }
 
       const result = await res.json();
-
       videoResult = result;
-
-      console.log(result);
     } catch (err) {
-      console.error(err);
+      toaster.add({
+        title: "Upload error",
+        description: err?.message || "Upload failed",
+        type: "error",
+        closable: true,
+      });
+      setUploading(false);
+      return;
     }
 
     //now creating the section
     try {
+      setSubmitting(true);
       const res = await api.post(`/subsection/create-sub-section`, {
         title: lectureTitle,
         description: lectureDescription,
@@ -66,7 +82,6 @@ export const AddLecture = ({
         section: lecSecId,
         duration: videoResult?.duration,
       });
-      console.log(res);
 
       setSections((prev) =>
         prev.map((section) =>
@@ -82,8 +97,22 @@ export const AddLecture = ({
       setLectureDescription("");
       setLectureVideo(null);
       setAddingLecture(false);
+      toaster.add({
+        title: "Lecture added",
+        description: "Lecture uploaded successfully.",
+        type: "success",
+        closable: true,
+      });
     } catch (err) {
-      console.error(err);
+      toaster.add({
+        title: "Create failed",
+        description: err?.message || "Could not add lecture",
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setUploading(false);
+      setSubmitting(false);
     }
   };
 
@@ -143,8 +172,11 @@ export const AddLecture = ({
             </div>
           </Dialog.Body>
           <Dialog.Footer className="modal-footer">
-            <button disabled={disableMain} onClick={addLecture}>
-              Add Lecture?
+            <button
+              disabled={disableMain || uploading || submitting}
+              onClick={addLecture}
+            >
+              {uploading || submitting ? "Adding..." : "Add Lecture"}
             </button>
           </Dialog.Footer>
         </Dialog.Content>

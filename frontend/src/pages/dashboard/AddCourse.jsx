@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../../utils/api";
+import { toaster } from "../../components/ui/toaster";
 //react icons
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { IoIosMenu } from "react-icons/io";
@@ -132,7 +133,14 @@ export const AddCourse = () => {
       thumbnail
     ) {
       setStage(1);
+      return;
     }
+    toaster.add({
+      title: "Missing info",
+      description: "Please fill all required fields before continuing.",
+      type: "error",
+      closable: true,
+    });
   };
 
   //function to check if a lecture can be added and when clicked save create a lecture array with the same index of the section on which save button was clicked, the idx comes from sections.map
@@ -151,7 +159,7 @@ export const AddCourse = () => {
         },
       ]);
 
-      console.log(lectureVideo.url);
+      // lectureVideo.url available
       //creating sub section here in the backend, so that the coursePage might have data of the sub section
 
       //doing this because on clicing save i want all the details to be cleared because once you click save, you are done with this particular lecture
@@ -224,9 +232,7 @@ export const AddCourse = () => {
       for (let i = 0; i < megaLectureStorage.length; i++) {
         const sectionId = createdSectionIds[megaLectureStorage[i].sectionIdx];
 
-        console.log(megaLectureStorage[i].duration);
-
-        const res = await api.post(`/subsection/create-sub-section`, {
+        await api.post(`/subsection/create-sub-section`, {
           title: megaLectureStorage[i].lectureTitle,
           description: megaLectureStorage[i].lectureDescription,
           videoUrl:
@@ -235,12 +241,11 @@ export const AddCourse = () => {
           section: sectionId,
           duration: megaLectureStorage[i].duration,
         });
-        console.log(res);
+        // subsection created
       }
 
       setStage(3);
     } catch (err) {
-      console.log(err);
     } finally {
       setIsSubSectionCreationBlocked(false);
     }
@@ -259,7 +264,15 @@ export const AddCourse = () => {
       },
     );
 
-    if (!res.ok) console.log(await res.text);
+    if (!res.ok) {
+      const text = await res.text();
+      toaster.add({
+        title: "Upload failed",
+        description: text || "Thumbnail upload failed",
+        type: "error",
+        closable: true,
+      });
+    }
 
     const result = await res.json();
     setThumbnail({ url: result.secure_url, publicId: result.public_id });
@@ -267,8 +280,6 @@ export const AddCourse = () => {
     //all nice and clear above this, but to delete the cached assets refer the below code
 
     const prevIds = JSON.parse(localStorage.getItem("tempIds")) || [];
-
-    console.log(prevIds);
 
     const newTempIds = [
       ...prevIds,
@@ -291,13 +302,23 @@ export const AddCourse = () => {
 
   const removeThumbnail = async (public_id) => {
     try {
-      const res = await api.post(`/courses/delete-thumbnail`, {
+      await api.post(`/courses/delete-thumbnail`, {
         publicId: public_id,
       });
       setThumbnail(null);
-      console.log(res);
+      toaster.add({
+        title: "Thumbnail removed",
+        description: "Removed successfully",
+        type: "success",
+        closable: true,
+      });
     } catch (err) {
-      console.log(err);
+      toaster.add({
+        title: "Remove failed",
+        description: err?.message || "Could not remove thumbnail",
+        type: "error",
+        closable: true,
+      });
     }
   };
 
@@ -313,11 +334,17 @@ export const AddCourse = () => {
       );
 
       if (!res.ok) {
-        console.log(res);
+        const text = await res.text();
+        toaster.add({
+          title: "Upload failed",
+          description: text || "Video upload failed",
+          type: "error",
+          closable: true,
+        });
+        return;
       }
 
       const result = await res.json();
-
       setLectureVideo({
         url: result.secure_url,
         publicId: result.public_id,
@@ -325,14 +352,29 @@ export const AddCourse = () => {
       });
       setDuration(result.duration);
     } catch (err) {
-      console.log(err);
+      toaster.add({
+        title: "Upload error",
+        description: err?.message || "Could not upload video",
+        type: "error",
+        closable: true,
+      });
     }
   };
 
   //function to create the course using backend
   const createCourse = async (e) => {
     e.preventDefault();
+    if (!thumbnail?.url) {
+      toaster.add({
+        title: "Missing thumbnail",
+        description: "Please upload a thumbnail before publishing.",
+        type: "error",
+        closable: true,
+      });
+      return;
+    }
     try {
+      setPublishing(true);
       const res = await api.post(`/courses/create-course`, {
         title,
         tags,
@@ -345,24 +387,32 @@ export const AddCourse = () => {
         sections: sectionIdCreated,
       });
       if (res) {
-        console.log(res);
-
-        //come back here
-        // this is the public id of the final thumbnail, i have verified it, now i need to save it from auto deletion
         const goodId = thumbnail.publicId;
-
         const array = localStorage.getItem("tempIds");
-
-        const backendResult = await api.post(`/courses/auto-delete-media`, {
+        await api.post(`/courses/auto-delete-media`, {
           array: array,
           keepPublicId: goodId,
         });
-        console.log(backendResult);
+        toaster.add({
+          title: "Course created",
+          description: "Course created successfully",
+          type: "success",
+          closable: true,
+        });
       }
     } catch (err) {
-      console.log(err);
+      toaster.add({
+        title: "Publish failed",
+        description: err?.message || "Could not publish course",
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setPublishing(false);
     }
   };
+
+  const [publishing, setPublishing] = useState(false);
 
   const uploadEditedLectureVideo = async (file) => {
     const data = new FormData();
@@ -375,22 +425,23 @@ export const AddCourse = () => {
     );
 
     if (!res.ok) {
-      console.log(res);
+      const text = await res.text();
+      toaster.add({
+        title: "Upload failed",
+        description: text || "Video upload failed",
+        type: "error",
+        closable: true,
+      });
+      return;
     }
 
     const result = await res.json();
-
     const newVideo = {
       url: result.secure_url,
       publicId: result.public_id,
       duration: result.duration,
     };
-
-    setTempLecture((prev) => ({
-      ...prev,
-      lectureVideo: newVideo.url,
-    }));
-
+    setTempLecture((prev) => ({ ...prev, lectureVideo: newVideo.url }));
     setTempLectureVideo(newVideo.url);
   };
 
@@ -937,10 +988,12 @@ export const AddCourse = () => {
         ) : (
           // stage 3 / final stage
           <form
-            onClick={createCourse}
+            onSubmit={createCourse}
             className="course-builder-form publish-stage"
           >
-            <button type="submit">Publish?</button>
+            <button type="submit" disabled={publishing}>
+              {publishing ? "Publishing..." : "Publish?"}
+            </button>
           </form>
         )
       }

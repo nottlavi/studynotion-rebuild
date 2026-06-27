@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
+import { toaster } from "../components/ui/toaster";
 
 //importing pages here
 // import { ReviewComponent } from "../components/semi/ReviewComponent";
@@ -28,25 +29,44 @@ export const CoursePage = () => {
 
   ///all the states here
   const [currentCourse, setCurrentCourse] = useState({});
+  const [loadingCourse, setLoadingCourse] = useState(false);
   //state to manage the expanded section
   const [expandMenu, setExpandMenu] = useState(false);
   //state to expand one particular section this will be through element id
   const [expandOneSection, setExpandOneSection] = useState();
   const [reviews, setReviews] = useState([]);
+  const [, setLoadingReviews] = useState(false);
+  const [addingToCart, setAddingToCart] = useState(false);
 
   ///all the functions here
   //function to call backend to add a course to cart
   const addToCartHandler = async (e) => {
     try {
+      setAddingToCart(true);
       const res = await api.post(`/cart/add-to-cart`, {
         courseId: currentCourse._id,
       });
       if (res) {
         dispatch(addToCart());
         dispatch(increaseTotal(currentCourse.price));
+        toaster.add({
+          title: "Added to cart",
+          description: "Course added to your cart.",
+          type: "success",
+          closable: true,
+        });
       }
     } catch (err) {
-      console.log(err);
+      const message =
+        err?.response?.data?.message || err.message || "Failed to add to cart";
+      toaster.add({
+        title: "Add to cart failed",
+        description: message,
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setAddingToCart(false);
     }
   };
 
@@ -55,12 +75,24 @@ export const CoursePage = () => {
   useEffect(() => {
     const fetchCourseDetails = async () => {
       try {
+        setLoadingCourse(true);
         const res = await api.get(`/courses/get-course-by-id/${courseId}`);
         if (res) {
           setCurrentCourse(res.data.course);
         }
       } catch (err) {
-        console.log(err.message);
+        const message =
+          err?.response?.data?.message ||
+          err.message ||
+          "Failed to load course";
+        toaster.add({
+          title: "Course load failed",
+          description: message,
+          type: "error",
+          closable: true,
+        });
+      } finally {
+        setLoadingCourse(false);
       }
     };
     fetchCourseDetails();
@@ -70,15 +102,35 @@ export const CoursePage = () => {
   useEffect(() => {
     const fetchAllReviews = async () => {
       try {
+        setLoadingReviews(true);
         const res = await api.get(`rating-review/get-all/${courseId}`);
-        setReviews(res?.data?.reviews);
-        console.log(res?.data?.reviews);
+        setReviews(res?.data?.reviews || []);
       } catch (err) {
-        console.error(err);
+        const message =
+          err?.response?.data?.message ||
+          err.message ||
+          "Failed to load reviews";
+        toaster.add({
+          title: "Reviews failed",
+          description: message,
+          type: "error",
+          closable: true,
+        });
+      } finally {
+        setLoadingReviews(false);
       }
     };
     fetchAllReviews();
   }, [courseId]);
+
+  // Defer early return until after hooks are declared so hooks run
+  // in the same order on every render.
+  // Show loading state before rendering content.
+  if (loadingCourse) {
+    return (
+      <main className="site-shell course-page float-in">Loading course...</main>
+    );
+  }
 
   const totalSubsections =
     currentCourse?.sections?.reduce(
@@ -100,9 +152,7 @@ export const CoursePage = () => {
   const minutes = Math.floor(totalLectureSeconds);
   const seconds = Math.round((totalLectureSeconds - minutes) * 60);
 
-  useEffect(() => {
-    console.log(profile, currentCourse._id);
-  }, [profile, currentCourse]);
+  // no-op: avoid console noise in production
 
   return (
     <main className="site-shell course-page float-in">
@@ -205,7 +255,9 @@ export const CoursePage = () => {
               </button>
             ) : (
               <div>
-                <button onClick={addToCartHandler}>Add to Cart</button>
+                <button onClick={addToCartHandler} disabled={addingToCart}>
+                  {addingToCart ? "Adding..." : "Add to Cart"}
+                </button>
               </div>
             )}
             <div className="text-sm text-slate-500">

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import api from "../../utils/api";
+import { toaster } from "../ui/toaster";
 //importing icons here
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { IoIosMenu } from "react-icons/io";
@@ -47,6 +48,7 @@ export const EditCourse = () => {
   const [firstButton, setFirstButton] = useState(false);
 
   const [addingSection, setAddingSection] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   //states to manage the section which is being deleted
   const [deleteSection, setDeleteSection] = useState(null);
@@ -100,7 +102,12 @@ export const EditCourse = () => {
         setSections(res?.data?.course?.sections);
         // setInitialSections(res?.data?.course?.sections);
       } catch (err) {
-        console.error(err);
+        toaster.add({
+          title: "Load failed",
+          description: err?.message || "Could not load course",
+          type: "error",
+          closable: true,
+        });
       }
     };
     fetchCourseDetails();
@@ -203,11 +210,9 @@ export const EditCourse = () => {
     payload.courseId = courseId;
 
     try {
+      setSaving(true);
       const res = await api.put(`/courses/update`, { payload });
-      console.log(res);
-
       const updated = res?.data?.course;
-
       setTitle(updated.title);
       setDescription(updated.description);
       setPrice(Number(updated.price));
@@ -221,23 +226,33 @@ export const EditCourse = () => {
       setInitialCategory(updated.category.name);
       setInitialTags(updated.tags);
       setInitialRequirements(updated.requirements);
+      toaster.add({
+        title: "Saved",
+        description: "Course details updated.",
+        type: "success",
+        closable: true,
+      });
     } catch (err) {
-      console.error(err);
+      toaster.add({
+        title: "Save failed",
+        description: err?.message || "Could not save changes",
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setSaving(false);
     }
   };
 
   const handleSectionEdit = async (e, sectionId) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log(sectionId, sectionName);
     try {
       const res = await api.put(`/section/edit`, {
         sectionId,
         newTitle: sectionName,
       });
       if (res) {
-        console.log(res);
-        //need to set the name of section on client side
         setSections((prev) =>
           prev.map((section) =>
             section._id === sectionId
@@ -245,13 +260,23 @@ export const EditCourse = () => {
               : section,
           ),
         );
-        //need to disable input section name
         setEditSection("");
         setInitialSectionName("");
         setSectionName("");
+        toaster.add({
+          title: "Updated",
+          description: "Section name updated.",
+          type: "success",
+          closable: true,
+        });
       }
     } catch (err) {
-      console.error(err);
+      toaster.add({
+        title: "Update failed",
+        description: err?.message || "Could not update section",
+        type: "error",
+        closable: true,
+      });
     }
   };
 
@@ -325,8 +350,8 @@ export const EditCourse = () => {
             <button type="button" onClick={() => setStage(1)}>
               Next
             </button>
-            <button disabled={!firstButton} onClick={saveStage1}>
-              Save
+            <button disabled={!firstButton || saving} onClick={saveStage1}>
+              {saving ? "Saving..." : "Save"}
             </button>
           </div>
         </form>
@@ -451,8 +476,7 @@ export const EditCourse = () => {
                           <RiDeleteBin5Line />
                         </button>
                       </div>
-                      {console.log(editLecture)}
-                      {console.log(subsection._id)}
+                      {/* debug removed */}
                       {editLecture === subsection._id && (
                         <EditLecture
                           lectId={editLecture}

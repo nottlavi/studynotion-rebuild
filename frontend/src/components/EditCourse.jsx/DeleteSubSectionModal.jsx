@@ -1,6 +1,8 @@
 //importing dependencies here
 import { Dialog } from "@chakra-ui/react";
 import api from "../../utils/api";
+import { toaster } from "../ui/toaster";
+import { useState } from "react";
 
 export const DeleteSubSectionModal = ({
   deleteSubSection,
@@ -19,12 +21,15 @@ export const DeleteSubSectionModal = ({
     setDeleteParentSectionId(null);
   };
 
+  const [, setDeleting] = useState(false);
+
   const deleteHandler = async (e) => {
     e.preventDefault();
 
     if (!deleteSubSection?._id || !deleteParentSectionId) return;
 
     try {
+      setDeleting(true);
       const res = await api.delete(`/subsection/delete`, {
         data: { subSectionId: deleteSubSection._id },
       });
@@ -43,9 +48,22 @@ export const DeleteSubSectionModal = ({
           ),
         );
         closeModal();
+        toaster.add({
+          title: "Deleted",
+          description: "Lecture removed.",
+          type: "success",
+          closable: true,
+        });
       }
     } catch (err) {
-      console.error(err);
+      toaster.add({
+        title: "Delete failed",
+        description: err?.message || "Could not delete lecture",
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setDeleting(false);
     }
   };
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../utils/api";
+import { toaster } from "../components/ui/toaster";
 import { FaStar } from "react-icons/fa";
 
 export const CourseCategory = () => {
@@ -9,24 +10,29 @@ export const CourseCategory = () => {
 
   //managing states here
   const [categoryCourses, setCategoryCourses] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchCategoryDetailsById = async (e) => {
       try {
+        setLoading(true);
         const res = await api.get(`/category/get-category-by-id/${categoryId}`);
         if (res) {
           setCategoryCourses(res.data.category.courses);
         }
       } catch (err) {
-        console.log(err.message);
+        toaster.add({
+          title: "Load failed",
+          description: err?.message || "Could not load category",
+          type: "error",
+          closable: true,
+        });
+      } finally {
+        setLoading(false);
       }
     };
     fetchCategoryDetailsById();
   }, [categoryId]);
-
-  useEffect(() => {
-    console.log(categoryCourses);
-  }, [categoryCourses]);
 
   return (
     <main className="site-shell category-page float-in">
@@ -43,9 +49,10 @@ export const CourseCategory = () => {
       </section>
 
       <section className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {categoryCourses.map((ele) => {
-          return (
-            // the individual course
+        {loading ? (
+          <div>Loading...</div>
+        ) : (
+          categoryCourses.map((ele) => (
             <Link
               to={`/course/${ele._id}`}
               key={ele._id}
@@ -105,8 +112,8 @@ export const CourseCategory = () => {
                 ₹ {ele?.price}
               </div>
             </Link>
-          );
-        })}
+          ))
+        )}
       </section>
     </main>
   );

@@ -11,12 +11,14 @@ import { store, persistor } from "./store";
 //importing chakra ui stuff here
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { ColorModeProvider } from "./components/ui/color-mode";
+import { Toaster } from "./components/ui/toaster";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ChakraProvider value={defaultSystem}>
       <ColorModeProvider />
+      <Toaster />
       <BrowserRouter>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>

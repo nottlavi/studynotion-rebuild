@@ -2,6 +2,7 @@
 import { Dialog } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import api from "../../utils/api";
+import { toaster } from "../ui/toaster";
 
 export const EditLecture = ({ lectId, onClose }) => {
   ///all the dependencies here
@@ -15,23 +16,31 @@ export const EditLecture = ({ lectId, onClose }) => {
 
   //state to toggle the blocking of save button
   const [blocked, setBlocked] = useState(true);
+  const [, setLoadingFetch] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   ///all the useEffects here
   //useEffect to fetch lecture data from backend
   useEffect(() => {
     const fetchLecture = async () => {
       try {
+        setLoadingFetch(true);
         const res = await api.get(`/subsection/get/${lectId}`);
-
         if (res) {
-          console.log(res);
           setLectureTitle(res?.data?.subSection?.title);
           setInitialLectureTitle(res?.data?.subSection?.title);
           setLectureDescription(res?.data?.subSection?.description);
           setInitialLectureDescription(res?.data?.subSection?.description);
         }
       } catch (err) {
-        console.error(err);
+        toaster.add({
+          title: "Load failed",
+          description: err?.message || "Could not load lecture",
+          type: "error",
+          closable: true,
+        });
+      } finally {
+        setLoadingFetch(false);
       }
     };
     fetchLecture();
@@ -39,12 +48,7 @@ export const EditLecture = ({ lectId, onClose }) => {
 
   //useEffect to toggle the blocking of save button
   useEffect(() => {
-    console.log(
-      lectureDescription,
-      lectureTitle,
-      initiaLectureDescription,
-      initialLectureTitle,
-    );
+    // no-op for debug in prod
 
     if (
       (lectureDescription.trim() !== initiaLectureDescription &&
@@ -67,22 +71,34 @@ export const EditLecture = ({ lectId, onClose }) => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
+      setSaving(true);
       const res = await api.put(`/subsection/edit`, {
         newName: lectureTitle,
         newDescription: lectureDescription,
         subSectionId: lectId,
       });
-
       if (res) {
-        console.log(res);
         setInitialLectureDescription("");
         setInitialLectureTitle("");
         setLectureDescription("");
         setLectureTitle("");
+        toaster.add({
+          title: "Saved",
+          description: "Lecture updated.",
+          type: "success",
+          closable: true,
+        });
         onClose();
       }
     } catch (err) {
-      console.error(err);
+      toaster.add({
+        title: "Save failed",
+        description: err?.message || "Could not update lecture",
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -128,8 +144,8 @@ export const EditLecture = ({ lectId, onClose }) => {
             </div>
           </Dialog.Body>
           <Dialog.Footer className="modal-footer">
-            <button disabled={blocked} onClick={handleSave}>
-              Save?
+            <button disabled={blocked || saving} onClick={handleSave}>
+              {saving ? "Saving..." : "Save"}
             </button>
           </Dialog.Footer>
         </Dialog.Content>

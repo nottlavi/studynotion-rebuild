@@ -2,6 +2,7 @@
 //importing dependencies here
 import api from "../utils/api";
 import { useEffect, useState } from "react";
+import { toaster } from "./ui/toaster";
 import { useParams } from "react-router-dom";
 //importing icons here
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
@@ -26,7 +27,12 @@ export const LectureSideBar = ({
         const res = await api.get(`/courses/get-course-by-id/${courseId}`);
         setCurrentCourse(res?.data?.course);
       } catch (err) {
-        console.log(err.message);
+        toaster.add({
+          title: "Course load failed",
+          description: err?.message || "Could not load course",
+          type: "error",
+          closable: true,
+        });
       }
     };
 

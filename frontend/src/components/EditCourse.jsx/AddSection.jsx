@@ -3,6 +3,7 @@
 import { Dialog } from "@chakra-ui/react";
 import api from "../../utils/api";
 import { useEffect, useState } from "react";
+import { toaster } from "../ui/toaster";
 import { useParams } from "react-router-dom";
 //importing icons here
 import { GoPencil } from "react-icons/go";
@@ -26,6 +27,7 @@ export const AddSection = ({
   const [lectAddMenu, setLectAddMenu] = useState(false);
   //state to block the create section button
   const [block, setBlock] = useState(true);
+  const [creating, setCreating] = useState(false);
   //state to block the create lecture button
   const [block1, setBlock1] = useState(true);
   //states to manage sub section details
@@ -60,64 +62,65 @@ export const AddSection = ({
 
   //function to finally create a section
   const createSection = async (e) => {
-    let section = "";
-
     e.preventDefault();
+    setCreating(true);
+    let section = "";
     try {
+      // create the section
       const res = await api.post(`/section/create/course-id`, {
         courseId,
         title: sectionName,
       });
+      if (res) section = res?.data?.section?._id;
 
-      if (res) {
-        console.log(res);
-        section = res?.data?.section?._id;
-      }
-    } catch (err) {
-      console.error(err);
-    }
+      // create subsections (if any)
+      for (let i = 0; i < lectures.length; i++) {
+        const lecture = lectures[i];
+        let resultSave = {};
 
-    //now i will create all the sub sections
-    for (let i = 0; i < lectures.length; i++) {
-      const lecture = lectures[i];
-      let resultSave = {};
-
-      //first of all uploading the lecture video to cloudinary
-      try {
-        const data = new FormData();
-        data.append("file", lecture.lectureVideo);
-        data.append("upload_preset", "hi1wsn1z");
-
-        const res = await fetch(
-          "https://api.cloudinary.com/v1_1/dguufm5le/video/upload",
-          { method: "POST", body: data },
-        );
-
-        if (!res.ok) {
-          console.log(res);
+        try {
+          const data = new FormData();
+          data.append("file", lecture.lectureVideo);
+          data.append("upload_preset", "hi1wsn1z");
+          const uploadRes = await fetch(
+            "https://api.cloudinary.com/v1_1/dguufm5le/video/upload",
+            { method: "POST", body: data },
+          );
+          if (!uploadRes.ok) {
+            toaster.add({
+              title: "Upload failed",
+              description: "Video upload failed.",
+              type: "error",
+              closable: true,
+            });
+          } else {
+            resultSave = await uploadRes.json();
+          }
+        } catch (err) {
+          toaster.add({
+            title: "Upload failed",
+            description: err?.message || "Could not upload video",
+            type: "error",
+            closable: true,
+          });
         }
 
-        const result = await res.json();
-        resultSave = result;
-
-        console.log(result);
-      } catch (err) {
-        console.error(err);
-      }
-
-      //creating the sub section here
-      try {
-        const res = await api.post(`/subsection/create-sub-section`, {
-          title: lecture.lectureTitle,
-          description: lecture.lectureDescription,
-          videoUrl: resultSave.secure_url,
-          section: section,
-          duration: resultSave.duration,
-        });
-
-        console.log(res);
-      } catch (err) {
-        console.error(err);
+        try {
+          await api.post(`/subsection/create-sub-section`, {
+            title: lecture.lectureTitle,
+            description: lecture.lectureDescription,
+            videoUrl: resultSave.secure_url,
+            section: section,
+            duration: resultSave.duration,
+          });
+        } catch (err) {
+          toaster.add({
+            title: "Create subsection failed",
+            description: err?.message || "Could not create subsection",
+            type: "error",
+            closable: true,
+          });
+        }
       }
 
       if (section) {
@@ -135,6 +138,15 @@ export const AddSection = ({
 
         setAddingSection(false);
       }
+    } catch (err) {
+      toaster.add({
+        title: "Create section failed",
+        description: err?.message || "Could not create section",
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -294,8 +306,8 @@ export const AddSection = ({
               >
                 Cancel
               </button>
-              <button onClick={createSection} disabled={block}>
-                Create Section
+              <button onClick={createSection} disabled={block || creating}>
+                {creating ? "Creating..." : "Create Section"}
               </button>
             </Dialog.Footer>
           </Dialog.Content>

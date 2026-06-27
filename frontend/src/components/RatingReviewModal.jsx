@@ -6,6 +6,7 @@ import { FaStar } from "react-icons/fa";
 //importing dependencies here
 import { useEffect, useState } from "react";
 import api from "../utils/api";
+import { toaster } from "./ui/toaster";
 
 export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
   ///all the dependencies here
@@ -19,18 +20,16 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
   const [initialReview, setInitialReview] = useState("");
 
   const [unblockButton, setUnblockButton] = useState(false);
+  const [, setLoadingFetch] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   ///all the useEffects here
   //use effect to change the rating states if profile or course is changed
   useEffect(() => {
     const fetchRatingDetails = async () => {
       try {
+        setLoadingFetch(true);
         const res = await api.post(`/rating-review/get`, { courseId });
-
-        if (res) {
-          console.log(res);
-        }
-
         if (res) {
           setCurrentRating(res?.data?.rating?.rating || 0);
           setInitialRating(res?.data?.rating?.rating || 0);
@@ -38,7 +37,14 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
           setCurrentReview(res?.data?.rating?.review || "");
         }
       } catch (err) {
-        console.log(err);
+        toaster.add({
+          title: "Reviews failed",
+          description: err?.message || "Could not load rating",
+          type: "error",
+          closable: true,
+        });
+      } finally {
+        setLoadingFetch(false);
       }
     };
 
@@ -67,20 +73,29 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
       payload.review = currentReview;
     }
 
-    console.log(payload);
-
     try {
+      setSaving(true);
       const res = await api.post(`/rating-review/add`, payload);
-
       if (res) {
+        toaster.add({
+          title: "Saved",
+          description: "Your review was saved.",
+          type: "success",
+          closable: true,
+        });
         setRatingModal(false);
       }
     } catch (err) {
-      console.log(err);
+      toaster.add({
+        title: "Save failed",
+        description: err?.message || "Could not save review",
+        type: "error",
+        closable: true,
+      });
+    } finally {
+      setSaving(false);
     }
   };
-
-  console.log("here is your redux profile: ", profile);
 
   return (
     <div
@@ -188,8 +203,8 @@ export const RatingReviewModal = ({ profile, setRatingModal, courseId }) => {
           >
             Cancel
           </button>
-          <button disabled={!unblockButton} onClick={saveRating}>
-            Save
+          <button disabled={!unblockButton || saving} onClick={saveRating}>
+            {saving ? "Saving..." : "Save"}
           </button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../utils/api";
+import { toaster } from "../components/ui/toaster";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setEmail } from "../slices/userSlice";
@@ -33,22 +34,24 @@ const SignUpPage = () => {
     try {
       setLoading(true);
 
-      const res = await api.post(`/users/signup`, inputs);
-
-      console.log("SUCCESS");
-      console.log(res.data);
-
+      await api.post(`/users/signup`, inputs);
       dispatch(setEmail(inputs.email));
-
+      toaster.add({
+        title: "OTP sent",
+        description: "Check your email for the OTP.",
+        type: "success",
+        closable: true,
+      });
       navigate("/verify-email");
     } catch (err) {
-      console.log("SIGNUP ERROR");
-
-      console.log(err);
-
-      if (err.response) {
-        console.log(err.response.data);
-      }
+      const message =
+        err?.response?.data?.message || err.message || "Sign up failed";
+      toaster.add({
+        title: "Sign up failed",
+        description: message,
+        type: "error",
+        closable: true,
+      });
     } finally {
       setLoading(false);
     }
@@ -171,7 +174,7 @@ const SignUpPage = () => {
             </div>
           </div>
 
-          <button type="submit">
+          <button type="submit" disabled={loading}>
             {loading ? "Sending OTP..." : "Create Account"}
           </button>
         </form>
