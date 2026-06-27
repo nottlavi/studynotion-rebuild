@@ -94,7 +94,7 @@ export const CartPage = () => {
             );
             alert(data.message);
 
-            if (data.success) {
+            if (data.message === "Payment verified successfully") {
               await verifyAdd(cartCourses);
             }
           } catch (err) {
