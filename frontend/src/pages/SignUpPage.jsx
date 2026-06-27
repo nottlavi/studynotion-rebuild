@@ -14,6 +14,7 @@ const SignUpPage = () => {
     password: "",
     confirmPassword: "",
   });
+  const [loading, setLoading] = useState(false);
 
   //managing all the dependencies here
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const SignUpPage = () => {
     e.preventDefault();
 
     try {
-      console.log("Submitting signup...");
+      setLoading(true);
 
       const res = await api.post(`/users/signup`, inputs);
 
@@ -48,6 +49,8 @@ const SignUpPage = () => {
       if (err.response) {
         console.log(err.response.data);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -168,7 +171,9 @@ const SignUpPage = () => {
             </div>
           </div>
 
-          <button type="submit">Create Account</button>
+          <button type="submit">
+            {loading ? "Sending OTP..." : "Create Account"}
+          </button>
         </form>
       </section>
     </main>
